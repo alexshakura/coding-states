@@ -1,0 +1,34 @@
+<h1 mat-dialog-title>
+  Coding state programm
+</h1>
+<div mat-dialog-content>
+  <p>Welcome to coding state program</p>
+  <br>
+  <p>Please enter length of table:</p>
+  <mat-form-field>
+    <input type="text" matInput [formControl]="tableLengthControl">
+    <mat-error *ngIf="tableLengthControl.hasError('required')">
+      Поле не может быть пустым
+    </mat-error>
+
+    <mat-error *ngIf="tableLengthControl.hasError('min')">
+      Длина должна быть больше нуля
+    </mat-error>
+
+    <mat-error *ngIf="tableLengthControl.hasError('max')">
+      Длина слишком большая
+    </mat-error>
+
+    <mat-error *ngIf="tableLengthControl.hasError('pattern')">
+      Длина должна быть числом
+    </mat-error>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="tableLengthControl.invalid"
+          [mat-dialog-close]="tableLengthControl.value">
+    Start
+  </button>
+</div>

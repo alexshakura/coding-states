@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { TableLengthDialogComponent } from 'app/table-length-dialog/table-length-dialog.component';
+
 
 @Component({
   selector: 'app-root',
@@ -11,10 +13,21 @@ export class AppComponent implements OnInit {
 
 
   public constructor(
-    private _dialog: MatDialog
+    private _dialog: MatDialog,
   ) { }
 
   public ngOnInit(): void {
-    this._dialog.open()
+    setTimeout(() => {
+      const dialogRef: MatDialogRef<TableLengthDialogComponent> = this._dialog.open(TableLengthDialogComponent, {
+        disableClose: true
+      });
+
+
+      dialogRef.afterClosed()
+        .take(1)
+        .subscribe((tableLength: number) => {
+
+        });
+    });
   }
 }
