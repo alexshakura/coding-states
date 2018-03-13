@@ -9,8 +9,8 @@ import { TableLengthDialogComponent } from 'app/table-length-dialog/table-length
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'app works!';
-
+  public isLoading: boolean = true;
+  public tableLength: number;
 
   public constructor(
     private _dialog: MatDialog,
@@ -26,7 +26,8 @@ export class AppComponent implements OnInit {
       dialogRef.afterClosed()
         .take(1)
         .subscribe((tableLength: number) => {
-
+          this.tableLength = tableLength;
+          this.isLoading = false;
         });
     });
   }

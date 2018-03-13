@@ -2,11 +2,14 @@
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
 @import '~roboto-fontface/css/roboto/roboto-fontface.css';
 
+@import './variables';
 
 body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   font-size: 14px;
   line-height: 20px;
+  color: $app-color-dark;
+  background-color: rgba($app-color-dark, 0.05);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
