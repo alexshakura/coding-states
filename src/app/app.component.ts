@@ -17,18 +17,19 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    setTimeout(() => {
-      const dialogRef: MatDialogRef<TableLengthDialogComponent> = this._dialog.open(TableLengthDialogComponent, {
-        disableClose: true
-      });
+    this.isLoading = false;
+    // setTimeout(() => {
+    //   const dialogRef: MatDialogRef<TableLengthDialogComponent> = this._dialog.open(TableLengthDialogComponent, {
+    //     disableClose: true
+    //   });
 
 
-      dialogRef.afterClosed()
-        .take(1)
-        .subscribe((tableLength: number) => {
-          this.tableLength = tableLength;
-          this.isLoading = false;
-        });
-    });
+    //   dialogRef.afterClosed()
+    //     .take(1)
+    //     .subscribe((tableLength: number) => {
+    //       this.tableLength = tableLength;
+    //       this.isLoading = false;
+    //     });
+    // });
   }
 }

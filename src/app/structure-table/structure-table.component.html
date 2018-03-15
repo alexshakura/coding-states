@@ -1,7 +1,55 @@
 <mat-table [dataSource]="dataSource">
 
+  <!-- Number Column -->
+  <ng-container matColumnDef="num">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> h </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{ row.num }} </mat-cell>
+  </ng-container>
+
+  <!-- Src state Column -->
+  <ng-container matColumnDef="srcState">
+    <mat-header-cell *matHeaderCellDef mat-sort-header> a <sub>m</sub> </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div *ngIf="!editMode">
+        a<sub>{{ row.srcState }}</sub>
+      </div>
+      <div *ngIf="editMode">
+        <mat-form-field floatLabel="never">
+          <input matInput
+                 type="text"
+                 placeholder="Введите номер состояния">
+        </mat-form-field>
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <!-- Code Src state Column -->
+  <ng-container matColumnDef="codeSrcState">
+    <mat-header-cell *matHeaderCellDef mat-sort-header>
+      <div>
+        K(a <sub>m</sub> )
+      </div>
+      <div>
+        <button type="button"
+                mat-raised-button
+                color="primary"
+                (click)="editMode = !editMode">
+          Редактировать
+        </button>
+      </div>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div>
+        {{ formatCodingState(row.codeSrcState) }}
+      </div>
+    </mat-cell>
+  </ng-container>
+
   <mat-header-row *matHeaderRowDef="displayedColumns">
   </mat-header-row>
+
+  <mat-row *matRowDef="let row; columns: displayedColumns;">
+  </mat-row>
 </mat-table>
 
 <mat-paginator #paginator
