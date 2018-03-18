@@ -8,9 +8,15 @@ import { MatTableDataSource, MatPaginator } from '@angular/material';
   styleUrls: ['./structure-table.component.css']
 })
 export class StructureTableComponent implements OnInit, AfterViewInit {
-  @Input() public readonly tableLength: number = 8;
+  @Input() public readonly tableData: App.TableData;
 
   public editMode: boolean = true;
+
+  public states: number[] = [];
+  public conditionalSignals: App.ConditionalSignal[] = [];
+  public outputSignals: number[] = [];
+
+  public bitStateCapacity: number;
 
   public editForm;
 
@@ -21,8 +27,9 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
       codeSrcState: 0,
       distState: 2,
       codeDistState: 1,
-      x: '',
-      y: '',
+      x: new Set(),
+      unconditionalX: false,
+      y: new Set(),
       f: ''
     }
   ]);
@@ -33,8 +40,8 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
     'codeSrcState',
     // 'distState',
     // 'codeDistState',
-    // 'x',
-    // 'y',
+    'x',
+    'y',
     // 'f'
   ];
 
@@ -43,17 +50,48 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
 
   constructor() { }
 
-  ngOnInit() {
+  public ngOnInit(): void {
+    this.states = new Array(this.tableData.numberOfStates)
+      .fill(1)
+      .map((val: number, index: number) => index + 1);
+
+    this.bitStateCapacity = Math.ceil(Math.log2(this.tableData.length));
+
+    for (let i: number = 0; i < this.tableData.numberOfX ; i++) {
+      this.conditionalSignals.push(
+        { id: i + 1, inverted: false },
+        { id: i + 1, inverted: true }
+      );
+    }
+
+    this.outputSignals = new Array(this.tableData.numberOfY)
+      .fill(1)
+      .map((val: number, index: number) => index + 1);
   }
 
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
+  public getSignalsIterator(signalContainer: Set<number | App.ConditionalSignal>): (number | App.ConditionalSignal)[] {
+    return Array.from(signalContainer);
+  }
+
+  public isConditionalSignalDisabled(tableRow: { unconditionalX: boolean, x: Set<App.ConditionalSignal> }, currentIndex: number, isInverted: boolean): boolean {
+    return tableRow.unconditionalX
+      || (isInverted && tableRow.x.has(this.conditionalSignals[currentIndex - 1]))
+      || tableRow.x.has(this.conditionalSignals[currentIndex + 1]);
+  }
+
+  public selectSignal(value: number, signalContainer: Set<number | App.ConditionalSignal>): void {
+    signalContainer.has(value)
+      ? signalContainer.delete(value)
+      : signalContainer.add(value);
+  }
+
   public formatCodingState(codingState: number): string {
     const formattedCodingState: string = codingState.toString(2);
-    const bitStateCapacity: number = Math.ceil(Math.log2(this.tableLength));
 
-    return '0'.repeat(bitStateCapacity - formattedCodingState.length) + formattedCodingState;
+    return '0'.repeat(this.bitStateCapacity - formattedCodingState.length) + formattedCodingState;
   }
 }

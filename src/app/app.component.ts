@@ -10,7 +10,12 @@ import { TableLengthDialogComponent } from 'app/table-length-dialog/table-length
 })
 export class AppComponent implements OnInit {
   public isLoading: boolean = true;
-  public tableLength: number;
+  public tableData: App.TableData = {
+    length: 16,
+    numberOfStates: 8,
+    numberOfX: 4,
+    numberOfY: 4
+  };
 
   public constructor(
     private _dialog: MatDialog,
@@ -26,8 +31,8 @@ export class AppComponent implements OnInit {
 
     //   dialogRef.afterClosed()
     //     .take(1)
-    //     .subscribe((tableLength: number) => {
-    //       this.tableLength = tableLength;
+    //     .subscribe((tableData: App.TableData) => {
+    //       this.tableData = tableData;
     //       this.isLoading = false;
     //     });
     // });

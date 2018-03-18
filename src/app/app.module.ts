@@ -3,12 +3,17 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {
+  MatButtonModule,
   MatDialogModule,
-  MatTableModule,
-  MatPaginatorModule,
   MatFormFieldModule,
   MatInputModule,
-  MatButtonModule
+  MatMenuModule,
+  MatPaginatorModule,
+  MatTableModule,
+  MatSelectModule,
+  MatTooltipModule,
+  MatCheckboxModule,
+  MatRadioModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -33,10 +38,15 @@ import { TableLengthDialogComponent } from './table-length-dialog/table-length-d
     HttpModule,
 
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
     MatTableModule,
+    MatMenuModule,
     MatPaginatorModule,
+    MatSelectModule,
+    MatRadioModule,
+    MatTooltipModule,
     MatInputModule
  ],
  entryComponents: [

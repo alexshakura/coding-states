@@ -2,33 +2,118 @@
   Coding state programm
 </h1>
 <div mat-dialog-content>
-  <p>Welcome to coding state program</p>
-  <br>
-  <p>Please enter length of table:</p>
-  <mat-form-field>
-    <input type="text" matInput [formControl]="tableLengthControl">
-    <mat-error *ngIf="tableLengthControl.hasError('required')">
-      Поле не может быть пустым
-    </mat-error>
+  <form id="tableParamsForm"
+        [formGroup]="tableData">
+    <p>Welcome to coding state program</p>
+    <br>
 
-    <mat-error *ngIf="tableLengthControl.hasError('min')">
-      Длина должна быть больше нуля
-    </mat-error>
+    <div>
+      <mat-form-field>
+        <mat-label>Длина СТП</mat-label>
 
-    <mat-error *ngIf="tableLengthControl.hasError('max')">
-      Длина слишком большая
-    </mat-error>
+        <input type="text"
+               matInput
+               formControlName="length">
+        <mat-error *ngIf="tableData.hasError('required', ['length'])">
+          Поле не может быть пустым
+        </mat-error>
 
-    <mat-error *ngIf="tableLengthControl.hasError('pattern')">
-      Длина должна быть числом
-    </mat-error>
-  </mat-form-field>
+        <mat-error *ngIf="tableData.hasError('min', ['length'])">
+          Длина должна быть больше нуля
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('max', ['length'])">
+          Длина слишком большая
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('pattern', ['length'])">
+          Длина должна быть числом
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Число состояний</mat-label>
+
+        <input type="text"
+                matInput
+                formControlName="numberOfStates">
+        <mat-error *ngIf="tableData.hasError('required', ['numberOfStates'])">
+          Поле не может быть пустым
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('min', ['numberOfStates'])">
+          Число состояний должно быть больше нуля
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('max', ['numberOfStates'])">
+          Число состояний слишком большое
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('pattern', ['numberOfStates'])">
+          Число состояний должно быть числом
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Число X</mat-label>
+
+        <input type="text"
+               matInput
+               formControlName="numberOfX">
+        <mat-error *ngIf="tableData.hasError('required', ['numberOfX'])">
+          Поле не может быть пустым
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('min', ['numberOfX'])">
+          Число X должно быть больше нуля
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('max', ['numberOfX'])">
+          Число X слишком большое
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('pattern', ['numberOfX'])">
+          Число X должно быть числом
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label>Число У</mat-label>
+
+        <input type="text"
+                matInput
+                formControlName="numberOfY">
+        <mat-error *ngIf="tableData.hasError('required', ['numberOfY'])">
+          Поле не может быть пустым
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('min', ['numberOfY'])">
+          Число Y должнo быть больше нуля
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('max', ['numberOfY'])">
+          Число Y слишком большое
+        </mat-error>
+
+        <mat-error *ngIf="tableData.hasError('pattern', ['numberOfY'])">
+          Число Y должно быть числом
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </form>
 </div>
 <div mat-dialog-actions>
   <button mat-raised-button
           color="primary"
-          [disabled]="tableLengthControl.invalid"
-          [mat-dialog-close]="tableLengthControl.value">
+          form="tableParamsForm"
+          [disabled]="tableData.invalid"
+          [mat-dialog-close]="tableData.value">
     Start
   </button>
 </div>

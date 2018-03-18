@@ -10,15 +10,27 @@
   <ng-container matColumnDef="srcState">
     <mat-header-cell *matHeaderCellDef mat-sort-header> a <sub>m</sub> </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div *ngIf="!editMode">
-        a<sub>{{ row.srcState }}</sub>
+      <div>
+        <ng-container *ngIf="row.srcState; else emptyValue">
+          a<sub>{{ row.srcState }}</sub>
+        </ng-container>
       </div>
       <div *ngIf="editMode">
-        <mat-form-field floatLabel="never">
-          <input matInput
-                 type="text"
-                 placeholder="Введите номер состояния">
-        </mat-form-field>
+        <button mat-raised-button
+                color="primary"
+                [matMenuTriggerFor]="statesMenu">
+          Добавить
+          <i class="mdi mdi-plus-circle"></i>
+        </button>
+
+        <mat-menu #statesMenu="matMenu"
+                  [overlapTrigger]="false">
+          <button *ngFor="let stateIndex of states"
+                  (click)="row.srcState = stateIndex"
+                  mat-menu-item>
+            a <sub>{{ stateIndex }}</sub>
+          </button>
+        </mat-menu>
       </div>
     </mat-cell>
   </ng-container>
@@ -28,6 +40,70 @@
     <mat-header-cell *matHeaderCellDef mat-sort-header>
       <div>
         K(a <sub>m</sub> )
+      </div>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div>
+        {{ formatCodingState(row.codeSrcState) }}
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <!-- X column -->
+  <ng-container matColumnDef="x">
+    <mat-header-cell *matHeaderCellDef>
+      <div>
+        X
+      </div>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <div *ngIf="row.x.size > 0">
+        <ng-container *ngFor="let conditionalSignal of getSignalsIterator(row.x)">
+          x <sub>{{ conditionalSignal.id }}</sub>
+        </ng-container>
+      </div>
+
+      <div *ngIf="row.unconditionalX">1</div>
+
+      <div *ngIf="row.x.size == 0 && !row.unconditionalX">-</div>
+
+      <div *ngIf="editMode">
+        <button mat-raised-button
+                color="primary"
+                [matMenuTriggerFor]="xSignalsMenu">
+          Добавить
+          <i class="mdi mdi-plus-circle"></i>
+        </button>
+
+        <mat-menu #xSignalsMenu="matMenu"
+                  [overlapTrigger]="false">
+          <button mat-menu-item
+                  (click)="$event.stopPropagation(); row.unconditionalX = !row.unconditionalX; box.toggle()">
+            <mat-checkbox #box
+                          (click)="$event.stopPropagation(); row.unconditionalX = !row.unconditionalX; true;">
+              Безусловный
+            </mat-checkbox>
+          </button>
+          <button *ngFor="let conditionalSignal of conditionalSignals; index as i"
+                  mat-menu-item
+                  (click)="$event.stopPropagation(); selectSignal(conditionalSignal, row.x); box.toggle()" >
+            <mat-checkbox #box
+                          [disabled]="row.unconditionalX || row.x.has(conditionalSignals[i-1])"
+                          (click)="$event.stopPropagation(); selectSignal(conditionalSignal, row.x)">
+              <span [style.text-decoration]="conditionalSignal.inverted ? 'overline' : 'unset'">x</span><!--
+              --><sub>{{ conditionalSignal.id }}</sub>
+            </mat-checkbox>
+          </button>
+        </mat-menu>
+      </div>
+    </mat-cell>
+  </ng-container>
+
+  <!-- Y column -->
+  <ng-container matColumnDef="y">
+    <mat-header-cell *matHeaderCellDef>
+      <div>
+        Y
       </div>
       <div>
         <button type="button"
@@ -39,8 +115,31 @@
       </div>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div>
-        {{ formatCodingState(row.codeSrcState) }}
+      <div *ngIf="row.y.size > 0; else emptyValue">
+        <ng-container *ngFor="let outputSignal of getSignalsIterator(row.y)">
+          y <sub>{{ outputSignal}}</sub>
+        </ng-container>
+      </div>
+
+      <div *ngIf="editMode">
+        <button mat-raised-button
+                color="primary"
+                [matMenuTriggerFor]="ySignalsMenu">
+          Добавить
+          <i class="mdi mdi-plus-circle"></i>
+        </button>
+
+        <mat-menu #ySignalsMenu="matMenu"
+                  [overlapTrigger]="false">
+          <button *ngFor="let outputSignal of outputSignals"
+                  mat-menu-item
+                  (click)="$event.stopPropagation(); selectSignal(outputSignal, row.y); box.toggle()" >
+            <mat-checkbox #box
+                          (click)="$event.stopPropagation(); selectSignal(outputSignal, row.y);">
+              y<sub>{{ outputSignal }}</sub>
+            </mat-checkbox>
+          </button>
+        </mat-menu>
       </div>
     </mat-cell>
   </ng-container>
@@ -51,6 +150,10 @@
   <mat-row *matRowDef="let row; columns: displayedColumns;">
   </mat-row>
 </mat-table>
+
+<ng-template #emptyValue>
+  -
+</ng-template>
 
 <mat-paginator #paginator
                [pageSize]="10"
