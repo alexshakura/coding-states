@@ -59,7 +59,7 @@
     <mat-cell *matCellDef="let row">
       <div *ngIf="row.x.size > 0">
         <ng-container *ngFor="let conditionalSignal of getSignalsIterator(row.x)">
-          x <sub>{{ conditionalSignal.id }}</sub>
+          <span [class.is--inverted]="conditionalSignal.inverted">x</span> <sub>{{ conditionalSignal.id }}</sub>
         </ng-container>
       </div>
 
@@ -77,23 +77,26 @@
 
         <mat-menu #xSignalsMenu="matMenu"
                   [overlapTrigger]="false">
-          <button mat-menu-item
-                  (click)="$event.stopPropagation(); row.unconditionalX = !row.unconditionalX; box.toggle()">
-            <mat-checkbox #box
-                          (click)="$event.stopPropagation(); row.unconditionalX = !row.unconditionalX; true;">
+          <div (click)="$event.stopPropagation();">
+            <mat-checkbox [ngModel]="row.unconditionalX"
+                          (ngModelChange)="toggleUnconditionalSignal(row)"
+                          (click)="$event.stopPropagation();">
               Безусловный
             </mat-checkbox>
-          </button>
-          <button *ngFor="let conditionalSignal of conditionalSignals; index as i"
-                  mat-menu-item
-                  (click)="$event.stopPropagation(); selectSignal(conditionalSignal, row.x); box.toggle()" >
-            <mat-checkbox #box
-                          [disabled]="row.unconditionalX || row.x.has(conditionalSignals[i-1])"
-                          (click)="$event.stopPropagation(); selectSignal(conditionalSignal, row.x)">
-              <span [style.text-decoration]="conditionalSignal.inverted ? 'overline' : 'unset'">x</span><!--
-              --><sub>{{ conditionalSignal.id }}</sub>
-            </mat-checkbox>
-          </button>
+          </div>
+
+          <ng-container *ngIf="!row.unconditionalX">
+            <div *ngFor="let conditionalSignal of conditionalSignals; index as i"
+                 (click)="$event.stopPropagation();">
+              <mat-checkbox [ngModel]="row.x.has(conditionalSignal)"
+                            (ngModelChange)="selectSignal(conditionalSignal, row.x)"
+                            [disabled]="isConditionalSignalDisabled(row, i, conditionalSignal.inverted)"
+                            (click)="$event.stopPropagation();">
+                <span [class.is--inverted]="conditionalSignal.inverted">x</span><!--
+             --><sub>{{ conditionalSignal.id }}</sub>
+              </mat-checkbox>
+            </div>
+          </ng-container>
         </mat-menu>
       </div>
     </mat-cell>
@@ -102,9 +105,7 @@
   <!-- Y column -->
   <ng-container matColumnDef="y">
     <mat-header-cell *matHeaderCellDef>
-      <div>
-        Y
-      </div>
+      <div>Y</div>
       <div>
         <button type="button"
                 mat-raised-button
@@ -131,14 +132,14 @@
 
         <mat-menu #ySignalsMenu="matMenu"
                   [overlapTrigger]="false">
-          <button *ngFor="let outputSignal of outputSignals"
-                  mat-menu-item
-                  (click)="$event.stopPropagation(); selectSignal(outputSignal, row.y); box.toggle()" >
-            <mat-checkbox #box
-                          (click)="$event.stopPropagation(); selectSignal(outputSignal, row.y);">
+          <div *ngFor="let outputSignal of outputSignals"
+               (click)="$event.stopPropagation();">
+            <mat-checkbox [ngModel]="row.y.has(outputSignal)"
+                          (ngModelChange)="selectSignal(outputSignal, row.y)"
+                          (click)="$event.stopPropagation();">
               y<sub>{{ outputSignal }}</sub>
             </mat-checkbox>
-          </button>
+          </div>
         </mat-menu>
       </div>
     </mat-cell>

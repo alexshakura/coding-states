@@ -67,7 +67,7 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
     this.outputSignals = new Array(this.tableData.numberOfY)
       .fill(1)
       .map((val: number, index: number) => index + 1);
-  }
+   }
 
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -77,10 +77,21 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
     return Array.from(signalContainer);
   }
 
-  public isConditionalSignalDisabled(tableRow: { unconditionalX: boolean, x: Set<App.ConditionalSignal> }, currentIndex: number, isInverted: boolean): boolean {
-    return tableRow.unconditionalX
-      || (isInverted && tableRow.x.has(this.conditionalSignals[currentIndex - 1]))
-      || tableRow.x.has(this.conditionalSignals[currentIndex + 1]);
+  public isConditionalSignalDisabled(
+    tableRow: { unconditionalX: boolean, x: Set<App.ConditionalSignal> },
+    currentIndex: number,
+    isInverted: boolean
+  ): boolean {
+    const index: number = isInverted
+      ? currentIndex - 1
+      : currentIndex + 1;
+
+    return tableRow.unconditionalX || tableRow.x.has(this.conditionalSignals[index]);
+  }
+
+  public toggleUnconditionalSignal(tableRow): void {
+    tableRow.unconditionalX = !tableRow.unconditionalX;
+    tableRow.x.clear();
   }
 
   public selectSignal(value: number, signalContainer: Set<number | App.ConditionalSignal>): void {
