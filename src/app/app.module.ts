@@ -19,6 +19,7 @@ import {
   MatToolbarModule,
   MatSortModule,
   MatRadioModule,
+  MatPaginatorIntl,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -27,6 +28,8 @@ import './rxjs-operators';
 import { AppComponent } from './app.component';
 import { StructureTableComponent } from './structure-table/structure-table.component';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
+
+import { CustomMatPaginatorIntlRu } from './custom-paginator';
 
 
 @NgModule({
@@ -62,7 +65,8 @@ import { TableConfigDialogComponent } from './table-config-dialog/table-config-d
     TableConfigDialogComponent
  ],
   providers: [
-    TableDataService
+    TableDataService,
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu }
   ],
   bootstrap: [AppComponent]
 })
