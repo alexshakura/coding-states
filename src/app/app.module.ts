@@ -1,3 +1,4 @@
+import { TableDataService } from './services/table-data.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +16,7 @@ import {
   MatTooltipModule,
   MatCheckboxModule,
   MatToolbarModule,
+  MatSortModule,
   MatRadioModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
@@ -23,14 +25,14 @@ import './rxjs-operators';
 
 import { AppComponent } from './app.component';
 import { StructureTableComponent } from './structure-table/structure-table.component';
-import { TableDataDialogComponent } from './table-data-dialog/table-data-dialog.component';
+import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     StructureTableComponent,
-    TableDataDialogComponent
+    TableConfigDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -49,14 +51,17 @@ import { TableDataDialogComponent } from './table-data-dialog/table-data-dialog.
     MatSelectModule,
     MatSlideToggleModule,
     MatRadioModule,
+    MatSortModule,
     MatToolbarModule,
     MatTooltipModule,
     MatInputModule
  ],
  entryComponents: [
-    TableDataDialogComponent
+    TableConfigDialogComponent
  ],
-  providers: [],
+  providers: [
+    TableDataService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

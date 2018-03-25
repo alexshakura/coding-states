@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { TableDataDialogComponent } from 'app/table-data-dialog/table-data-dialog.component';
+import { TableConfigDialogComponent } from 'app/table-config-dialog/table-config-dialog.component';
 
 
 @Component({
@@ -11,7 +11,8 @@ import { TableDataDialogComponent } from 'app/table-data-dialog/table-data-dialo
 })
 export class AppComponent implements OnInit {
   public isLoading: boolean = true;
-  public tableData: App.TableData = {
+
+  public tableConfig: App.TableConfig = {
     length: 16,
     numberOfStates: 8,
     numberOfX: 4,
@@ -39,19 +40,19 @@ export class AppComponent implements OnInit {
     // });
   }
 
-  public changeTableParams(): void {
-    const dialogRef: MatDialogRef<TableDataDialogComponent> = this._dialog.open(TableDataDialogComponent, {
+  public changeTableConfig(): void {
+    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent, {
       data: {
-        tableData: this.tableData
+        tableConfig: this.tableConfig
       }
     }
   );
 
     dialogRef.afterClosed()
-      .filter((tableData: App.TableData) => Boolean(tableData))
+      .filter((tableConfig: App.TableConfig) => Boolean(tableConfig))
       .take(1)
-      .subscribe((tableData: App.TableData) => {
-        this.tableData = tableData;
+      .subscribe((tableConfig: App.TableConfig) => {
+        this.tableConfig = tableConfig;
       });
   }
 }

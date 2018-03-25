@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/core';
-import { MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { TableDataService } from '../services/table-data.service';
 
 
 @Component({
@@ -8,9 +9,9 @@ import { MatTableDataSource, MatPaginator } from '@angular/material';
   styleUrls: ['./structure-table.component.css']
 })
 export class StructureTableComponent implements OnInit, AfterViewInit {
-  @Input() public readonly tableData: App.TableData;
+  @Input() public readonly tableConfig: App.TableConfig;
 
-  public editMode: boolean = true;
+  public editMode: boolean = false;
 
   public states: number[] = [];
   public conditionalSignals: App.ConditionalSignal[] = [];
@@ -18,28 +19,16 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
 
   public bitStateCapacity: number;
 
-  public editForm;
+  @ViewChild(MatSort) public readonly sort: MatSort;
 
-  public dataSource: MatTableDataSource<any> = new MatTableDataSource([
-    {
-      num: 1,
-      srcState: 1,
-      codeSrcState: 0,
-      distState: 2,
-      codeDistState: 1,
-      x: new Set(),
-      unconditionalX: false,
-      y: new Set(),
-      f: ''
-    }
-  ]);
+  public dataSource: MatTableDataSource<App.TableRowData> = new MatTableDataSource();
 
   public readonly displayedColumns: string[] = [
     'num',
     'srcState',
     'codeSrcState',
-    // 'distState',
-    // 'codeDistState',
+    'distState',
+    'codeDistState',
     'x',
     'y',
     // 'f'
@@ -48,29 +37,23 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator)
   public paginator: MatPaginator;
 
-  constructor() { }
+  public constructor(
+    private _tableDataService: TableDataService
+  ) { }
 
   public ngOnInit(): void {
-    this.states = new Array(this.tableData.numberOfStates)
-      .fill(1)
-      .map((val: number, index: number) => index + 1);
+    this.dataSource.data = this._tableDataService.generate(this.tableConfig);
 
-    this.bitStateCapacity = Math.ceil(Math.log2(this.tableData.length));
+    this.states = this._tableDataService.generateStates(this.tableConfig.numberOfStates);
+    this.conditionalSignals = this._tableDataService.generateConditionalSignals(this.tableConfig.numberOfX);
+    this.outputSignals = this._tableDataService.generateOutputSignals(this.tableConfig.numberOfY);
 
-    for (let i: number = 0; i < this.tableData.numberOfX ; i++) {
-      this.conditionalSignals.push(
-        { id: i + 1, inverted: false },
-        { id: i + 1, inverted: true }
-      );
-    }
-
-    this.outputSignals = new Array(this.tableData.numberOfY)
-      .fill(1)
-      .map((val: number, index: number) => index + 1);
+    this.bitStateCapacity = Math.ceil(Math.log2(this.tableConfig.length));
    }
 
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
   public getSignalsIterator(signalContainer: Set<number | App.ConditionalSignal>): (number | App.ConditionalSignal)[] {
