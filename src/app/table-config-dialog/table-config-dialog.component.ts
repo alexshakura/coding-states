@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, Validators, FormBuilder, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
 const fieldValidators: ValidatorFn[] = [
   Validators.required,
@@ -25,6 +25,7 @@ export class TableConfigDialogComponent {
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.TableConfig },
+    private _dialogRef: MatDialogRef<TableConfigDialogComponent>,
     private _formBuilder: FormBuilder
   ) { }
 
@@ -37,5 +38,15 @@ export class TableConfigDialogComponent {
 
     return control.valid
       && control.value < this.data.tableConfig[fieldKey];
+  }
+
+  public save(): void {
+    const newConfig: App.TableConfig = this.tableConfigForm.value;
+
+    for (const key in newConfig) {
+      newConfig[key] = Number(newConfig[key]);
+    }
+
+    this._dialogRef.close(newConfig);
   }
 }

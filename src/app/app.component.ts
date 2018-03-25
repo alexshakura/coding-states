@@ -42,11 +42,11 @@ export class AppComponent implements OnInit {
 
   public changeTableConfig(): void {
     const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent, {
-      data: {
-        tableConfig: this.tableConfig
+        data: {
+          tableConfig: this.tableConfig
+        }
       }
-    }
-  );
+    );
 
     dialogRef.afterClosed()
       .filter((tableConfig: App.TableConfig) => Boolean(tableConfig))

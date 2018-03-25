@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {
   MatButtonModule,
+  MatCardModule,
   MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
@@ -42,6 +43,7 @@ import { TableConfigDialogComponent } from './table-config-dialog/table-config-d
     HttpModule,
 
     MatButtonModule,
+    MatCardModule,
     MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,

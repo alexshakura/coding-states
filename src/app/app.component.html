@@ -1,15 +1,28 @@
 <mat-toolbar class="layout-split"
              color="primary">
   <div class="layout-split__item">
-    Структурная таблица переходов
+    Title
   </div>
 
-  <button mat-raised-button
-          color="accent"
-          class="layout-split__item"
-          (click)="changeTableConfig()">
-    Изменить параметры СТП
-  </button>
+  <div class="layout-split__item">
+    <div class="layout-inline">
+      <div class="layout-inline__item">
+        <button mat-raised-button
+                color="accent">
+          Закодировать
+        </button>
+      </div>
+
+      <div class="layout-inline__item">
+        <button mat-raised-button
+                color="accent"
+                (click)="changeTableConfig()">
+          Изменить параметры СТП
+        </button>
+      </div>
+    </div>
+  </div>
+
 </mat-toolbar>
 
 <app-structure-table [tableConfig]="tableConfig">

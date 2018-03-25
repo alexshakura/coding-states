@@ -3,7 +3,8 @@
 </h1>
 <div mat-dialog-content>
   <form id="tableParamsForm"
-        [formGroup]="tableConfigForm">
+        [formGroup]="tableConfigForm"
+        (ngSubmit)="save()">
     <p>Welcome to coding state program</p>
     <br>
 
@@ -131,8 +132,7 @@
   <button mat-raised-button
           color="primary"
           form="tableParamsForm"
-          [disabled]="tableConfigForm.invalid"
-          [mat-dialog-close]="tableConfigForm.value">
+          [disabled]="tableConfigForm.invalid">
     {{ isTableExist() ? 'Изменить' : 'Создать' }}
   </button>
 </div>

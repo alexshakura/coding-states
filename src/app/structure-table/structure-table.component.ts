@@ -9,7 +9,23 @@ import { TableDataService } from '../services/table-data.service';
   styleUrls: ['./structure-table.component.css']
 })
 export class StructureTableComponent implements OnInit, AfterViewInit {
-  @Input() public readonly tableConfig: App.TableConfig;
+  @Input('tableConfig') public set defineTableData(tableConfig: App.TableConfig) {
+    if (!this._tableConfig || this._tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
+      this.dataSource.data = this._tableDataService.generateRaw(tableConfig.length);
+    } else {
+      this.dataSource.data = this._tableDataService.rearrangeTableData(this.dataSource.data, tableConfig.length);
+    }
+
+    this.states = this._tableDataService.generateStates(tableConfig.numberOfStates);
+    this.conditionalSignals = this._tableDataService.generateConditionalSignals(tableConfig.numberOfX);
+    this.outputSignals = this._tableDataService.generateOutputSignals(tableConfig.numberOfY);
+
+    this.bitStateCapacity = Math.ceil(Math.log2(tableConfig.length));
+
+    this._tableConfig = tableConfig;
+  }
+
+  private _tableConfig: App.TableConfig;
 
   public editMode: boolean = false;
 
@@ -42,13 +58,7 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
   ) { }
 
   public ngOnInit(): void {
-    this.dataSource.data = this._tableDataService.generate(this.tableConfig);
 
-    this.states = this._tableDataService.generateStates(this.tableConfig.numberOfStates);
-    this.conditionalSignals = this._tableDataService.generateConditionalSignals(this.tableConfig.numberOfX);
-    this.outputSignals = this._tableDataService.generateOutputSignals(this.tableConfig.numberOfY);
-
-    this.bitStateCapacity = Math.ceil(Math.log2(this.tableConfig.length));
    }
 
   public ngAfterViewInit(): void {
