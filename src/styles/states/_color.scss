@@ -1,0 +1,68 @@
+/**
+ *  COLOR global state
+ *
+ *  set of default global color modifiers
+ *  available colors:
+ *  - primary
+ *  - warning
+ *  - danger
+ *  - danger-05per
+ *  - success
+ *  - light
+ *
+ *    .is--%COLOR%
+ *
+ *  muted variations:
+ *
+ *    .is--muted-70
+ *    .is--muted
+ *    .is--muted-30
+ *
+ *  how to use
+ *  ----------
+ *  attach global modifiers directly to the respective elements
+ *
+ *    .link.is--%COLOR%(.is--muted)(.is--muted-30)
+ *
+ */
+
+
+$lms-colors: (
+  primary: $lms-color-primary,
+  warning: $lms-color-warning,
+  danger: $lms-color-danger,
+  danger-05per: rgba($lms-color-danger, 0.05),
+  success: $lms-color-success,
+  light: white
+);
+
+.is--muted-70 {
+  color: rgba($lms-color-dark, 0.7);
+}
+
+.is--muted {
+  color: rgba($lms-color-dark, 0.5);
+}
+
+.is--muted-30 {
+  color: rgba($lms-color-dark, 0.3);
+}
+
+@each $name, $color in $lms-colors {
+  .is--#{$name} {
+    color: $color;
+
+    &.is--muted-70 {
+      color: rgba($color, 0.7);
+    }
+
+    &.is--muted {
+      color: rgba($color, 0.5);
+    }
+
+    &.is--muted-30 {
+      color: rgba($color, 0.3);
+    }
+  }
+}
+

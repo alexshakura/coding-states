@@ -1,0 +1,98 @@
+/**
+ *  CONTENT layout
+ *
+ *  positioning and size for rows, cards,
+ *  expandable rows, form panels, etc.
+ *
+ *    .layout-content
+ *      &__item
+ *        &--narrow
+ *        &--wide
+ *        &--expanded
+ *      &--fullwidth
+ *
+ *  how to use
+ *  ----------
+ *  use inside .page__body of page css component (../components/_page.scss)
+ *  combine with other layouts for additional spacing
+ *
+ *  tables
+ *  (with expandable rows)
+ *
+ *    ...
+ *    .page__body(just use this first class for fullscreen dialogs)
+ *      .layout-content
+ *        .layout-content__item
+ *          (row)
+ *        .layout-content__item(.layout-content__item--expanded)
+ *          (row)
+ *        ...
+ *
+ *  cards
+ *  (or when you need spacing between elements)
+ *
+ *    ...
+ *    .page__body(just use this first class for fullscreen dialogs)
+ *      .layout-content
+ *        .layout-list
+ *          .layout-list__item
+ *            .layout-content__item
+ *              (card)
+ *          .layout-list__item
+ *            .layout-content__item
+ *              (card)
+ *            ...
+ *
+ *  form panels
+ *
+ *    ...
+ *    .page__body(just use this first class for fullscreen dialogs)
+ *      .layout-content
+ *        .layout-content__item.layout-content__item--narrow
+ *          (panel)
+ *        .layout-content__item.layout-content__item--narrow(.layout-content__item--expanded)
+ *          (panel)
+ *        ...
+ *
+ *  wide version (&--wide) is for now only for "invite users" page and "assign event detail" dialog
+ *
+ */
+
+
+.layout-content {
+  display: block;
+  width: 100%;
+
+  &__item {
+    // position to contain loading state
+    position: relative;
+    width: 100%;
+    padding: 0;
+    max-width: $lms-item-max-width;
+    margin-left: auto;
+    margin-right: auto;
+
+    transition: padding 0.2s;
+
+    &--narrow {
+      max-width: $lms-item-narrow-max-width;
+    }
+
+    &--wide {
+      max-width: $lms-item-wide-max-width;
+    }
+
+    &--expanded {
+      padding: 24px 0;
+      max-width: $lms-expanded-item-max-width;
+
+      &.layout-content__item--narrow {
+        max-width: $lms-expanded-item-narrow-max-width;
+      }
+
+      &.layout-content__item--wide {
+        max-width: $lms-item-wide-max-width;
+      }
+    }
+  }
+}

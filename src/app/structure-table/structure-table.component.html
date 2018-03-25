@@ -106,14 +106,6 @@
   <ng-container matColumnDef="y">
     <mat-header-cell *matHeaderCellDef>
       <div>Y</div>
-      <div>
-        <button type="button"
-                mat-raised-button
-                color="primary"
-                (click)="editMode = !editMode">
-          Редактировать
-        </button>
-      </div>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
       <div *ngIf="row.y.size > 0; else emptyValue">

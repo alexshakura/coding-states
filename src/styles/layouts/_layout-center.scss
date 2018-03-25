@@ -1,0 +1,21 @@
+/**
+ *  CENTER layout
+ *
+ *  positions content in the middle of the parent
+ *
+ *  .layout-center
+ *
+ *  how to use:
+ *
+ *  (parent container)
+ *    .layout-center
+ *      (element that will be centered)
+ *
+ */
+
+
+.layout-center {
+  @extend %layout-center;
+  width: 100%;
+  height: 100%;
+}

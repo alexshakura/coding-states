@@ -1,0 +1,36 @@
+/**
+ *  SPLIT layout
+ *
+ *  split items horizontally in the parent
+ *
+ *    .layout-split
+ *      &__item
+ *      &--stretch
+ *
+ *  how to use
+ *  ----------
+ *  if the layout is placed in an element with a fixed height
+ *  and the layout should stretch vertically to be same height as its parent
+ *  then use the '--stretch' modifier
+ *
+ *    .layout-split(.layout-split--stretch)
+ *      .layout-split__item
+ *        (thing on the left)
+ *      .layout-split__item
+ *        (thing on the right)
+ *
+ */
+
+
+.layout-split {
+  @extend %layout-split;
+  width: 100%;
+
+  &__item {
+    flex-shrink: 0;
+  }
+
+  &--stretch {
+    height: 100%;
+  }
+}

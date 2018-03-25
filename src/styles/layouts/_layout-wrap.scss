@@ -1,0 +1,36 @@
+/**
+ *  WRAP layout
+ *
+ *  layout for an inline list of items which wraps to new lines
+ *
+ *    .layout-wrap
+ *      &__item
+ *
+ *  how to use
+ *  ----------
+ *
+ *    .layout-wrap
+ *      .layout-wrap__item
+ *        (tag)
+ *      ...
+ *      .layout-wrap__item
+ *        (tag)
+ *
+ */
+
+
+$layout-wrap-default-spacing: 10px;
+
+
+.layout-wrap {
+  @extend %layout-inline;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-left: -$layout-wrap-default-spacing;
+  margin-bottom: -$layout-wrap-default-spacing;
+
+  &__item {
+    margin-left: $layout-wrap-default-spacing;
+    margin-bottom: $layout-wrap-default-spacing;
+  }
+}

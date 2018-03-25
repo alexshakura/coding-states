@@ -14,6 +14,7 @@
         <input type="text"
                matInput
                formControlName="length">
+
         <mat-error *ngIf="tableData.hasError('required', ['length'])">
           Поле не может быть пустым
         </mat-error>
@@ -39,6 +40,12 @@
         <input type="text"
                 matInput
                 formControlName="numberOfStates">
+
+        <mat-hint *ngIf="hasNotice('numberOfStates')"
+                  class="is--primary">
+          Данное значение приведет к сбросу всех данных таблицы
+        </mat-hint>
+
         <mat-error *ngIf="tableData.hasError('required', ['numberOfStates'])">
           Поле не может быть пустым
         </mat-error>
@@ -64,6 +71,12 @@
         <input type="text"
                matInput
                formControlName="numberOfX">
+
+        <mat-hint *ngIf="hasNotice('numberOfX')"
+                  class="is--primary">
+          Данное значение приведет к сбросу всех данных таблицы
+        </mat-hint>
+
         <mat-error *ngIf="tableData.hasError('required', ['numberOfX'])">
           Поле не может быть пустым
         </mat-error>
@@ -89,6 +102,12 @@
         <input type="text"
                 matInput
                 formControlName="numberOfY">
+
+        <mat-hint *ngIf="hasNotice('numberOfY')"
+                  class="is--primary">
+          Данное значение приведет к сбросу всех данных таблицы
+        </mat-hint>
+
         <mat-error *ngIf="tableData.hasError('required', ['numberOfY'])">
           Поле не может быть пустым
         </mat-error>

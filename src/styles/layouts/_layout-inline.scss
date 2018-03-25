@@ -1,0 +1,157 @@
+/**
+ *  INLINE layout
+ *
+ *  a horizontal list of items with a default spacing and a set of general widths
+ *
+ *  default spacing: 16px
+ *
+ *  item widths options:
+ *  64px 100px 250px 20per 25per 33per 40per 50per 60per 66per
+ *
+ *  .layout-inline
+ *    &__item
+ *      &--expand
+ *      &--collapse
+ *      &--animated
+ *      &--%WIDTH%
+ *    &--align-right
+ *    &--valign-baseline
+ *    &--valign-stretch
+ *    &--valign-top
+ *    &--stretch
+ *    &--%MARGIN%
+ *
+ *  shortcuts
+ *  (for common layout variations)
+ *
+ *    .layout-inline-row-actions
+ *    .layout-inline-group-actions
+ *    .layout-inline-learning-info
+ *    .layout-inline-checkbox
+ *    .layout-inline-form-field
+ *
+ *  how to use
+ *  ----------
+ *  if the layout is placed in an element with a fixed height
+ *  and the layout should stretch vertically to be same height as its parent
+ *  then use the '--stretch' modifier
+ *
+ *    .layout-inline(.layout-inline--align-right)(.layout-inline--valign-baseline)(.layout-inline--%MARGIN%)(.layout-inline--stretch)
+ *      .layout-inline__item(.layout-inline__item--expand)
+ *        <button>
+ *      .layout-inline__item
+ *        <button>
+ *
+ */
+
+$lms-inline-default-margin: 16px;
+
+
+$lms-inline-item-widths: (
+  64px: 64px,
+  100px: 100px,
+  250px: 250px,
+  20per: 20%,
+  25per: 25%,
+  33per: 100% / 3,
+  40per: 40%,
+  50per: 50%,
+  60per: 60%,
+  66per: 100% * 2 / 3,
+);
+
+
+.layout-inline {
+  @extend %layout-inline;
+
+  &__item {
+    flex-shrink: 0;
+
+    &:not(:first-child) {
+      padding-left: $lms-inline-default-margin;
+    }
+
+    &--expand {
+      flex-grow: 1;
+      flex-shrink: 1;
+      overflow: hidden; // ensure that it does not expand over 100%
+    }
+
+    &--collapse {
+      flex-grow: 0;
+      flex-shrink: 1;
+      overflow: hidden;
+    }
+
+    &--animated {
+      flex-basis: 0;
+      transition: flex 0.3s linear;
+    }
+
+    @each $size-name, $size-width in $lms-inline-item-widths {
+      &--#{$size-name} {
+        width: $size-width;
+      }
+    }
+  }
+
+  &--align-right {
+    justify-content: flex-end !important;
+  }
+
+  &--valign-baseline {
+    align-items: baseline !important;
+  }
+
+  &--valign-stretch {
+    align-items: stretch !important;
+  }
+
+  &--valign-top {
+    align-items: flex-start !important;
+  }
+
+  &--stretch {
+    height: 100%;
+  }
+
+  @each $margin in $lms-layout-spacing-options {
+    &--#{$margin} > &__item:not(:first-child) {
+      padding-left: $margin;
+    }
+  }
+}
+
+
+.layout-inline-row-actions {
+  @extend .layout-inline;
+  @extend .layout-inline--10px;
+  @extend .layout-inline--stretch;
+}
+
+
+.layout-inline-group-actions {
+  @extend .layout-inline;
+  @extend .layout-inline--align-right;
+  @extend .layout-inline--6px;
+  flex-wrap: wrap; // quick fix
+}
+
+
+.layout-inline-learning-info {
+  @extend .layout-inline;
+  @extend .layout-inline--0px;
+  @extend .layout-inline--valign-stretch;
+}
+
+.layout-inline-checkbox {
+  @extend .layout-inline;
+  @extend .layout-inline--12px;
+  @extend .layout-inline--valign-baseline;
+}
+
+.layout-inline-form-field {
+  @extend .layout-inline;
+  @extend .layout-inline--24px;
+  @extend .layout-inline--valign-baseline;
+}

@@ -11,8 +11,10 @@ import {
   MatPaginatorModule,
   MatTableModule,
   MatSelectModule,
+  MatSlideToggleModule,
   MatTooltipModule,
   MatCheckboxModule,
+  MatToolbarModule,
   MatRadioModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
@@ -21,14 +23,14 @@ import './rxjs-operators';
 
 import { AppComponent } from './app.component';
 import { StructureTableComponent } from './structure-table/structure-table.component';
-import { TableLengthDialogComponent } from './table-length-dialog/table-length-dialog.component';
+import { TableDataDialogComponent } from './table-data-dialog/table-data-dialog.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     StructureTableComponent,
-    TableLengthDialogComponent
+    TableDataDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -45,12 +47,14 @@ import { TableLengthDialogComponent } from './table-length-dialog/table-length-d
     MatMenuModule,
     MatPaginatorModule,
     MatSelectModule,
+    MatSlideToggleModule,
     MatRadioModule,
+    MatToolbarModule,
     MatTooltipModule,
     MatInputModule
  ],
  entryComponents: [
-    TableLengthDialogComponent
+    TableDataDialogComponent
  ],
   providers: [],
   bootstrap: [AppComponent]

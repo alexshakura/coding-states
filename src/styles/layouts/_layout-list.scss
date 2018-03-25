@@ -1,0 +1,55 @@
+/**
+ *  LIST layout
+ *
+ *  a vertical list of items with default margins
+ *  default padding-bottom: 24px
+ *  alternative padding-bottom: 44px 24px 16px 12px 10px 6px 0px
+ *
+ *    .layout-list
+ *      &__item
+ *        &--expand
+ *      &--align-center
+ *      &--%SPACING%
+ *
+ *  how to use
+ *  ----------
+ *
+ *    .layout-list(.layout-list--align-center)
+ *      .layout-list__item
+ *        (input group/whatever)
+ *      .layout-list__item
+ *        (input group/whatever)
+ *
+ */
+
+
+$lms-list-default-marign: 24px;
+
+
+.layout-list {
+  @extend %layout-list;
+  width: 100%;
+
+  &__item {
+    flex-shrink: 0;
+
+    &:not(:last-child) {
+      padding-bottom: $lms-list-default-marign;
+    }
+
+    &--expand {
+      flex-shrink: 0;
+      flex-grow: 1;
+    }
+  }
+
+  &--align-center {
+    align-items: center;
+  }
+
+  @each $spacing in $lms-layout-spacing-options {
+    &--#{$spacing} > &__item:not(:last-child) {
+      padding-bottom: $spacing;
+    }
+  }
+}

@@ -1,0 +1,58 @@
+/**
+ *  OFFSCREEN layout
+ *
+ *  simple behaviour of sidebar sliding in from
+ *  the left or from the right
+ *
+ *    .layout-offscreen
+ *      &__main
+ *      &__side
+ *      &--right
+ *      &--left
+ *      &--open
+ *
+ *  how to use
+ *  ==========
+ *  Layout-offscreen does not know anything about heights, so the elements you put inside
+ *  &__main and &__side should have proper height.
+ *
+ *  The elements residing inside &__main and &__side should also have their own scroll,
+ *  as the layout-offscreen hides outside content to prevent the side-scroll
+ *
+ *  For the sliding to work, the &__side element must have an additional class of a specific
+ *  panel, which would have fixed width and a margin-left/margin-right for its full width.
+ *  &--open then resets the margin, making the panel to slide out
+ *
+ */
+
+
+.layout-offscreen {
+  @extend %layout-inline;
+  align-items: stretch;
+  overflow: hidden;
+
+  &__main {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+
+  &__side {
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+
+    transition: margin 0.2s linear,
+                box-shadow 0.2s linear,
+                outline 0.2s linear;
+  }
+}
+  .layout-offscreen:not(.layout-offscreen--open) > .layout-offscreen__side {
+    box-shadow: 0 0 0 transparent !important;
+    outline: none !important;
+  }
+  .layout-offscreen--open.layout-offscreen--left > .layout-offscreen__side {
+    margin-left: 0 !important;
+  }
+  .layout-offscreen--open.layout-offscreen--right > .layout-offscreen__side {
+    margin-right: 0 !important;
+  }

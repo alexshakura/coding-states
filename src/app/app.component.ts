@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import { TableLengthDialogComponent } from 'app/table-length-dialog/table-length-dialog.component';
+
+import { TableDataDialogComponent } from 'app/table-data-dialog/table-data-dialog.component';
 
 
 @Component({
@@ -36,5 +37,21 @@ export class AppComponent implements OnInit {
     //       this.isLoading = false;
     //     });
     // });
+  }
+
+  public changeTableParams(): void {
+    const dialogRef: MatDialogRef<TableDataDialogComponent> = this._dialog.open(TableDataDialogComponent, {
+      data: {
+        tableData: this.tableData
+      }
+    }
+  );
+
+    dialogRef.afterClosed()
+      .filter((tableData: App.TableData) => Boolean(tableData))
+      .take(1)
+      .subscribe((tableData: App.TableData) => {
+        this.tableData = tableData;
+      });
   }
 }

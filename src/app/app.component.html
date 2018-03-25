@@ -1,2 +1,29 @@
+<mat-toolbar class="layout-split"
+             color="primary">
+  <div class="layout-split__item">
+    Структурная таблица переходов
+  </div>
+
+  <button mat-raised-button
+          color="accent"
+          class="layout-split__item"
+          (click)="changeTableParams()">
+    Изменить параметры СТП
+  </button>
+</mat-toolbar>
+
+<mat-toolbar class="layout-split"
+             color="primary">
+  <div class="layout-split__item">
+    Структурная таблица переходов
+  </div>
+
+  <div class="layout-split__item">
+    <mat-slide-toggle color="accent">
+      Режим редактирования
+    </mat-slide-toggle>
+  </div>
+</mat-toolbar>
+
 <app-structure-table [tableData]="tableData">
 </app-structure-table>
