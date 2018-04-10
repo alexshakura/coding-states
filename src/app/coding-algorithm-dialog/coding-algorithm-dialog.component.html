@@ -1,0 +1,35 @@
+<h1 mat-dialog-title>
+  Кодирование
+</h1>
+<div mat-dialog-content>
+  <p>Выберите алгоритм кодирования</p>
+  <div>
+    <mat-radio-group [(ngModel)]="codingAlgorithm">
+      <mat-radio-button class="coding-algorithm-option"
+                        [value]="UNITARY_D_ALGORITHM"
+                        [disabled]="isLoading">
+        Унитарный
+      </mat-radio-button>
+
+      <mat-radio-button class="coding-algorithm-option"
+                        [value]="FREQUENCY_D_ALGORITHM"
+                        [disabled]="isLoading">
+        Частотный
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button
+          color="primary"
+          [disabled]="isLoading"
+          (click)="performCoding()">
+    <ng-container *ngIf="!isLoading">
+      Закодировать
+    </ng-container>
+
+    <ng-container *ngIf="isLoading">
+      <mat-spinner [diameter]="20" strokeWidth="2"></mat-spinner>
+    </ng-container>
+  </button>
+</div>

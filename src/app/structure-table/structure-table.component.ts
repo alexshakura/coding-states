@@ -93,9 +93,7 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
       : signalContainer.add(value);
   }
 
-  public formatCodingState(codingState: number): string {
-    const formattedCodingState: string = codingState.toString(2);
-
-    return '0'.repeat(this.bitStateCapacity - formattedCodingState.length) + formattedCodingState;
+  public formatStateCode(stateCode: number): string {
+    return this._tableDataService.formatStateCode(stateCode, this.bitStateCapacity);
   }
 }

@@ -8,7 +8,8 @@
     <div class="layout-inline">
       <div class="layout-inline__item">
         <button mat-raised-button
-                color="accent">
+                color="accent"
+                (click)="chooseCodingAlgorithm()">
           Закодировать
         </button>
       </div>
@@ -27,3 +28,6 @@
 
 <app-structure-table [tableConfig]="tableConfig">
 </app-structure-table>
+
+<app-vertex-codes-table>
+</app-vertex-codes-table>

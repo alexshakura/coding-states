@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { TableConfigDialogComponent } from 'app/table-config-dialog/table-config-dialog.component';
+import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 
 
 @Component({
@@ -54,5 +55,10 @@ export class AppComponent implements OnInit {
       .subscribe((tableConfig: App.TableConfig) => {
         this.tableConfig = tableConfig;
       });
+  }
+
+  public chooseCodingAlgorithm(): void {
+    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent);
+
   }
 }

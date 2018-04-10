@@ -20,6 +20,7 @@ import {
   MatSortModule,
   MatRadioModule,
   MatPaginatorIntl,
+  MatProgressSpinnerModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -30,13 +31,18 @@ import { StructureTableComponent } from './structure-table/structure-table.compo
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 
 import { CustomMatPaginatorIntlRu } from './custom-paginator';
+import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
+import { CodingAlgorithmsService } from './services/coding-algorithms.service';
+import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     StructureTableComponent,
-    TableConfigDialogComponent
+    TableConfigDialogComponent,
+    CodingAlgorithmDialogComponent,
+    VertexCodesTableComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -56,16 +62,19 @@ import { CustomMatPaginatorIntlRu } from './custom-paginator';
     MatSelectModule,
     MatSlideToggleModule,
     MatRadioModule,
+    MatProgressSpinnerModule,
     MatSortModule,
     MatToolbarModule,
     MatTooltipModule,
     MatInputModule
  ],
  entryComponents: [
+    CodingAlgorithmDialogComponent,
     TableConfigDialogComponent
  ],
   providers: [
     TableDataService,
+    CodingAlgorithmsService,
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu }
   ],
   bootstrap: [AppComponent]

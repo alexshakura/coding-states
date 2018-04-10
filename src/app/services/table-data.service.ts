@@ -84,4 +84,10 @@ export class TableDataService {
         || previousTableConfig.numberOfY > newTableConfig.numberOfY
       );
   }
+
+  public formatStateCode(stateCode: number, bitStateCapacity: number): string {
+    const formattedCodingState: string = stateCode.toString(2);
+
+    return '0'.repeat(bitStateCapacity - formattedCodingState.length) + formattedCodingState;
+  }
 }

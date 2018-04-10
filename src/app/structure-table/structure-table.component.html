@@ -60,7 +60,7 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         <div *ngIf="row.codeSrcState; else emptyValue">
-          {{ formatCodingState(row.codeSrcState) }}
+          {{ formatStateCode(row.codeSrcState) }}
         </div>
       </mat-cell>
     </ng-container>
@@ -106,7 +106,7 @@
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
         <div *ngIf="row.codeDistState; else emptyValue">
-          {{ formatCodingState(row.codeDistState) }}
+          {{ formatStateCode(row.codeDistState) }}
         </div>
       </mat-cell>
     </ng-container>

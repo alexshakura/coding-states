@@ -1,0 +1,26 @@
+<mat-card>
+  <h3>Коды вершин для D и D*</h3>
+
+  <mat-table [dataSource]="dataSource">
+    <!-- Vertex id Column -->
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef> a<sub>i</sub> </mat-header-cell>
+      <mat-cell *matCellDef="let row"> a<sub>{{ row.id }}</sub></mat-cell>
+    </ng-container>
+
+    <!-- Vertex code Column -->
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef>D - триггеры</mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ formatStateCode(row.code) }}
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns">
+    </mat-header-row>
+
+    <mat-row *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+
+  </mat-table>
+</mat-card>
