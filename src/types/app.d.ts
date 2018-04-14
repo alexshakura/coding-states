@@ -15,7 +15,7 @@ declare namespace App {
     x: Set<ConditionalSignal>;
     unconditionalX: boolean;
     y: Set<number>;
-    f: any;
+    f: number;
   }
 
   export interface ConditionalSignal {

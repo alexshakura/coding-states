@@ -27,7 +27,7 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
 
   private _tableConfig: App.TableConfig;
 
-  public editMode: boolean = false;
+  public editMode: boolean = true;
 
   public states: number[] = [];
   public conditionalSignals: App.ConditionalSignal[] = [];
@@ -47,7 +47,7 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
     'codeDistState',
     'x',
     'y',
-    // 'f'
+    'f'
   ];
 
   @ViewChild(MatPaginator)
