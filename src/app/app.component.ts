@@ -13,6 +13,8 @@ import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding
 export class AppComponent implements OnInit {
   public isLoading: boolean = true;
 
+  public isTableCoded: boolean = false;
+
   public tableConfig: App.TableConfig = {
     length: 16,
     numberOfStates: 8,
@@ -60,5 +62,11 @@ export class AppComponent implements OnInit {
   public chooseCodingAlgorithm(): void {
     const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent);
 
+    dialogRef.afterClosed()
+      .filter(Boolean)
+      .take(1)
+      .subscribe(() => {
+        this.isTableCoded = true;
+      });
   }
 }

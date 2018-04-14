@@ -42,7 +42,7 @@
             <mat-menu #statesMenu="matMenu"
                       [overlapTrigger]="false">
               <button *ngFor="let stateIndex of states"
-                      (click)="row.srcState = stateIndex"
+                      (click)="row.srcState = stateIndex; emitTableUpdate()"
                       mat-menu-item>
                 a<sub>{{ stateIndex }}</sub>
               </button>
@@ -91,7 +91,7 @@
             <mat-menu #statesMenu="matMenu"
                       [overlapTrigger]="false">
               <button *ngFor="let stateIndex of states"
-                      (click)="row.distState = stateIndex"
+                      (click)="row.distState = stateIndex; emitTableUpdate()"
                       mat-menu-item>
                 a<sub>{{ stateIndex }}</sub>
               </button>
@@ -122,7 +122,7 @@
       <mat-cell *matCellDef="let row">
         <div class="layout-inline">
           <div class="layout-inline__item">
-            <div *ngIf="row.x.size > 0">
+            <div *ngIf="row.x.size > 0 && !row.unconditionalX">
               <ng-container *ngFor="let conditionalSignal of getSignalsIterator(row.x)">
                 <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
               </ng-container>

@@ -1,5 +1,5 @@
 <mat-card>
-  <h3>Коды вершин для D и D*</h3>
+  <h3 *ngIf="isTriggerModeD()">Коды вершин для D и D*</h3>
 
   <mat-table [dataSource]="dataSource">
     <!-- Vertex id Column -->
@@ -10,7 +10,11 @@
 
     <!-- Vertex code Column -->
     <ng-container matColumnDef="code">
-      <mat-header-cell *matHeaderCellDef>D - триггеры</mat-header-cell>
+      <mat-header-cell *matHeaderCellDef>
+        <ng-container *ngIf="isTriggerModeD()">
+          D - триггеры
+        </ng-container>
+      </mat-header-cell>
       <mat-cell *matCellDef="let row">
         {{ formatStateCode(row.code) }}
       </mat-cell>

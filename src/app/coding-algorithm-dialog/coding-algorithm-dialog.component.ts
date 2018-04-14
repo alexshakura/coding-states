@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { TableDataService } from '../services/table-data.service';
+import { MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-coding-algorithm-dialog',
@@ -16,7 +18,9 @@ export class CodingAlgorithmDialogComponent implements OnInit {
   public isLoading: boolean = false;
 
   public constructor(
-    private _codingAlgorithmsService: CodingAlgorithmsService
+    private _codingAlgorithmsService: CodingAlgorithmsService,
+    private _dialogRef: MatDialogRef<CodingAlgorithmDialogComponent>,
+    private _tableDataService: TableDataService
   ) { }
 
   ngOnInit() {
@@ -25,6 +29,11 @@ export class CodingAlgorithmDialogComponent implements OnInit {
   public performCoding(): void {
     this.isLoading = true;
 
+    this._tableDataService.tableData$
+      .subscribe((tableData: App.TableRowData[]) => {
+        this._codingAlgorithmsService.code(this.codingAlgorithm, tableData);
 
+        this._dialogRef.close(true);
+      });
   }
 }

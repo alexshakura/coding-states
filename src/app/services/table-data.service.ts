@@ -1,12 +1,26 @@
 import { Injectable } from '@angular/core';
 
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+
+
 @Injectable()
 export class TableDataService {
+
+  public get tableData$(): Observable<App.TableRowData[]> {
+    return this._tableData$$.asObservable();
+  }
+
+  private _tableData$$: ReplaySubject<App.TableRowData[]> = new ReplaySubject(1);
 
   private _conditionalSignals: App.ConditionalSignal[] = [];
   private _outputSignals: number[] = [];
 
   private _states: number[] = [];
+
+  public emitUpdatedTableData(updatedTableData: App.TableRowData[]): void {
+    this._tableData$$.next(updatedTableData);
+  }
 
   public generateRaw(newLength: number, startId: number = 0): App.TableRowData[] {
     const tableRowData: App.TableRowData[] = [];
@@ -21,7 +35,7 @@ export class TableDataService {
         x: new Set(),
         unconditionalX: false,
         y: new Set(),
-        f: ''
+        f: null
       });
     }
 
@@ -88,6 +102,263 @@ export class TableDataService {
   public formatStateCode(stateCode: number, bitStateCapacity: number): string {
     const formattedCodingState: string = stateCode.toString(2);
 
-    return '0'.repeat(bitStateCapacity - formattedCodingState.length) + formattedCodingState;
+    return bitStateCapacity > 1
+      ? '0'.repeat(bitStateCapacity - formattedCodingState.length) + formattedCodingState
+      : formattedCodingState;
+  }
+
+  public getMockDataForUnitaryD(): App.TableRowData[] {
+    return [
+      {
+        id: 1,
+        srcState: 7,
+        codeSrcState: null,
+        distState: 1,
+        codeDistState: null,
+        unconditionalX: true,
+        x: new Set(),
+        y: new Set(),
+        f: null
+      },
+      {
+        id: 2,
+        srcState: 6,
+        codeSrcState: null,
+        distState: 1,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 3,
+          inverted: true
+        }]),
+        y: new Set(),
+        f: null
+      },
+      {
+        id: 3,
+        srcState: 5,
+        codeSrcState: null,
+        distState: 1,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 3,
+            inverted: true
+          }
+      ]),
+        y: new Set(),
+        f: null
+      },
+      {
+        id: 4,
+        srcState: 4,
+        codeSrcState: null,
+        distState: 1,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 3,
+            inverted: true
+          }
+        ]),
+        y: new Set(),
+        f: null
+      },
+
+      {
+        id: 5,
+        srcState: 1,
+        codeSrcState: null,
+        distState: 2,
+        codeDistState: null,
+        unconditionalX: true,
+        x: new Set(),
+        y: new Set([1, 2]),
+        f: null
+      },
+
+      {
+        id: 6,
+        srcState: 2,
+        codeSrcState: null,
+        distState: 3,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 1,
+          inverted: false
+        }]),
+        y: new Set([3]),
+        f: null
+      },
+
+      {
+        id: 7,
+        srcState: 2,
+        codeSrcState: null,
+        distState: 4,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 2,
+            inverted: false
+          }
+        ]),
+        y: new Set([4]),
+        f: null
+      },
+
+
+      {
+        id: 8,
+        srcState: 3,
+        codeSrcState: null,
+        distState: 4,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 2,
+          inverted: false
+        }]),
+        y: new Set([4]),
+        f: null
+      },
+
+      {
+        id: 9,
+        srcState: 2,
+        codeSrcState: null,
+        distState: 5,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 2,
+            inverted: true
+          }
+        ]),
+        y: new Set([5]),
+        f: null
+      },
+
+      {
+        id: 10,
+        srcState: 3,
+        codeSrcState: null,
+        distState: 5,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 2,
+          inverted: true
+        }]),
+        y: new Set([5]),
+        f: null
+      },
+
+      {
+        id: 11,
+        srcState: 4,
+        codeSrcState: null,
+        distState: 6,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 1,
+          inverted: false
+        }]),
+        y: new Set([3]),
+        f: null
+      },
+
+      {
+        id: 12,
+        srcState: 5,
+        codeSrcState: null,
+        distState: 6,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 1,
+          inverted: false
+        }]),
+        y: new Set([3]),
+        f: null
+      },
+
+      {
+        id: 13,
+        srcState: 6,
+        codeSrcState: null,
+        distState: 7,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([{
+          id: 3,
+          inverted: false
+        }]),
+        y: new Set([6]),
+        f: null
+      },
+      {
+        id: 14,
+        srcState: 5,
+        codeSrcState: null,
+        distState: 7,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 3,
+            inverted: false
+          }
+        ]),
+        y: new Set([6]),
+        f: null
+      },
+      {
+        id: 15,
+        srcState: 4,
+        codeSrcState: null,
+        distState: 7,
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([
+          {
+            id: 1,
+            inverted: true
+          },
+          {
+            id: 3,
+            inverted: false
+          }
+        ]),
+        y: new Set([6]),
+        f: null
+      },
+    ];
   }
 }

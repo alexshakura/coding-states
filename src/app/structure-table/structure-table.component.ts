@@ -58,7 +58,8 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
   ) { }
 
   public ngOnInit(): void {
-
+    this.dataSource.data = this._tableDataService.getMockDataForUnitaryD();
+    this.emitTableUpdate();
    }
 
   public ngAfterViewInit(): void {
@@ -85,15 +86,23 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
   public toggleUnconditionalSignal(tableRow): void {
     tableRow.unconditionalX = !tableRow.unconditionalX;
     tableRow.x.clear();
+
+    this.emitTableUpdate();
   }
 
   public selectSignal(value: number, signalContainer: Set<number | App.ConditionalSignal>): void {
     signalContainer.has(value)
       ? signalContainer.delete(value)
       : signalContainer.add(value);
+
+    this.emitTableUpdate();
   }
 
   public formatStateCode(stateCode: number): string {
     return this._tableDataService.formatStateCode(stateCode, this.bitStateCapacity);
+  }
+
+  public emitTableUpdate(): void {
+    this._tableDataService.emitUpdatedTableData(this.dataSource.data);
   }
 }

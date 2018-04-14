@@ -34,6 +34,7 @@ import { CustomMatPaginatorIntlRu } from './custom-paginator';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { CodingAlgorithmsService } from './services/coding-algorithms.service';
 import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
+import { OutputFunctionsTableComponent } from './output-functions-table/output-functions-table.component';
 
 
 @NgModule({
@@ -42,7 +43,8 @@ import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-tab
     StructureTableComponent,
     TableConfigDialogComponent,
     CodingAlgorithmDialogComponent,
-    VertexCodesTableComponent
+    VertexCodesTableComponent,
+    OutputFunctionsTableComponent
   ],
   imports: [
     BrowserAnimationsModule,

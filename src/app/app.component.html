@@ -29,5 +29,8 @@
 <app-structure-table [tableConfig]="tableConfig">
 </app-structure-table>
 
-<app-vertex-codes-table>
+<app-vertex-codes-table *ngIf="isTableCoded">
 </app-vertex-codes-table>
+
+<app-output-functions-table *ngIf="isTableCoded">
+</app-output-functions-table>
