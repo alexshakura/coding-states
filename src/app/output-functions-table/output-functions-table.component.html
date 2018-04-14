@@ -1,3 +1,39 @@
 <mat-card>
+  <div class="layout-split">
+    <h3 class="layout-split__item">Функции выходов</h3>
+    <div class="layout-split__item"></div>
+  </div>
 
+  <mat-table [dataSource]="dataSource">
+    <!-- Output id Column -->
+    <ng-container matColumnDef="id">
+      <mat-header-cell *matHeaderCellDef> y<sub>i</sub> </mat-header-cell>
+      <mat-cell *matCellDef="let row"> y<sub>{{ row.id }}</sub></mat-cell>
+    </ng-container>
+
+    <!-- Output Function Column -->
+    <ng-container matColumnDef="function">
+      <mat-header-cell *matHeaderCellDef>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+
+        <!-- TODO: Simple version -->
+        <div class="layout-inline">
+          <span *ngFor="let operand of row.function.operands; last as isLast"
+               [class.is--inverted]="operand.inverted">
+            {{ operand.sign }}<sub>{{ operand.id }}</sub>
+            <span *ngIf="!isLast"
+                  [innerHTML]="row.function.sign"></span>
+          </span>
+        </div>
+
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns">
+    </mat-header-row>
+
+    <mat-row *matRowDef="let row; columns: displayedColumns;">
+    </mat-row>
+  </mat-table>
 </mat-card>

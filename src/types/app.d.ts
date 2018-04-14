@@ -36,8 +36,9 @@ declare namespace App {
 
   export interface Expression {
     sign: string;
-    operands: (Operand | Expression)[]
-  }
+    operands: (Operand | Expression)[];
 
-  export type DiscreteExpression = Operand | Expression;
+    addOperand(newOperand: (App.Operand | App.Expression)): void;
+    hasOperand(sign: string, id: number, inverted: boolean): boolean;
+  }
 }
