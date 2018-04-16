@@ -1,6 +1,9 @@
-import { AfterViewInit, Component, OnInit, ViewChild, Input } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, Input, OnDestroy } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { TableDataService } from '../services/table-data.service';
+import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+
+import { Subject } from 'rxjs/Subject';
 
 
 @Component({
@@ -8,7 +11,7 @@ import { TableDataService } from '../services/table-data.service';
   templateUrl: './structure-table.component.html',
   styleUrls: ['./structure-table.component.css']
 })
-export class StructureTableComponent implements OnInit, AfterViewInit {
+export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input('tableConfig') public set defineTableData(tableConfig: App.TableConfig) {
     if (!this._tableConfig || this._tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
       this.dataSource.data = this._tableDataService.generateRaw(tableConfig.length);
@@ -53,13 +56,33 @@ export class StructureTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator)
   public paginator: MatPaginator;
 
+  private _destroy$$: Subject<void> = new Subject<void>();
+
   public constructor(
-    private _tableDataService: TableDataService
+    private _tableDataService: TableDataService,
+    private _codingAlgorithmsService: CodingAlgorithmsService
   ) { }
 
   public ngOnInit(): void {
     this.dataSource.data = this._tableDataService.getMockDataForUnitaryD();
     this.emitTableUpdate();
+
+    this._codingAlgorithmsService.vertexCodes$
+      .takeUntil(this._destroy$$)
+      .subscribe((vertexCodes: App.TVertexData) => {
+        this.dataSource.data.forEach((tableRow: App.TableRowData) => {
+          tableRow.codeSrcState = vertexCodes.get(tableRow.srcState);
+          tableRow.codeDistState = vertexCodes.get(tableRow.distState);
+          tableRow.f = vertexCodes.get(tableRow.distState);
+        });
+
+        this.bitStateCapacity = vertexCodes.size;
+      });
+   }
+
+   public ngOnDestroy(): void {
+     this._destroy$$.next();
+     this._destroy$$.complete();
    }
 
   public ngAfterViewInit(): void {

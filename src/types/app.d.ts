@@ -23,11 +23,6 @@ declare namespace App {
     inverted: boolean
   }
 
-  export interface VertexCode {
-    id: number;
-    code: number;
-  }
-
   export interface Operand {
     sign: string;
     equalTo(operand: App.Operand): boolean;
@@ -49,4 +44,6 @@ declare namespace App {
     addOperand(newOperand: (App.Operand | App.Expression)): void;
     hasOperand(operandToCompare: App.Operand): boolean;
   }
+
+  export type TVertexData = Map<number, number>;
 }

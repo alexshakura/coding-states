@@ -25,11 +25,11 @@ export class CodingAlgorithmsService {
 
   private _triggerMode$$: ReplaySubject<string> = new ReplaySubject<string>(1);
 
-  public get vertexCodes$(): Observable<App.VertexCode[]> {
+  public get vertexCodes$(): Observable<App.TVertexData> {
     return this._vertexCodes$$.asObservable();
   }
 
-  private _vertexCodes$$: ReplaySubject<App.VertexCode[]> = new ReplaySubject<App.VertexCode[]>(1);
+  private _vertexCodes$$: ReplaySubject<App.TVertexData> = new ReplaySubject<App.TVertexData>(1);
 
   public get outputBooleanFunctions$(): Observable<Map<number, App.Expression>> {
     return this._outputBooleanFunctions$$.asObservable();
@@ -48,16 +48,13 @@ export class CodingAlgorithmsService {
   }
 
   public unitaryD(tableData: App.TableRowData[]) {
-    const vertexCodes: App.VertexCode[] = [];
+    const vertexCodes: App.TVertexData = new Map();
 
     const tableCodingStates: number[] = tableData.map((tableRowData: App.TableRowData) => tableRowData.distState);
     const capacity: number = Math.max(...tableCodingStates);
 
     for (let i: number = 0; i < capacity; i++) {
-      vertexCodes.push({
-        id: i + 1,
-        code: 1 << i
-      });
+      vertexCodes.set(i + 1, 1 << i);
     }
 
     const outputBooleanFunctions: Map<number, App.Expression> = new Map();

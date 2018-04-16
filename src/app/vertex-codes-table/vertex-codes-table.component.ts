@@ -17,7 +17,7 @@ export class VertexCodesTableComponent implements OnInit, OnDestroy {
 
   public readonly displayedColumns: string[] = ['id', 'code'];
 
-  public dataSource: MatTableDataSource<App.VertexCode> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<{ id: number, code: number }> = new MatTableDataSource();
   public bitCapacity: number;
 
   public triggerMode: string;
@@ -32,9 +32,13 @@ export class VertexCodesTableComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     this._codingAlgorithmsService.vertexCodes$
       .takeUntil(this._destroy$$)
-      .subscribe((vertexCodes: App.VertexCode[]) => {
-        this.dataSource.data = vertexCodes;
-        this.bitCapacity = Math.max(...vertexCodes.map((vertexCode: App.VertexCode) => vertexCode.id));
+      .subscribe((vertexCodes: App.TVertexData) => {
+        const newData = [];
+
+        vertexCodes.forEach((value, key) => newData.push({ id: key, code: value }));
+
+        this.dataSource.data = newData;
+        this.bitCapacity = vertexCodes.size;
       });
 
     this._codingAlgorithmsService.triggerMode$
