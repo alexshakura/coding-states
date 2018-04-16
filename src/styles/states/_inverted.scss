@@ -1,3 +1,7 @@
 .is--inverted {
   text-decoration: overline;
+
+  sub {
+    display: inline-block;
+  }
 }

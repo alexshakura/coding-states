@@ -16,6 +16,11 @@ export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
 
   public dataSource: MatTableDataSource<{ id: number, function: App.Expression }> = new MatTableDataSource();
 
+  public isBooleanBasisMode: boolean;
+
+  private _booleanFunctions: { id: number, function: App.Expression }[] = [];
+  private _shefferFunctions: { id: number, function: App.Expression }[] = [];
+
   private _destroy$$: Subject<void> = new Subject<void>();
 
   public constructor(
@@ -26,14 +31,32 @@ export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
     this._codingAlgorithmsService.outputBooleanFunctions$
       .takeUntil(this._destroy$$)
       .subscribe((outputBooleanFunctions: Map<number, App.Expression>) => {
-        const newTableData = [];
-
         outputBooleanFunctions.forEach((value, key) => {
-          newTableData.push({ id: key, function: value });
+          this._booleanFunctions.push({
+            id: key,
+            function: value
+          });
+
+          this._shefferFunctions.push({
+            id: key,
+            function: this._codingAlgorithmsService.convertToShefferBasis(value)
+          });
         });
 
-        this.dataSource.data = newTableData;
+        this.toggleBasisMode(true);
       });
+  }
+
+  public toggleBasisMode(isBooleanBasisMode: boolean): void {
+    if (isBooleanBasisMode === this.isBooleanBasisMode) {
+      return;
+    }
+
+    this.isBooleanBasisMode = isBooleanBasisMode;
+
+    this.dataSource.data = this.isBooleanBasisMode
+      ? [...this._booleanFunctions]
+      : [...this._shefferFunctions];
   }
 
   public isDisjunctiveExpression(expression: App.Expression): expression is DisjunctiveExpression {

@@ -1,5 +1,5 @@
-import { Operand } from "./operand";
+import { SignalOperand } from "./signal-operand";
 
-export class ConditionSignalOperand extends Operand {
+export class ConditionSignalOperand extends SignalOperand {
   public sign: string = 'x';
 }

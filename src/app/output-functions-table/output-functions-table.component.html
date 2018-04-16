@@ -1,8 +1,25 @@
 <mat-card>
   <div class="layout-split">
     <h3 class="layout-split__item">Функции выходов</h3>
-    <div class="layout-split__item"></div>
+    <div class="layout-split__item">
+      <button mat-icon-button
+              [matMenuTriggerFor]="basisModeMenu">
+        <i class="mdi mdi-settings"></i>
+      </button>
+    </div>
   </div>
+
+  <mat-menu #basisModeMenu="matMenu"
+            [overlapTrigger]="false">
+    <button class="mat-menu-item"
+            (click)="toggleBasisMode(true)">
+      Базис Буля
+    </button>
+    <button class="mat-menu-item"
+            (click)="toggleBasisMode(false)">
+      Базис Шеффера
+    </button>
+  </mat-menu>
 
   <mat-table [dataSource]="dataSource">
     <!-- Output id Column -->
@@ -18,13 +35,12 @@
       <mat-cell *matCellDef="let row">
 
         <!-- TODO: Simple version -->
-        <div class="layout-inline">
-          <span *ngFor="let operand of row.function.operands; last as isLast"
-               [class.is--inverted]="operand.inverted">
-            {{ operand.sign }}<sub>{{ operand.id }}</sub>
-            <span *ngIf="!isLast"
-                  [innerHTML]="row.function.sign"></span>
-          </span>
+        <div class="layout-inline disjunctive-expression">
+          <div *ngFor="let operand of row.function.operands; last as isLast"
+               [class.is--inverted]="operand.inverted"
+               class="operand"><!--
+         -->{{ operand.sign }}<sub>{{ operand.id }}</sub><!--
+       --></div>
         </div>
 
       </mat-cell>

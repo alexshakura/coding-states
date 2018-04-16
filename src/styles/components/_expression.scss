@@ -1,0 +1,11 @@
+.disjunctive-expression {
+  .operand::after {
+    content: 'v';
+    display: inline-block;
+    margin: 0 4px;
+  }
+
+  :last-child::after {
+    content: none;
+  }
+}

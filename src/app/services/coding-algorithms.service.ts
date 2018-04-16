@@ -4,6 +4,11 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { DisjunctiveExpression } from '../forms/disjunctive-expression';
 import { StateOperand } from '../forms/state-operand';
+import { ShefferExpression } from '../forms/sheffer-expression';
+import { Expression } from '../forms/expression';
+import { Operand } from '../forms/operand';
+import { SignalOperand } from '../forms/signal-operand';
+import { OneOperand } from '../forms/one-operand';
 
 
 @Injectable()
@@ -60,6 +65,8 @@ export class CodingAlgorithmsService {
     tableData
       .filter((tableRow: App.TableRowData) => tableRow.y.size > 0)
       .forEach((tableRow: App.TableRowData) => {
+        const stateOperand: StateOperand = new StateOperand(tableRow.distState, false);
+
         tableRow.y.forEach((y: number) => {
           if (!outputBooleanFunctions.has(y)) {
             outputBooleanFunctions.set(y, new DisjunctiveExpression([]));
@@ -67,8 +74,8 @@ export class CodingAlgorithmsService {
 
           const outputBooleanFunction: App.Expression = outputBooleanFunctions.get(y);
 
-          if (!outputBooleanFunction.hasOperand('a', tableRow.distState, false)) {
-            outputBooleanFunction.addOperand(new StateOperand(tableRow.distState, false));
+          if (!outputBooleanFunction.hasOperand(stateOperand)) {
+            outputBooleanFunction.addOperand(stateOperand);
           }
         });
       });
@@ -76,5 +83,41 @@ export class CodingAlgorithmsService {
     this._triggerMode$$.next(CodingAlgorithmsService.D_TRIGGER_MODE);
     this._outputBooleanFunctions$$.next(outputBooleanFunctions);
     this._vertexCodes$$.next(vertexCodes);
+  }
+
+  // DNF -> Sheffer Bassis
+  public convertToShefferBasis(expression: App.Expression): ShefferExpression {
+    const shefferExpression: ShefferExpression = new ShefferExpression([]);
+
+    if (expression.operands.length === 1) {
+      if (expression.operands[0] instanceof Operand) {
+        shefferExpression.addOperand({ ...expression.operands[0] });
+      }
+
+      if (expression.operands[0] instanceof Expression) {
+        shefferExpression.addOperand(
+          new ShefferExpression((expression.operands[0] as App.Expression).operands)
+        );
+
+        shefferExpression.addOperand(new OneOperand());
+      }
+
+      return shefferExpression;
+    }
+
+    expression.operands.forEach((operand) => {
+      if (operand instanceof Expression) {
+        shefferExpression.addOperand(new ShefferExpression(operand.operands));
+      }
+
+      if (operand instanceof SignalOperand) {
+        shefferExpression.addOperand({
+          ...operand,
+          inverted: !operand.inverted
+        } as App.SignalOperand);
+      }
+    });
+
+    return shefferExpression;
   }
 }

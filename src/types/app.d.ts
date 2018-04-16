@@ -30,8 +30,16 @@ declare namespace App {
 
   export interface Operand {
     sign: string;
+    equalTo(operand: App.Operand): boolean;
+  }
+
+  export interface SignalOperand extends Operand {
     id: number;
     inverted: boolean;
+  }
+
+  export interface ConstantOperand extends Operand {
+    value: number;
   }
 
   export interface Expression {
@@ -39,6 +47,6 @@ declare namespace App {
     operands: (Operand | Expression)[];
 
     addOperand(newOperand: (App.Operand | App.Expression)): void;
-    hasOperand(sign: string, id: number, inverted: boolean): boolean;
+    hasOperand(operandToCompare: App.Operand): boolean;
   }
 }
