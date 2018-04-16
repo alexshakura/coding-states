@@ -9,6 +9,8 @@ import { Expression } from '../forms/expression';
 import { Operand } from '../forms/operand';
 import { SignalOperand } from '../forms/signal-operand';
 import { OneOperand } from '../forms/one-operand';
+import { ConjunctiveExpression } from '../forms/conjunctive-expression';
+import { ConditionSignalOperand } from '../forms/condition-signal-operand';
 
 
 @Injectable()
@@ -36,6 +38,12 @@ export class CodingAlgorithmsService {
   }
 
   private _outputBooleanFunctions$$: ReplaySubject<Map<number, App.Expression>> = new ReplaySubject<Map<number, App.Expression>>(1);
+
+  public get transitionBooleanFunctions$(): Observable<App.TFunctionMap> {
+    return this._transitionBooleanFunctions$$.asObservable();
+  }
+
+  private _transitionBooleanFunctions$$: ReplaySubject<App.TFunctionMap> = new ReplaySubject<App.TFunctionMap>(1);
 
   constructor() { }
 
@@ -77,18 +85,46 @@ export class CodingAlgorithmsService {
         });
       });
 
+    const transitionBooleanFunctions: Map<number, App.Expression> = new Map();
+
+    tableData
+      .forEach((tableRow: App.TableRowData) => {
+        if (!transitionBooleanFunctions.has(tableRow.distState)) {
+          transitionBooleanFunctions.set(tableRow.distState, new DisjunctiveExpression([]));
+        }
+
+        if (tableRow.unconditionalX || !tableRow.x.size) {
+          return transitionBooleanFunctions
+            .get(tableRow.distState)
+            .addOperand(new StateOperand(tableRow.srcState, false));
+        }
+
+        const rowExpression = new ConjunctiveExpression([new StateOperand(tableRow.srcState, false)]);
+
+        if (!tableRow.unconditionalX) {
+          tableRow.x.forEach((conditionSignal) =>
+            rowExpression.addOperand(new ConditionSignalOperand(conditionSignal.id, conditionSignal.inverted))
+          );
+        }
+
+        transitionBooleanFunctions.get(tableRow.distState).addOperand(rowExpression);
+      });
+
     this._triggerMode$$.next(CodingAlgorithmsService.D_TRIGGER_MODE);
+
     this._outputBooleanFunctions$$.next(outputBooleanFunctions);
+    this._transitionBooleanFunctions$$.next(transitionBooleanFunctions);
+
     this._vertexCodes$$.next(vertexCodes);
   }
 
-  // DNF -> Sheffer Bassis
+  // DNF -> Sheffer Basis
   public convertToShefferBasis(expression: App.Expression): ShefferExpression {
     const shefferExpression: ShefferExpression = new ShefferExpression([]);
 
     if (expression.operands.length === 1) {
       if (expression.operands[0] instanceof Operand) {
-        shefferExpression.addOperand({ ...expression.operands[0] });
+        shefferExpression.addOperand((expression.operands[0] as App.Operand).copy());
       }
 
       if (expression.operands[0] instanceof Expression) {
@@ -96,7 +132,9 @@ export class CodingAlgorithmsService {
           new ShefferExpression((expression.operands[0] as App.Expression).operands)
         );
 
-        shefferExpression.addOperand(new OneOperand());
+        if ((expression.operands[0] as App.Expression).operands.length > 1) {
+          shefferExpression.addOperand(new OneOperand());
+        }
       }
 
       return shefferExpression;
@@ -108,10 +146,7 @@ export class CodingAlgorithmsService {
       }
 
       if (operand instanceof SignalOperand) {
-        shefferExpression.addOperand({
-          ...operand,
-          inverted: !operand.inverted
-        } as App.SignalOperand);
+        shefferExpression.addOperand(operand.copy());
       }
     });
 

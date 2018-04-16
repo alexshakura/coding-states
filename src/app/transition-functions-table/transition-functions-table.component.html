@@ -1,6 +1,6 @@
 <mat-card>
   <div class="layout-split">
-    <h3 class="layout-split__item">Функции выходов</h3>
+    <h3 class="layout-split__item">Функции переходов</h3>
     <div class="layout-split__item">
       <button mat-icon-button
               [matMenuTriggerFor]="basisModeMenu">
@@ -24,7 +24,11 @@
   <mat-table [dataSource]="dataSource">
     <!-- Output id Column -->
     <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef> y<sub>i</sub> </mat-header-cell>
+      <mat-header-cell *matHeaderCellDef>
+        <div *ngIf="isTriggerModeD()">
+          D<sub>i</sub>
+        </div>
+      </mat-header-cell>
       <mat-cell *matCellDef="let row"> y<sub>{{ row.id }}</sub></mat-cell>
     </ng-container>
 

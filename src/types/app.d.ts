@@ -26,6 +26,7 @@ declare namespace App {
   export interface Operand {
     sign: string;
     equalTo(operand: App.Operand): boolean;
+    copy(): App.Operand;
   }
 
   export interface SignalOperand extends Operand {
@@ -46,4 +47,5 @@ declare namespace App {
   }
 
   export type TVertexData = Map<number, number>;
+  export type TFunctionMap = Map<number, App.Expression>;
 }

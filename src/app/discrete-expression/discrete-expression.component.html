@@ -1,0 +1,22 @@
+<div class="layout-inline">
+  <div *ngIf="isBracketsShown()">(</div>
+  <div class="layout-inline expression"
+       [class.expression--disjunctive]="isBooleanBasisMode && isDisjunctiveExpression()"
+       [class.expression--conjunctive]="isBooleanBasisMode && !isDisjunctiveExpression()"
+       [class.expression--sheffer]="!isBooleanBasisMode">
+    <div *ngFor="let expression of function.operands"
+         class="operand layout-inline">
+      <div *ngIf="isOperand(expression); else expressionTemplate"
+           [class.is--inverted]="expression.inverted"><!--
+     -->{{ expression.sign }}<sub>{{ expression.id }}</sub><!--
+   --></div>
+      <ng-template #expressionTemplate>
+        <app-discrete-expression [isBooleanBasisMode]="isBooleanBasisMode"
+                                 [function]="expression"
+                                 [nested]="true">
+        </app-discrete-expression>
+      </ng-template>
+    </div>
+  </div>
+  <div *ngIf="isBracketsShown()">)</div>
+</div>

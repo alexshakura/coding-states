@@ -3,6 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { TableConfigDialogComponent } from 'app/table-config-dialog/table-config-dialog.component';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
+import { CodingAlgorithmsService } from './services/coding-algorithms.service';
+import { TableDataService } from './services/table-data.service';
 
 
 @Component({
@@ -24,10 +26,19 @@ export class AppComponent implements OnInit {
 
   public constructor(
     private _dialog: MatDialog,
+    private _td: TableDataService,
+    private _cd: CodingAlgorithmsService
   ) { }
 
   public ngOnInit(): void {
     this.isLoading = false;
+
+    setTimeout(() => {
+      this._td.tableData$
+        .subscribe((x) => {
+          this._cd.code(CodingAlgorithmsService.UNITARY_D_ALGORITHM, x);
+        })
+    });
     // setTimeout(() => {
     //   const dialogRef: MatDialogRef<TableLengthDialogComponent> = this._dialog.open(TableLengthDialogComponent, {
     //     disableClose: true

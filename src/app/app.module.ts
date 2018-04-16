@@ -35,6 +35,8 @@ import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding
 import { CodingAlgorithmsService } from './services/coding-algorithms.service';
 import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
 import { OutputFunctionsTableComponent } from './output-functions-table/output-functions-table.component';
+import { TransitionFunctionsTableComponent } from './transition-functions-table/transition-functions-table.component';
+import { DiscreteExpressionComponent } from './discrete-expression/discrete-expression.component';
 
 
 @NgModule({
@@ -44,7 +46,9 @@ import { OutputFunctionsTableComponent } from './output-functions-table/output-f
     TableConfigDialogComponent,
     CodingAlgorithmDialogComponent,
     VertexCodesTableComponent,
-    OutputFunctionsTableComponent
+    OutputFunctionsTableComponent,
+    TransitionFunctionsTableComponent,
+    DiscreteExpressionComponent
   ],
   imports: [
     BrowserAnimationsModule,

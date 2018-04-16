@@ -1,11 +1,33 @@
-.disjunctive-expression {
+.expression {
+  sub {
+    font-size: 10px;
+  }
+
   .operand::after {
-    content: 'v';
     display: inline-block;
     margin: 0 4px;
+    height: 25px;
   }
 
   :last-child::after {
-    content: none;
+    content: none !important;
+  }
+
+  &--disjunctive {
+    .operand::after {
+      content: 'v';
+    }
+  }
+
+  &--sheffer {
+    .operand::after {
+      content: '|';
+    }
+  }
+
+  &--conjunctive {
+    .operand::after {
+      content: none;
+    }
   }
 }
