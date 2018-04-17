@@ -1,3 +1,7 @@
+.brackets {
+  align-self: stretch;
+}
+
 .expression {
   sub {
     font-size: 10px;
@@ -6,7 +10,7 @@
   .operand::after {
     display: inline-block;
     margin: 0 4px;
-    height: 25px;
+    align-self: stretch;
   }
 
   :last-child::after {

@@ -146,7 +146,10 @@ export class CodingAlgorithmsService {
       }
 
       if (operand instanceof SignalOperand) {
-        shefferExpression.addOperand(operand.copy());
+        const newOperand: SignalOperand = operand.copy() as App.SignalOperand;
+        newOperand.inverted = !newOperand.inverted;
+
+        shefferExpression.addOperand(newOperand);
       }
     });
 

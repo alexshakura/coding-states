@@ -1,5 +1,8 @@
 <div class="layout-inline">
-  <div *ngIf="isBracketsShown()">(</div>
+  <div *ngIf="isBracketsShown()"
+       class="brackets">
+    (
+  </div>
   <div class="layout-inline expression"
        [class.expression--disjunctive]="isBooleanBasisMode && isDisjunctiveExpression()"
        [class.expression--conjunctive]="isBooleanBasisMode && !isDisjunctiveExpression()"
@@ -18,5 +21,8 @@
       </ng-template>
     </div>
   </div>
-  <div *ngIf="isBracketsShown()">)</div>
+  <div *ngIf="isBracketsShown()"
+       class="brackets">
+    )
+  </div>
 </div>
