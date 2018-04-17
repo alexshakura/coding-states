@@ -7,26 +7,26 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 @Injectable()
 export class TableDataService {
 
-  public get tableData$(): Observable<App.TableRowData[]> {
+  public get tableData$(): Observable<App.TableRow[]> {
     return this._tableData$$.asObservable();
   }
 
-  private _tableData$$: ReplaySubject<App.TableRowData[]> = new ReplaySubject(1);
+  private _tableData$$: ReplaySubject<App.TableRow[]> = new ReplaySubject(1);
 
   private _conditionalSignals: App.ConditionalSignal[] = [];
   private _outputSignals: number[] = [];
 
   private _states: number[] = [];
 
-  public emitUpdatedTableData(updatedTableData: App.TableRowData[]): void {
+  public emitUpdatedTableData(updatedTableData: App.TableRow[]): void {
     this._tableData$$.next(updatedTableData);
   }
 
-  public generateRaw(newLength: number, startId: number = 0): App.TableRowData[] {
-    const tableRowData: App.TableRowData[] = [];
+  public generateRaw(newLength: number, startId: number = 0): App.TableRow[] {
+    const TableRow: App.TableRow[] = [];
 
     for (let i: number = 0; i < newLength; i++) {
-      tableRowData.push({
+      TableRow.push({
         id: i + 1 + startId,
         srcState: null,
         codeSrcState: null,
@@ -39,11 +39,11 @@ export class TableDataService {
       });
     }
 
-    return tableRowData;
+    return TableRow;
   }
 
-  public rearrangeTableData(tableData: App.TableRowData[], newLength: number): App.TableRowData[] {
-    const newTableData: App.TableRowData[] = tableData.slice();
+  public rearrangeTableData(tableData: App.TableRow[], newLength: number): App.TableRow[] {
+    const newTableData: App.TableRow[] = tableData.slice();
 
 
     if (tableData.length > newLength) {
@@ -107,7 +107,7 @@ export class TableDataService {
       : formattedCodingState;
   }
 
-  public getMockDataForUnitaryD(): App.TableRowData[] {
+  public getMockDataForUnitaryD(): App.TableRow[] {
     return [
       {
         id: 1,

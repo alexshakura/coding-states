@@ -60,7 +60,7 @@
         </div>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <div *ngIf="row.codeSrcState; else emptyValue">
+        <div *ngIf="isStateCodeExist(row.codeSrcState); else emptyValue">
           {{ formatStateCode(row.codeSrcState) }}
         </div>
       </mat-cell>
@@ -101,7 +101,7 @@
       </mat-cell>
     </ng-container>
 
-    <!-- Code Src state Column -->
+    <!-- Code Dist state Column -->
     <ng-container matColumnDef="codeDistState">
       <mat-header-cell *matHeaderCellDef>
         <div>
@@ -109,7 +109,7 @@
         </div>
       </mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <div *ngIf="row.codeDistState; else emptyValue">
+        <div *ngIf="isStateCodeExist(row.codeDistState); else emptyValue">
           {{ formatStateCode(row.codeDistState) }}
         </div>
       </mat-cell>
@@ -217,7 +217,7 @@
     <ng-container matColumnDef="f">
       <mat-header-cell *matHeaderCellDef>F<sub>h</sub></mat-header-cell>
       <mat-cell *matCellDef="let row">
-        <div *ngIf="row.f; else emptyValue">
+        <div *ngIf="isStateCodeExist(row.f); else emptyValue">
           {{ formatStateCode(row.f) }}
         </div>
       </mat-cell>

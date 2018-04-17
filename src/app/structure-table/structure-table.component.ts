@@ -40,7 +40,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
 
   @ViewChild(MatSort) public readonly sort: MatSort;
 
-  public dataSource: MatTableDataSource<App.TableRowData> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<App.TableRow> = new MatTableDataSource();
 
   public readonly displayedColumns: string[] = [
     'num',
@@ -70,7 +70,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this._codingAlgorithmsService.vertexCodes$
       .takeUntil(this._destroy$$)
       .subscribe((vertexCodes: App.TVertexData) => {
-        this.dataSource.data.forEach((tableRow: App.TableRowData) => {
+        this.dataSource.data.forEach((tableRow: App.TableRow) => {
           tableRow.codeSrcState = vertexCodes.get(tableRow.srcState);
           tableRow.codeDistState = vertexCodes.get(tableRow.distState);
           tableRow.f = vertexCodes.get(tableRow.distState);
@@ -119,6 +119,10 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
       : signalContainer.add(value);
 
     this.emitTableUpdate();
+  }
+
+  public isStateCodeExist(stateCode: number): boolean {
+    return typeof stateCode === 'number';
   }
 
   public formatStateCode(stateCode: number): string {

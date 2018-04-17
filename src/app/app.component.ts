@@ -36,8 +36,9 @@ export class AppComponent implements OnInit {
     setTimeout(() => {
       this._td.tableData$
         .subscribe((x) => {
-          this._cd.code(CodingAlgorithmsService.UNITARY_D_ALGORITHM, x);
-        })
+          this._cd.code(CodingAlgorithmsService.FREQUENCY_D_ALGORITHM, x);
+          this.isTableCoded = true;
+        });
     });
     // setTimeout(() => {
     //   const dialogRef: MatDialogRef<TableLengthDialogComponent> = this._dialog.open(TableLengthDialogComponent, {

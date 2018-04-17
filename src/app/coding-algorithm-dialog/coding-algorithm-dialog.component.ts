@@ -30,7 +30,7 @@ export class CodingAlgorithmDialogComponent implements OnInit {
     this.isLoading = true;
 
     this._tableDataService.tableData$
-      .subscribe((tableData: App.TableRowData[]) => {
+      .subscribe((tableData: App.TableRow[]) => {
         this._codingAlgorithmsService.code(this.codingAlgorithm, tableData);
 
         this._dialogRef.close(true);

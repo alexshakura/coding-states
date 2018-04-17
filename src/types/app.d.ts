@@ -6,7 +6,7 @@ declare namespace App {
     numberOfY: number;
   }
 
-  export interface TableRowData {
+  export interface TableRow {
     id: number;
     srcState: number;
     codeSrcState: number;
