@@ -6,7 +6,8 @@ import { MatTableDataSource } from '@angular/material';
 @Component({
   selector: 'app-transition-functions-table',
   templateUrl: './transition-functions-table.component.html',
-  styleUrls: ['./transition-functions-table.component.scss']
+  styleUrls: ['./transition-functions-table.component.scss'],
+  host: { class: 'component-wrapper' }
 })
 export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
 

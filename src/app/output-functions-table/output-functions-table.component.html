@@ -1,51 +1,49 @@
-<mat-card>
-  <div class="layout-split">
-    <h3 class="layout-split__item">Функции выходов</h3>
-    <div class="layout-split__item">
-      <button mat-icon-button
-              [matMenuTriggerFor]="basisModeMenu">
-        <i class="mdi mdi-settings"></i>
-      </button>
-    </div>
+<div class="layout-split">
+  <h3 class="layout-split__item">Функции выходов</h3>
+  <div class="layout-split__item">
+    <button mat-icon-button
+            [matMenuTriggerFor]="basisModeMenu">
+      <i class="mdi mdi-settings"></i>
+    </button>
   </div>
+</div>
 
-  <mat-menu #basisModeMenu="matMenu"
-            [overlapTrigger]="false">
-    <button class="mat-menu-item"
-            (click)="toggleBasisMode(true)">
-      Базис Буля
-    </button>
-    <button class="mat-menu-item"
-            (click)="toggleBasisMode(false)">
-      Базис Шеффера
-    </button>
-  </mat-menu>
+<mat-menu #basisModeMenu="matMenu"
+          [overlapTrigger]="false">
+  <button class="mat-menu-item"
+          (click)="toggleBasisMode(true)">
+    Базис Буля
+  </button>
+  <button class="mat-menu-item"
+          (click)="toggleBasisMode(false)">
+    Базис Шеффера
+  </button>
+</mat-menu>
 
-  <mat-table [dataSource]="dataSource">
-    <!-- Output id Column -->
-    <ng-container matColumnDef="id">
-      <mat-header-cell *matHeaderCellDef> y<sub>i</sub> </mat-header-cell>
-      <mat-cell *matCellDef="let row"> y<sub>{{ row.id }}</sub></mat-cell>
-    </ng-container>
+<mat-table [dataSource]="dataSource">
+  <!-- Output id Column -->
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef> y<sub>i</sub> </mat-header-cell>
+    <mat-cell *matCellDef="let row"> y<sub>{{ row.id }}</sub></mat-cell>
+  </ng-container>
 
-    <!-- Output Function Column -->
-    <ng-container matColumnDef="function">
-      <mat-header-cell *matHeaderCellDef>
-      </mat-header-cell>
-      <mat-cell *matCellDef="let row">
+  <!-- Output Function Column -->
+  <ng-container matColumnDef="function">
+    <mat-header-cell *matHeaderCellDef>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row">
 
-        <!-- TODO: Simple version -->
-        <app-discrete-expression [isBooleanBasisMode]="isBooleanBasisMode"
-                                 [function]="row.function">
-        </app-discrete-expression>
+      <!-- TODO: Simple version -->
+      <app-discrete-expression [isBooleanBasisMode]="isBooleanBasisMode"
+                                [function]="row.function">
+      </app-discrete-expression>
 
-      </mat-cell>
-    </ng-container>
+    </mat-cell>
+  </ng-container>
 
-    <mat-header-row *matHeaderRowDef="displayedColumns">
-    </mat-header-row>
+  <mat-header-row *matHeaderRowDef="displayedColumns">
+  </mat-header-row>
 
-    <mat-row *matRowDef="let row; columns: displayedColumns;">
-    </mat-row>
-  </mat-table>
-</mat-card>
+  <mat-row *matRowDef="let row; columns: displayedColumns;">
+  </mat-row>
+</mat-table>

@@ -1,39 +1,50 @@
-<mat-toolbar class="layout-split"
-             color="primary">
-  <div class="layout-split__item">
-    Title
-  </div>
+<mat-card>
+  <mat-toolbar class="layout-split" color="primary">
+    <div class="layout-split__item">
+      Кодирование состояний автомата
+    </div>
 
-  <div class="layout-split__item">
-    <div class="layout-inline">
-      <div class="layout-inline__item">
-        <button mat-raised-button
-                color="accent"
-                (click)="chooseCodingAlgorithm()">
-          Закодировать
-        </button>
-      </div>
+    <div class="layout-split__item">
+      <div class="layout-inline">
+        <div class="layout-inline__item">
+          <button mat-raised-button color="accent" (click)="chooseCodingAlgorithm()">
+            Закодировать
+          </button>
+        </div>
 
-      <div class="layout-inline__item">
-        <button mat-raised-button
-                color="accent"
-                (click)="changeTableConfig()">
-          Изменить параметры СТП
-        </button>
+        <div class="layout-inline__item">
+          <button mat-raised-button color="accent" (click)="changeTableConfig()">
+            Изменить параметры СТП
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </mat-toolbar>
 
-</mat-toolbar>
+  <mat-card-content>
+    <mat-tab-group>
+      <mat-tab label="Структурная таблица переходов">
+        <app-structure-table [tableConfig]="tableConfig">
+        </app-structure-table>
+      </mat-tab>
 
-<app-structure-table [tableConfig]="tableConfig">
-</app-structure-table>
+      <mat-tab label="Коды вершин"
+               [disabled]="!isTableCoded">
+        <app-vertex-codes-table>
+        </app-vertex-codes-table>
+      </mat-tab>
 
-<app-vertex-codes-table *ngIf="isTableCoded">
-</app-vertex-codes-table>
+      <mat-tab label="Функции выходов"
+               [disabled]="!isTableCoded">
+        <app-output-functions-table *ngIf="isTableCoded">
+        </app-output-functions-table>
+      </mat-tab>
 
-<app-output-functions-table *ngIf="isTableCoded">
-</app-output-functions-table>
-
-<app-transition-functions-table *ngIf="true">
-</app-transition-functions-table>
+      <mat-tab label="Функции переходов"
+               [disabled]="!isTableCoded">
+        <app-transition-functions-table>
+        </app-transition-functions-table>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

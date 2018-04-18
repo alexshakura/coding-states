@@ -9,9 +9,8 @@ import { Subject } from 'rxjs/Subject';
 @Component({
   selector: 'app-vertex-codes-table',
   templateUrl: './vertex-codes-table.component.html',
-  encapsulation: ViewEncapsulation.None,
   styleUrls: ['./vertex-codes-table.component.scss'],
-  host: { class: 'component-wrapper vertex-codes-table' }
+  host: { class: 'component-wrapper' }
 })
 export class VertexCodesTableComponent implements OnInit, OnDestroy {
 

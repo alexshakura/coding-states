@@ -21,6 +21,7 @@ import {
   MatRadioModule,
   MatPaginatorIntl,
   MatProgressSpinnerModule,
+  MatTabsModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -62,6 +63,7 @@ import { DiscreteExpressionComponent } from './discrete-expression/discrete-expr
     MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
+    MatTabsModule,
     MatTableModule,
     MatMenuModule,
     MatPaginatorModule,

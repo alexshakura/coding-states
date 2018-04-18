@@ -8,7 +8,8 @@ import { DisjunctiveExpression } from '../forms/disjunctive-expression';
 @Component({
   selector: 'app-output-functions-table',
   templateUrl: './output-functions-table.component.html',
-  styleUrls: ['./output-functions-table.component.scss']
+  styleUrls: ['./output-functions-table.component.scss'],
+  host: { class: 'component-wrapper' }
 })
 export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
 
