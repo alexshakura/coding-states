@@ -34,8 +34,12 @@
         <div *ngIf="editMode"
               class="layout-inline__item">
           <button mat-icon-button
-                  [matMenuTriggerFor]="statesMenu">
-            <i class="mdi mdi-plus-circle"></i>
+                  [matMenuTriggerFor]="statesMenu"
+                  matTooltip="Добавить"
+                  matTooltipPosition="above"
+                  app-theme="primary"
+                  app-custom>
+            <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
           <mat-menu #statesMenu="matMenu"
@@ -80,11 +84,13 @@
         </div>
         <div *ngIf="editMode"
               class="layout-inline__item">
-          <button mat-raised-button
-                  color="primary"
-                  [matMenuTriggerFor]="statesMenu">
-            Добавить
-            <i class="mdi mdi-plus-circle"></i>
+          <button mat-icon-button
+                 [matMenuTriggerFor]="statesMenu"
+                 matTooltip="Добавить"
+                 matTooltipPosition="above"
+                 app-theme="primary"
+                 app-custom>
+            <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
           <mat-menu #statesMenu="matMenu"
@@ -119,8 +125,8 @@
     <mat-header-cell *matHeaderCellDef>X</mat-header-cell>
 
     <mat-cell *matCellDef="let row">
-      <div class="layout-inline">
-        <div class="layout-inline__item">
+      <div class="layout-inline layout-inline--0px">
+        <div class="layout-inline__item layout-inline__item--60per">
           <div *ngIf="row.x.size > 0 && !row.unconditionalX">
             <ng-container *ngFor="let conditionalSignal of getSignalsIterator(row.x)">
               <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
@@ -133,12 +139,14 @@
         </div>
 
         <div *ngIf="editMode"
-              class="layout-inline__item">
-          <button mat-raised-button
-                  color="primary"
-                  [matMenuTriggerFor]="xSignalsMenu">
-            Добавить
-            <i class="mdi mdi-plus-circle"></i>
+              class="layout-inline__item layout-inline__item--40per">
+          <button mat-icon-button
+                  [matMenuTriggerFor]="xSignalsMenu"
+                  matTooltip="Добавить"
+                  matTooltipPosition="above"
+                  app-theme="primary"
+                  app-custom>
+            <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
           <mat-menu #xSignalsMenu="matMenu"
@@ -176,8 +184,8 @@
       <div>Y</div>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div class="layout-inline">
-        <div class="layout-inline__item">
+      <div class="layout-inline layout-inline--0px">
+        <div class="layout-inline__item layout-inline__item--60per">
           <div *ngIf="row.y.size > 0; else emptyValue">
             <ng-container *ngFor="let outputSignal of getSignalsIterator(row.y)">
               y <sub>{{ outputSignal}}</sub>
@@ -185,13 +193,15 @@
           </div>
         </div>
 
-        <div class="layout-inline__item">
+        <div class="layout-inline__item layout-inline__item--40per">
           <div *ngIf="editMode">
-            <button mat-raised-button
-                    color="primary"
-                    [matMenuTriggerFor]="ySignalsMenu">
-              Добавить
-              <i class="mdi mdi-plus-circle"></i>
+            <button mat-icon-button
+                    [matMenuTriggerFor]="ySignalsMenu"
+                    matTooltip="Добавить"
+                    matTooltipPosition="above"
+                    app-theme="primary"
+                    app-custom>
+              <div class="icon icon--plus-circle icon--20px"></div>
             </button>
 
             <mat-menu #ySignalsMenu="matMenu"

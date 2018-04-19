@@ -1,0 +1,89 @@
+$app-icon-button-default-theme: dark;
+$app-icon-button-alternative-themes: light primary;
+
+$app-icon-button-theme-colors: (
+  light: white,
+  dark: $app-color-dark,
+  primary: $app-color-primary
+);
+
+$app-icon-button-theme-backgrounds: (
+  light: white,
+  dark: $app-color-dark,
+  primary: $app-color-dark
+);
+
+
+.mat-icon-button[app-custom] {
+  display: block !important;
+  height: 36px !important;
+  width: 36px !important;
+
+  & > .mat-button-wrapper {
+    @extend %layout-center;
+    height: 100%;
+    width: 100%;
+  }
+
+  &:not(:disabled):hover {
+    & > .mat-button-focus-overlay {
+      opacity: 1;
+    }
+  }
+
+  // default theme
+  &:not(:disabled) {
+    color: rgba(map-get($app-icon-button-theme-colors, $app-icon-button-default-theme), 0.5) !important;
+  }
+
+  &:disabled {
+    color: rgba(map-get($app-icon-button-theme-colors, $app-icon-button-default-theme), 0.2) !important;
+  }
+
+  &:not(:disabled) > .mat-button-focus-overlay {
+    background-color: rgba(map-get($app-icon-button-theme-backgrounds, $app-icon-button-default-theme), 0.12) !important;
+  }
+
+  &:not(:disabled) .mat-ripple-element {
+    background-color: rgba(map-get($app-icon-button-theme-backgrounds, $app-icon-button-default-theme), 0.2) !important;
+  }
+
+  &:not(:disabled).mat-icon-button--active {
+    background-color: rgba(map-get($app-icon-button-theme-backgrounds, $app-icon-button-default-theme), 0.3) !important;
+  }
+}
+  @each $theme-name in $app-icon-button-alternative-themes {
+    .mat-icon-button[app-custom][app-theme="#{$theme-name}"] {
+      &:not(:disabled) {
+        color: rgba(map-get($app-icon-button-theme-colors, $theme-name), 1) !important;
+      }
+
+      &:disabled {
+        color: rgba(map-get($app-icon-button-theme-colors, $theme-name), 0.5) !important;
+      }
+
+      &:not(:disabled) > .mat-button-focus-overlay {
+        background-color: rgba(map-get($app-icon-button-theme-backgrounds, $theme-name), 0.12) !important;
+      }
+
+      &:not(:disabled) .mat-ripple-element {
+        background-color: rgba(map-get($app-icon-button-theme-backgrounds, $theme-name), 0.2) !important;
+      }
+
+      &:not(:disabled).mat-icon-button--active {
+        background-color: rgba(map-get($app-icon-button-theme-backgrounds, $theme-name), 0.3) !important;
+      }
+    }
+  }
+
+.mat-input-suffix .mat-icon-button,
+.mat-input-prefix .mat-icon-button,
+.mat-icon-button[lms-small] {
+  height: 32px !important;
+  width: 32px !important;
+
+  & .mat-icon {
+    font-size: 20px !important;
+    line-height: 20px !important;
+  }
+}

@@ -1,0 +1,82 @@
+/**
+ *  ICON component
+ *
+ *  custom wrapper for icons from MDI library
+ *
+ *    .icon
+ *      &--%ICON%
+ *      &--%ICON-SIZE%
+ *      &--box-%BOX-SIZE%
+ *
+ *    .icon-mat-suffix
+ *
+ *  how to use
+ *  ==========
+ *  the --%ICON-SIZE% modifier sets the size for the font,
+ *  the box size can be set using --box-%BOX-SIZE%
+ *
+ *  for example, matSuffix should be 32px in size, as it is
+ *  the size of mat-input's input + padding
+ *
+ *    ...
+ *    .icon[matSuffix].icon--20px.icon--box-32px
+ *
+ */
+
+
+ $mdi-font-path: "~mdi/fonts";
+ @import "~mdi/scss/variables";
+ @import "~mdi/scss/functions";
+ @import "~mdi/scss/path";
+
+
+ $lms-icon-default-size: 24px;
+ $lms-icon-sizes: 14px 18px 20px 24px 48px;
+
+ $lms-icon-default-box-size: 24px;
+ $lms-icon-box-sizes: 14px 18px 20px 32px 48px;
+
+
+ .icon {
+   @extend %layout-center;
+   font-weight: normal;
+   font-size: $lms-icon-default-size;
+   line-height: $lms-icon-default-size;
+   width: $lms-icon-default-box-size;
+   height: $lms-icon-default-box-size;
+
+   &:before {
+     display: block;
+     font-family: '#{$mdi-font-name}';
+     font-size: inherit;
+     font-weight: inherit;
+     line-height: inherit;
+   }
+
+   @each $size in $lms-icon-sizes {
+     &--#{$size} {
+       font-size: $size;
+       line-height: $size;
+     }
+   }
+
+   @each $size in $lms-icon-box-sizes {
+     &--box-#{$size} {
+       width: $size;
+       height: $size;
+     }
+   }
+
+   @each $key, $value in $mdi-icons {
+     &--#{$key}:before {
+       content: char($value);
+     }
+   }
+ }
+
+
+ .icon-mat-suffix {
+   @extend .icon;
+   @extend .icon--20px;
+   @extend .icon--box-32px;
+ }

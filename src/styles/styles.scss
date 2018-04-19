@@ -24,6 +24,7 @@ body {
 @import 'utils/layout-list';
 @import 'utils/layout-split';
 
+@import 'components/icon';
 @import 'components/component-wrapper';
 @import 'components/expression';
 
@@ -38,3 +39,5 @@ body {
 @import 'mat-library/mat-menu';
 @import 'mat-library/mat-card';
 @import 'mat-library/mat-tab';
+@import 'mat-library/mat-icon-button';
+@import 'mat-library/mat-tooltip';
