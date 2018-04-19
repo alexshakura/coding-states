@@ -1,35 +1,66 @@
-<h1 mat-dialog-title>
-  Кодирование
-</h1>
-<div mat-dialog-content>
-  <p>Выберите алгоритм кодирования</p>
-  <div>
-    <mat-radio-group [(ngModel)]="codingAlgorithm">
-      <mat-radio-button class="coding-algorithm-option"
-                        [value]="UNITARY_D_ALGORITHM"
-                        [disabled]="isLoading">
-        Унитарный
-      </mat-radio-button>
+<app-dialog-overlay (closed)="close()">
+  <div class="dialog">
+    <div class="dialog__body">
+      <div class="dialog-body-section">
+        <div class="layout-list">
+          <div class="layout-list__item">
+            <div class="dialog-header">
+              <div class="dialog-header__title">
+                Кодирование
+              </div>
+              <div class="dialog-header__text">
+                Выберите алгоритм кодирования
+              </div>
+            </div>
+          </div>
 
-      <mat-radio-button class="coding-algorithm-option"
-                        [value]="FREQUENCY_D_ALGORITHM"
-                        [disabled]="isLoading">
-        Частотный
-      </mat-radio-button>
-    </mat-radio-group>
+          <div class="layout-list__item">
+            <mat-radio-group [(ngModel)]="codingAlgorithm">
+              <mat-radio-button class="coding-algorithm-option"
+                                [value]="UNITARY_D_ALGORITHM"
+                                [disabled]="isProcessing">
+                Унитарный
+              </mat-radio-button>
+
+              <mat-radio-button class="coding-algorithm-option"
+                                [value]="FREQUENCY_D_ALGORITHM"
+                                [disabled]="isProcessing">
+                Частотный
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dialog__actions">
+      <div class="layout-inline layout-inline--align-right">
+        <div class="layout-inline__item">
+          <button mat-button
+                  mat-dialog-close
+                  lms-theme="primary"
+                  [disabled]="isProcessing"
+                  tabindex="3">
+           Выйти
+          </button>
+        </div>
+
+        <div class="layout-inline__item">
+          <button mat-raised-button
+                  color="primary"
+                  [disabled]="isProcessing"
+                  (click)="performCoding()">
+            <ng-container *ngIf="!isProcessing">
+              Закодировать
+            </ng-container>
+
+            <ng-container *ngIf="isProcessing">
+              <mat-spinner [diameter]="20"
+                            strokeWidth="2"></mat-spinner>
+            </ng-container>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<div mat-dialog-actions>
-  <button mat-raised-button
-          color="primary"
-          [disabled]="isLoading"
-          (click)="performCoding()">
-    <ng-container *ngIf="!isLoading">
-      Закодировать
-    </ng-container>
-
-    <ng-container *ngIf="isLoading">
-      <mat-spinner [diameter]="20" strokeWidth="2"></mat-spinner>
-    </ng-container>
-  </button>
-</div>
+</app-dialog-overlay>

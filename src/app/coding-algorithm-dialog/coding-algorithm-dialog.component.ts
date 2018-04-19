@@ -6,7 +6,8 @@ import { MatDialogRef } from '@angular/material';
 @Component({
   selector: 'app-coding-algorithm-dialog',
   templateUrl: './coding-algorithm-dialog.component.html',
-  styleUrls: ['./coding-algorithm-dialog.component.scss']
+  styleUrls: ['./coding-algorithm-dialog.component.scss'],
+  host: { class: 'component-wrapper' }
 })
 export class CodingAlgorithmDialogComponent implements OnInit {
 
@@ -15,7 +16,7 @@ export class CodingAlgorithmDialogComponent implements OnInit {
 
   public codingAlgorithm: string;
 
-  public isLoading: boolean = false;
+  public isProcessing: boolean = false;
 
   public constructor(
     private _codingAlgorithmsService: CodingAlgorithmsService,
@@ -27,7 +28,7 @@ export class CodingAlgorithmDialogComponent implements OnInit {
   }
 
   public performCoding(): void {
-    this.isLoading = true;
+    this.isProcessing = true;
 
     this._tableDataService.tableData$
       .subscribe((tableData: App.TableRow[]) => {
@@ -35,5 +36,9 @@ export class CodingAlgorithmDialogComponent implements OnInit {
 
         this._dialogRef.close(true);
       });
+  }
+
+  public close(): void {
+    this._dialogRef.close();
   }
 }

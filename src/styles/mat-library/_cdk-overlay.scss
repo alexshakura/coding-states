@@ -1,0 +1,14 @@
+.cdk-overlay-backdrop {
+  background: rgba($app-color-dark, 0.6);
+
+  transition: background 0.1s;
+
+  &.cdk-overlay-transparent-backdrop {
+    background: transparent;
+  }
+}
+
+
+.cdk-overlay-pane {
+  max-width: none !important;
+}

@@ -38,6 +38,7 @@ import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-tab
 import { OutputFunctionsTableComponent } from './output-functions-table/output-functions-table.component';
 import { TransitionFunctionsTableComponent } from './transition-functions-table/transition-functions-table.component';
 import { DiscreteExpressionComponent } from './discrete-expression/discrete-expression.component';
+import { DialogOverlayComponent } from './dialog-overlay/dialog-overlay.component';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import { DiscreteExpressionComponent } from './discrete-expression/discrete-expr
     VertexCodesTableComponent,
     OutputFunctionsTableComponent,
     TransitionFunctionsTableComponent,
-    DiscreteExpressionComponent
+    DiscreteExpressionComponent,
+    DialogOverlayComponent
   ],
   imports: [
     BrowserAnimationsModule,

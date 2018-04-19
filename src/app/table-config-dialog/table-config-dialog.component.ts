@@ -12,7 +12,8 @@ const fieldValidators: ValidatorFn[] = [
 @Component({
   selector: 'app-table-config-dialog',
   templateUrl: './table-config-dialog.component.html',
-  styleUrls: ['./table-config-dialog.component.css']
+  styleUrls: ['./table-config-dialog.component.css'],
+  host: { class: 'component-wrapper' }
 })
 export class TableConfigDialogComponent {
 
@@ -48,5 +49,9 @@ export class TableConfigDialogComponent {
     }
 
     this._dialogRef.close(newConfig);
+  }
+
+  public close(): void {
+    this._dialogRef.close();
   }
 }

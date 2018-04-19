@@ -30,9 +30,9 @@
 $lms-colors: (
   primary: $app-color-primary,
   warning: $lms-color-warning,
-  danger: $lms-color-danger,
-  danger-05per: rgba($lms-color-danger, 0.05),
-  success: $lms-color-success,
+  danger: $app-color-danger,
+  danger-05per: rgba($app-color-danger, 0.05),
+  success: $app-color-success,
   light: white
 );
 

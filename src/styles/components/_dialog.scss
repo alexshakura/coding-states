@@ -1,0 +1,130 @@
+/**
+ *  DIALOG component
+ *
+ *    .dialog
+ *      &__image
+ *        &--theme-%THEME%
+ *      &__body
+ *        &--wide
+ *      &__actions
+ *
+ *    .dialog-body-section
+ *      &--bordered
+ *      &--narrow
+ *
+ *    .dialog-header
+ *      &__title
+ *      &__text
+ *
+ *  how to use
+ *  ----------
+ *  to ensure proper spacing, use with .layout-list and .layout-inline
+ *
+ *    .dialog
+ *      .dialog__body(.dialog__body--wide)
+ *        .dialog-body-section(.dialog-body-section--bordered)(.dialog-body-section--narrow)
+ *          .layout-list
+ *            .layout-list__item
+ *              .dialog-header
+ *                .dialog-header__title
+ *                .dialog-header__text
+ *            .layout-list__item
+ *               (input group/whatever)
+ *            .layout-list__item
+ *               (input group/whatever)
+ *        (something full-width without "section", e.g., ng-wig)
+ *      .dialog__actions
+ *        .layout-inline.layout-inline--align-right
+ *          .layout-inline__item
+ *            <button>
+ *          .layout-inline__item
+ *            <button>
+ *
+ *  dialogs with images on the side:
+ *
+ *    .dialog
+ *      .layout-inline.layout-inline--0px.layout-inline--valign-stretch
+ *        .layout-inline__item
+ *          .dialog__image
+ *        .layout-inline__item
+ *          .dialog__body
+ *            (...)
+ *
+ **/
+
+
+$dialog-image-themes: (
+  primary: $app-color-primary,
+  warning: $lms-color-warning
+);
+
+
+.dialog {
+  display: block;
+  @extend %dialog;
+  margin: 100px 0;
+
+  &__body {
+    display: block;
+    width: 400px;
+    min-height: 280px - 56px; // 56 px === height of actions bar
+
+    &--wide {
+      width: 640px;
+    }
+  }
+
+  &__actions {
+    padding: 12px 24px;
+  }
+}
+
+
+.dialog-body-section {
+  padding: 21px 24px;
+
+  &--bordered {
+    border-bottom: 1px solid rgba($app-color-dark, 0.2);
+  }
+
+  &--narrow {
+    padding: 16px 24px;
+  }
+}
+
+
+.dialog-header {
+  &__title {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 500;
+
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+  }
+
+  &__text {
+    font-size: 16px;
+    line-height: 24px;
+    color: rgba($app-color-dark, 0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.dialog-overlay {
+  @extend %layout-center;
+  width: 100vw;
+  height: 100vh;
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-height: 100%;
+    overflow: auto;
+  }
+}

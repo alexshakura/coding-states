@@ -23,7 +23,9 @@ body {
 @import 'utils/layout-inline';
 @import 'utils/layout-list';
 @import 'utils/layout-split';
+@import 'utils/dialog';
 
+@import 'components/dialog';
 @import 'components/icon';
 @import 'components/component-wrapper';
 @import 'components/expression';
@@ -41,3 +43,7 @@ body {
 @import 'mat-library/mat-tab';
 @import 'mat-library/mat-icon-button';
 @import 'mat-library/mat-tooltip';
+@import 'mat-library/mat-dialog-container';
+@import 'mat-library/cdk-overlay';
+@import 'mat-library/mat-error';
+@import 'mat-library/mat-form-field';
