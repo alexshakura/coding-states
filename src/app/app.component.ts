@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { TableConfigDialogComponent } from 'app/table-config-dialog/table-config-dialog.component';
@@ -10,7 +10,8 @@ import { TableDataService } from './services/table-data.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.scss'],
+  host: { class: 'component-wrapper' }
 })
 export class AppComponent implements OnInit {
   public isLoading: boolean = true;

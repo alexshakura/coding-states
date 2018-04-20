@@ -1,4 +1,9 @@
-<h3 *ngIf="isTriggerModeD()">Коды вершин для D и D*</h3>
+<div class="layout-split card-header">
+  <div *ngIf="isTriggerModeD()"
+       class="layout-split__item card-header__title">
+    Коды вершин для D и D*
+  </div>
+</div>
 
 <mat-table [dataSource]="dataSource">
   <!-- Vertex id Column -->
