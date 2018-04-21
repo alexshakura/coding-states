@@ -1,0 +1,75 @@
+<div class="paginator">
+  <div class="mat-paginator-page-size" *ngIf="!hidePageSize">
+    <div class="mat-paginator-page-size-label">
+      {{_intl.itemsPerPageLabel}}
+    </div>
+
+    <mat-form-field
+      *ngIf="_displayedPageSizeOptions.length > 1"
+      class="mat-paginator-page-size-select">
+      <mat-select
+        [value]="pageSize"
+        [aria-label]="_intl.itemsPerPageLabel"
+        (selectionChange)="_changePageSize($event.value)">
+        <mat-option *ngFor="let pageSizeOption of _displayedPageSizeOptions" [value]="pageSizeOption">
+          {{pageSizeOption}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div *ngIf="_displayedPageSizeOptions.length <= 1">{{pageSize}}</div>
+  </div>
+
+  <div class="layout-inline layout-inline--align-right">
+    <div class="layout-inline__item is--muted">
+      {{ _intl.getRangeLabel(pageIndex, pageSize, length) }}
+    </div>
+
+    <div class="layout-inline__item">
+      <button mat-icon-button
+              type="button"
+              (click)="firstPage()"
+              [matTooltip]="_intl.firstPageLabel"
+              [matTooltipPosition]="'above'"
+              [disabled]="!hasPreviousPage()"
+              *ngIf="showFirstLastButtons">
+        <div class="icon icon--page-first"></div>
+      </button>
+    </div>
+
+    <div class="layout-inline__item">
+      <button mat-icon-button
+              type="button"
+              (click)="previousPage()"
+              [matTooltip]="_intl.previousPageLabel"
+              [matTooltipPosition]="'above'"
+              [disabled]="!hasPreviousPage()">
+        <div class="icon icon--chevron-left"></div>
+      </button>
+    </div>
+
+    <div class="layout-inline__item">
+      <button mat-icon-button
+              type="button"
+              (click)="nextPage()"
+              [attr.aria-label]="_intl.nextPageLabel"
+              [matTooltip]="_intl.nextPageLabel"
+              [matTooltipPosition]="'above'"
+              [disabled]="!hasNextPage()">
+        <div class="icon icon--chevron-right"></div>
+      </button>
+    </div>
+
+    <div class="layout-inline__item">
+      <button mat-icon-button
+              type="button"
+              (click)="lastPage()"
+              [matTooltip]="_intl.lastPageLabel"
+              [matTooltipPosition]="'above'"
+              [disabled]="!hasNextPage()"
+              *ngIf="showFirstLastButtons">
+        <div class="icon icon--page-last"></div>
+      </button>
+    </div>
+  </div>
+</div>

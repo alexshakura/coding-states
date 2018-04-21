@@ -14,7 +14,7 @@ $app-icon-button-theme-backgrounds: (
 );
 
 
-.mat-icon-button[app-custom] {
+.mat-icon-button {
   display: block !important;
   height: 36px !important;
   width: 36px !important;
@@ -53,7 +53,7 @@ $app-icon-button-theme-backgrounds: (
   }
 }
   @each $theme-name in $app-icon-button-alternative-themes {
-    .mat-icon-button[app-custom][app-theme="#{$theme-name}"] {
+    .mat-icon-button[app-theme="#{$theme-name}"] {
       &:not(:disabled) {
         color: rgba(map-get($app-icon-button-theme-colors, $theme-name), 1) !important;
       }

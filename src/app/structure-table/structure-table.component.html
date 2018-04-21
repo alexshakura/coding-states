@@ -45,8 +45,7 @@
                   [matMenuTriggerFor]="statesMenu"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
-                  app-theme="primary"
-                  app-custom>
+                  app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
@@ -96,8 +95,7 @@
                  [matMenuTriggerFor]="statesMenu"
                  matTooltip="Добавить"
                  matTooltipPosition="above"
-                 app-theme="primary"
-                 app-custom>
+                 app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
@@ -152,8 +150,7 @@
                   [matMenuTriggerFor]="xSignalsMenu"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
-                  app-theme="primary"
-                  app-custom>
+                  app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
@@ -207,8 +204,7 @@
                     [matMenuTriggerFor]="ySignalsMenu"
                     matTooltip="Добавить"
                     matTooltipPosition="above"
-                    app-theme="primary"
-                    app-custom>
+                    app-theme="primary">
               <div class="icon icon--plus-circle icon--20px"></div>
             </button>
 
@@ -247,10 +243,11 @@
   </mat-row>
 </mat-table>
 
-<mat-paginator #paginator
-                [pageSize]="10"
-                [pageSizeOptions]="[5, 10, 20]"
-                [showFirstLastButtons]="true">
-</mat-paginator>
+<app-paginator #myPaginator
+               [showFirstLastButtons]="true"
+               [hidePageSize]="true"
+               [pageSize]="10">
+              <!-- TODO: Const for pageSize -->
+</app-paginator>
 
 <ng-template #emptyValue>-</ng-template>

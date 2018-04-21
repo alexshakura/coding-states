@@ -39,6 +39,7 @@ import { OutputFunctionsTableComponent } from './output-functions-table/output-f
 import { TransitionFunctionsTableComponent } from './transition-functions-table/transition-functions-table.component';
 import { DiscreteExpressionComponent } from './discrete-expression/discrete-expression.component';
 import { DialogOverlayComponent } from './dialog-overlay/dialog-overlay.component';
+import { PaginatorComponent } from './paginator/paginator.component';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { DialogOverlayComponent } from './dialog-overlay/dialog-overlay.componen
     OutputFunctionsTableComponent,
     TransitionFunctionsTableComponent,
     DiscreteExpressionComponent,
-    DialogOverlayComponent
+    DialogOverlayComponent,
+    PaginatorComponent
   ],
   imports: [
     BrowserAnimationsModule,

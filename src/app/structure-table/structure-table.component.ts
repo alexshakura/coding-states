@@ -54,8 +54,8 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     'f'
   ];
 
-  @ViewChild(MatPaginator)
-  public paginator: MatPaginator;
+  @ViewChild('myPaginator')
+  public myPaginator: MatPaginator;
 
   private _destroy$$: Subject<void> = new Subject<void>();
 
@@ -87,7 +87,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
    }
 
   public ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.myPaginator;
     this.dataSource.sort = this.sort;
   }
 
