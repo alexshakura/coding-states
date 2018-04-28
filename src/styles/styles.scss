@@ -30,6 +30,7 @@ body {
 @import 'components/icon';
 @import 'components/component-wrapper';
 @import 'components/expression';
+@import 'components/table';
 
 @import 'layouts/layout-center';
 @import 'layouts/layout-inline';
@@ -49,3 +50,5 @@ body {
 @import 'mat-library/cdk-overlay';
 @import 'mat-library/mat-error';
 @import 'mat-library/mat-form-field';
+@import 'mat-library/mat-radio-group';
+@import 'mat-library/mat-table';

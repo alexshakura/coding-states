@@ -1,8 +1,7 @@
 <div class="card-header-wrapper">
-  <div class="layout-split card-header">
-    <div *ngIf="isTriggerModeD()"
-         class="layout-split__item card-header__title">
-      Коды вершин для D и D*
+  <div class="layout-inline card-header">
+    <div class="layout-inline__item card-header__title">
+      Коды вершин
     </div>
   </div>
 </div>
@@ -11,16 +10,13 @@
   <!-- Vertex id Column -->
   <ng-container matColumnDef="id">
     <mat-header-cell *matHeaderCellDef> a<sub>i</sub> </mat-header-cell>
-    <mat-cell *matCellDef="let row"> a<sub>{{ row.id }}</sub></mat-cell>
+    <mat-cell *matCellDef="let row"
+              class="index-cell"> a<sub>{{ row.id }}</sub> =</mat-cell>
   </ng-container>
 
   <!-- Vertex code Column -->
   <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef>
-      <ng-container *ngIf="isTriggerModeD()">
-        D - триггеры
-      </ng-container>
-    </mat-header-cell>
+    <mat-header-cell *matHeaderCellDef></mat-header-cell>
     <mat-cell *matCellDef="let row">
       {{ formatStateCode(row.code) }}
     </mat-cell>

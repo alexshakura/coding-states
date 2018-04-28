@@ -35,7 +35,8 @@
         D<sub>i</sub>
       </div>
     </mat-header-cell>
-    <mat-cell *matCellDef="let row"> y<sub>{{ row.id }}</sub></mat-cell>
+    <mat-cell *matCellDef="let row"
+              class="index-cell"> D<sub>{{ row.id }}</sub> =</mat-cell>
   </ng-container>
 
   <!-- Output Function Column -->
@@ -43,12 +44,9 @@
     <mat-header-cell *matHeaderCellDef>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-
-      <!-- TODO: Simple version -->
       <app-discrete-expression [isBooleanBasisMode]="isBooleanBasisMode"
                                 [function]="row.function">
       </app-discrete-expression>
-
     </mat-cell>
   </ng-container>
 

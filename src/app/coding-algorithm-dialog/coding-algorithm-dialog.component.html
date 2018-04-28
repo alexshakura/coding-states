@@ -16,17 +16,36 @@
 
           <div class="layout-list__item">
             <mat-radio-group [(ngModel)]="codingAlgorithm">
-              <mat-radio-button class="coding-algorithm-option"
-                                [value]="UNITARY_D_ALGORITHM"
-                                [disabled]="isProcessing">
-                Унитарный
-              </mat-radio-button>
+              <div class="layout-list layout-list--16px">
+                <div class="layout-list__item">
+                  <label class="layout-inline-checkbox">
+                    <div class="layout-inline__item">
+                      <mat-radio-button class="coding-algorithm-option"
+                                        [value]="UNITARY_D_ALGORITHM"
+                                        [disabled]="isProcessing">
+                      </mat-radio-button>
+                    </div>
 
-              <mat-radio-button class="coding-algorithm-option"
-                                [value]="FREQUENCY_D_ALGORITHM"
-                                [disabled]="isProcessing">
-                Частотный
-              </mat-radio-button>
+                    <div class="layout-inline__item layout-inline__item--expand">
+                      Унитарный
+                    </div>
+                  </label>
+                </div>
+                <div class="layout-list__item">
+                  <label class="layout-inline-checkbox">
+                    <div class="layout-inline__item">
+                      <mat-radio-button class="coding-algorithm-option"
+                                        [value]="FREQUENCY_D_ALGORITHM"
+                                        [disabled]="isProcessing">
+                      </mat-radio-button>
+                    </div>
+
+                    <div class="layout-inline__item layout-inline__item--expand">
+                      Частотный
+                    </div>
+                  </label>
+                </div>
+              </div>
             </mat-radio-group>
           </div>
         </div>
