@@ -20,6 +20,8 @@ export class CodingAlgorithmsService {
   public static readonly UNITARY_D_ALGORITHM: string = 'unitary';
   public static readonly FREQUENCY_D_ALGORITHM: string = 'frequency';
 
+  public static readonly DEFAULT_TIMEOUT: number = 1000;
+
   public static readonly D_TRIGGER_MODE: string = 'D';
 
   public get triggerMode$(): Observable<string> {
@@ -48,7 +50,14 @@ export class CodingAlgorithmsService {
 
   constructor() { }
 
-  public code(algorithm: string, tableData: App.TableRow[]): void {
+  public code(algorithm: string, tableData: App.TableRow[]): Observable<void> {
+    const invalidRows: number[] = this._checkTableData(tableData);
+
+    if (invalidRows.length) {
+      return Observable.throw(invalidRows)
+        .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
+    }
+
     switch (algorithm) {
       case CodingAlgorithmsService.UNITARY_D_ALGORITHM:
         this.unitaryD(tableData);
@@ -56,7 +65,23 @@ export class CodingAlgorithmsService {
       case CodingAlgorithmsService.FREQUENCY_D_ALGORITHM:
         this.frequencyD(tableData);
         break;
+      default:
+        return Observable.throw(null)
+          .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
+
+    return Observable.of(null)
+      .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
+  }
+
+  private _checkTableData(tableData: App.TableRow[]): number[] {
+    return tableData
+      .filter((tableRow: App.TableRow) => {
+        return !tableRow.distState
+          || !tableRow.srcState
+          || (!tableRow.unconditionalX && !tableRow.x.size);
+      })
+      .map((tableRow: App.TableRow) => tableRow.id);
   }
 
   public unitaryD(tableData: App.TableRow[]) {

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { TableConfigDialogComponent } from 'app/table-config-dialog/table-config-dialog.component';
+import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { CodingAlgorithmsService } from './services/coding-algorithms.service';
 import { TableDataService } from './services/table-data.service';
@@ -15,8 +15,8 @@ import { TableDataService } from './services/table-data.service';
 })
 export class AppComponent implements OnInit {
   public isLoading: boolean = true;
-
   public isTableCoded: boolean = false;
+  public isInitialized: boolean;
 
   public tableConfig: App.TableConfig = {
     length: 16,
@@ -57,18 +57,17 @@ export class AppComponent implements OnInit {
   }
 
   public changeTableConfig(): void {
-    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent, {
-        data: {
-          tableConfig: this.tableConfig
-        }
-      }
+    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(
+      TableConfigDialogComponent,
+      { data: { tableConfig: this.tableConfig } }
     );
 
     dialogRef.afterClosed()
-      .filter((tableConfig: App.TableConfig) => Boolean(tableConfig))
       .take(1)
       .subscribe((tableConfig: App.TableConfig) => {
-        this.tableConfig = tableConfig;
+        if (tableConfig) {
+          this.tableConfig = tableConfig;
+        }
       });
   }
 
@@ -76,10 +75,11 @@ export class AppComponent implements OnInit {
     const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent);
 
     dialogRef.afterClosed()
-      .filter(Boolean)
       .take(1)
-      .subscribe(() => {
-        this.isTableCoded = true;
+      .subscribe((isTableCoded: boolean) => {
+        if (isTableCoded) {
+          this.isTableCoded = true;
+        }
       });
   }
 }

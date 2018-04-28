@@ -10,22 +10,23 @@ import { HttpModule } from '@angular/http';
 import {
   MatButtonModule,
   MatCardModule,
+  MatCheckboxModule,
   MatDialogModule,
   MatFormFieldModule,
   MatInputModule,
   MatMenuModule,
+  MatPaginatorIntl,
   MatPaginatorModule,
-  MatTableModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
   MatSelectModule,
   MatSlideToggleModule,
-  MatTooltipModule,
-  MatCheckboxModule,
-  MatToolbarModule,
+  MatSnackBarModule,
   MatSortModule,
-  MatRadioModule,
-  MatPaginatorIntl,
-  MatProgressSpinnerModule,
+  MatTableModule,
   MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
 
@@ -44,21 +45,24 @@ import { TransitionFunctionsTableComponent } from './transition-functions-table/
 import { DiscreteExpressionComponent } from './discrete-expression/discrete-expression.component';
 import { DialogOverlayComponent } from './dialog-overlay/dialog-overlay.component';
 import { PaginatorComponent } from './paginator/paginator.component';
-import { ElectronService } from './providers/electron.service';
+import { ElectronService } from './services/electron.service';
+import { SnackBarService } from './services/snack-bar.service';
+import { SnackBarContentComponent } from './snack-bar-content/snack-bar-error.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
+    CodingAlgorithmDialogComponent,
+    DialogOverlayComponent,
+    DiscreteExpressionComponent,
+    OutputFunctionsTableComponent,
+    PaginatorComponent,
+    SnackBarContentComponent,
     StructureTableComponent,
     TableConfigDialogComponent,
-    CodingAlgorithmDialogComponent,
-    VertexCodesTableComponent,
-    OutputFunctionsTableComponent,
     TransitionFunctionsTableComponent,
-    DiscreteExpressionComponent,
-    DialogOverlayComponent,
-    PaginatorComponent
+    VertexCodesTableComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -81,18 +85,21 @@ import { ElectronService } from './providers/electron.service';
     MatRadioModule,
     MatProgressSpinnerModule,
     MatSortModule,
+    MatSnackBarModule,
     MatToolbarModule,
     MatTooltipModule,
     MatInputModule
  ],
  entryComponents: [
     CodingAlgorithmDialogComponent,
-    TableConfigDialogComponent
+    TableConfigDialogComponent,
+    SnackBarContentComponent
  ],
   providers: [
-    ElectronService,
-    TableDataService,
     CodingAlgorithmsService,
+    ElectronService,
+    SnackBarService,
+    TableDataService,
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu }
   ],
   bootstrap: [AppComponent]

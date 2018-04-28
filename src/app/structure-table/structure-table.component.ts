@@ -27,6 +27,8 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this.bitStateCapacity = Math.ceil(Math.log2(tableConfig.length));
 
     this._tableConfig = tableConfig;
+
+    this.emitTableUpdate();
   }
 
   private _tableConfig: App.TableConfig;

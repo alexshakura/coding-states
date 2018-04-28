@@ -1,0 +1,25 @@
+<div class="layout-inline">
+  <div *ngIf="data.isError"
+       class="layout-inline__item">
+    <div class="icon icon--alert-circle-outline icon--18px"></div>
+  </div>
+
+  <div class="layout-inline__item layout-inline__item--expand">
+    <ng-container *ngIf="data.text">
+      {{ data.text }}
+    </ng-container>
+
+    <ng-container *ngIf="!data.text && data.isError">
+      {{ 'Что-то пошло не так. Пожалуйста, попробуйте еще раз' }}
+    </ng-container>
+  </div>
+
+  <div class="layout-inline__item">
+    <button mat-icon-button
+            app-theme="light"
+            (click)="close()">
+      <div class="icon icon--close"></div>
+    </button>
+  </div>
+</div>
+
