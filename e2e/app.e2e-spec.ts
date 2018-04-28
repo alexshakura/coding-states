@@ -1,14 +1,15 @@
-import { CodingStatesPage } from './app.po';
+import { AngularElectronPage } from './app.po';
+import { browser, element, by } from 'protractor';
 
-describe('coding-states App', () => {
-  let page: CodingStatesPage;
+describe('angular-electron App', () => {
+  let page: AngularElectronPage;
 
   beforeEach(() => {
-    page = new CodingStatesPage();
+    page = new AngularElectronPage();
   });
 
-  it('should display message saying app works', () => {
-    page.navigateTo();
-    expect(page.getParagraphText()).toEqual('app works!');
+  it('should display message saying App works !', () => {
+    page.navigateTo('/');
+    expect(element(by.css('app-home h1')).getText()).toMatch('App works !');
   });
 });

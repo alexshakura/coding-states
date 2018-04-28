@@ -1,3 +1,7 @@
+import 'zone.js/dist/zone-mix';
+import 'reflect-metadata';
+import '../polyfills';
+
 import { TableDataService } from './services/table-data.service';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
@@ -40,6 +44,7 @@ import { TransitionFunctionsTableComponent } from './transition-functions-table/
 import { DiscreteExpressionComponent } from './discrete-expression/discrete-expression.component';
 import { DialogOverlayComponent } from './dialog-overlay/dialog-overlay.component';
 import { PaginatorComponent } from './paginator/paginator.component';
+import { ElectronService } from './providers/electron.service';
 
 
 @NgModule({
@@ -85,6 +90,7 @@ import { PaginatorComponent } from './paginator/paginator.component';
     TableConfigDialogComponent
  ],
   providers: [
+    ElectronService,
     TableDataService,
     CodingAlgorithmsService,
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu }
