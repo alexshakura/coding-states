@@ -93,7 +93,7 @@ export class FrequencyDAlgorithm {
     const numStates: number = Math.max(...tableData.map((tableRow: App.TableRow) => tableRow.distState));
     const capacity: number = Math.ceil(Math.log2(numStates));
 
-    const sortedVertexes = this._getSortedVertexes(tableData);
+    const sortedByFrequencyVertexes = this._getSortedByFrequencyVertexes(tableData);
     const vertexCodesMap: App.TVertexData = new Map();
 
     const codeMap: Map<number, number[]> = this._getCodeMap(capacity);
@@ -103,13 +103,27 @@ export class FrequencyDAlgorithm {
         numOfDigits++;
       }
 
-      vertexCodesMap.set(sortedVertexes[i].id, codeMap.get(numOfDigits).shift());
+      vertexCodesMap.set(sortedByFrequencyVertexes[i].id, codeMap.get(numOfDigits).shift());
     }
 
-    return vertexCodesMap;
+    const sortedByIndexVertexes: [number, number][] = Array
+      .from(vertexCodesMap)
+      .sort((a: number[], b: number[]) => {
+        if (a[0] > b[0]) {
+          return 1;
+        }
+
+        if (a[0] < b[0]) {
+          return -1;
+        }
+
+        return 0;
+      });
+
+    return new Map(sortedByIndexVertexes);
   }
 
-  private _getSortedVertexes(tableData: App.TableRow[]): { id: number, frequency: number}[] {
+  private _getSortedByFrequencyVertexes(tableData: App.TableRow[]): { id: number, frequency: number}[] {
     const vertexFrequencyMap: Map<number, { id: number, frequency: number }> = new Map();
 
     tableData.forEach((tableRow: App.TableRow) => {
