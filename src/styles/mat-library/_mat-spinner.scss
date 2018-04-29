@@ -1,0 +1,26 @@
+$app-mat-spinner-default-theme: primary;
+$app-mat-spinner-alternative-themes: light danger;
+
+$app-mat-spinner-theme-colors: (
+  light: white,
+  primary: $app-color-primary,
+  danger: $app-color-danger
+);
+
+
+.mat-spinner {
+  // default theme
+
+  & circle {
+    stroke: map-get($app-mat-spinner-theme-colors, $app-mat-spinner-default-theme);
+  }
+}
+
+
+@each $theme-name in $app-mat-spinner-alternative-themes {
+  .mat-spinner[app-theme="#{$theme-name}"] {
+    & circle {
+      stroke: map-get($app-mat-spinner-theme-colors, $theme-name);
+    }
+  }
+}

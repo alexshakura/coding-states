@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, Validators, FormBuilder, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { SnackBarService } from '../services/snack-bar.service';
 
 const fieldValidators: ValidatorFn[] = [
   Validators.required,
@@ -17,6 +18,8 @@ const fieldValidators: ValidatorFn[] = [
 })
 export class TableConfigDialogComponent {
 
+  public isProcessing: boolean = false;
+
   public tableConfigForm: FormGroup = this._formBuilder.group({
     length: [this.data.tableConfig.length, fieldValidators],
     numberOfStates: [this.data.tableConfig.numberOfStates, fieldValidators],
@@ -27,6 +30,7 @@ export class TableConfigDialogComponent {
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.TableConfig },
     private _dialogRef: MatDialogRef<TableConfigDialogComponent>,
+    private _snackBarService: SnackBarService,
     private _formBuilder: FormBuilder
   ) { }
 
@@ -42,13 +46,22 @@ export class TableConfigDialogComponent {
   }
 
   public save(): void {
-    const newConfig: App.TableConfig = this.tableConfigForm.value;
-
-    for (const key in newConfig) {
-      newConfig[key] = Number(newConfig[key]);
+    if (this.tableConfigForm.invalid) {
+      this._snackBarService.showError('В форме присутствуют ошибки');
+      return;
     }
 
-    this._dialogRef.close(newConfig);
+    this.isProcessing = true;
+
+    setTimeout(() => {
+      const newConfig: App.TableConfig = this.tableConfigForm.value;
+
+      for (const key in newConfig) {
+        newConfig[key] = Number(newConfig[key]);
+      }
+
+      this._dialogRef.close(newConfig);
+    }, 1000);
   }
 
   public close(): void {

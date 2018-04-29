@@ -7,13 +7,17 @@
     <div class="layout-split__item">
       <div class="layout-inline">
         <div class="layout-inline__item">
-          <button mat-raised-button color="accent" (click)="chooseCodingAlgorithm()">
+          <button mat-raised-button
+                  app-theme="warning"
+                  (click)="chooseCodingAlgorithm()">
             Закодировать
           </button>
         </div>
 
         <div class="layout-inline__item">
-          <button mat-raised-button color="accent" (click)="changeTableConfig()">
+          <button mat-raised-button
+                  app-theme="warning"
+                  (click)="changeTableConfig()">
             Изменить параметры СТП
           </button>
         </div>

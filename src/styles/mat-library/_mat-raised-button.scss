@@ -1,0 +1,120 @@
+$app-raised-button-default-theme: primary;
+$app-raised-button-alternative-themes: light danger success warning;
+
+$app-raised-button-theme-colors: (
+  light: $app-color-primary,
+  primary: white,
+  warning: rgba($app-color-dark, .87),
+  danger: white,
+  success: white
+);
+
+$app-raised-button-theme-backgrounds: (
+  light: white,
+  primary: $app-color-primary,
+  warning: $app-color-warning,
+  danger: $app-color-danger,
+  success: $app-color-success
+);
+
+$app-raised-button-theme-overlays: (
+  light: $app-color-dark,
+  primary: white,
+  warning: white,
+  danger: white,
+  success: white
+);
+
+
+.mat-raised-button {
+  display: block !important;
+  height: 36px;
+
+  font-weight: 500;
+  text-transform: uppercase;
+
+  box-shadow: 0px 3px 1px -2px rgba($app-color-dark, 0.2),
+              0px 2px 2px 0px rgba($app-color-dark, 0.14),
+              0px 1px 5px 0px rgba($app-color-dark, 0.12) !important;
+
+  &:not(:disabled):hover,
+  &:not(:disabled):focus {
+    box-shadow: 0px 2px 4px -1px rgba($app-color-dark, 0.2),
+                0px 4px 5px 0px rgba($app-color-dark, 0.14),
+                0px 1px 10px 0px rgba($app-color-dark, 0.12) !important;
+  }
+
+  &:not(:disabled):active {
+    box-shadow: 0px 5px 5px -3px rgba($app-color-dark, 0.2),
+                0px 8px 10px 1px rgba($app-color-dark, 0.14),
+                0px 3px 14px 2px rgba($app-color-dark, 0.12) !important;
+  }
+
+  & > .mat-button-wrapper {
+    @extend %layout-inline;
+    justify-content: center !important;
+  }
+
+  &[app-full-width] {
+    width: 100%;
+  }
+
+  // default theme
+
+  &:not(:disabled) {
+    color: map-get($app-raised-button-theme-colors, $app-raised-button-default-theme) !important;
+    background-color: map-get($app-raised-button-theme-backgrounds, $app-raised-button-default-theme) !important;
+  }
+
+  &:disabled {
+    color: map-get($app-raised-button-theme-colors, $app-raised-button-default-theme) !important;
+    background-color: rgba(map-get($app-raised-button-theme-backgrounds, $app-raised-button-default-theme), 0.4) !important;
+    box-shadow: none !important;
+  }
+
+  &:not(:disabled) > .mat-button-focus-overlay {
+    background-color: rgba(map-get($app-raised-button-theme-overlays, $app-raised-button-default-theme), 0.12) !important;
+  }
+
+  &:not(:disabled) .mat-ripple-element {
+    background-color: rgba(map-get($app-raised-button-theme-overlays, $app-raised-button-default-theme), 0.2) !important;
+  }
+
+  &:disabled > .mat-button-focus-overlay {
+    background-color: rgba(map-get($app-raised-button-theme-overlays, $app-raised-button-default-theme), 0.06) !important;
+  }
+
+  &:disabled .mat-ripple-element {
+    background-color: rgba(map-get($app-raised-button-theme-overlays, $app-raised-button-default-theme), 0.1) !important;
+  }
+}
+  @each $theme-name in $app-raised-button-alternative-themes {
+    .mat-raised-button[app-theme="#{$theme-name}"] {
+      &:not(:disabled) {
+        color: map-get($app-raised-button-theme-colors, $theme-name) !important;
+        background-color: map-get($app-raised-button-theme-backgrounds, $theme-name) !important;
+      }
+
+      &:disabled {
+        color: map-get($app-raised-button-theme-colors, $theme-name) !important;
+        background-color: rgba(map-get($app-raised-button-theme-backgrounds, $theme-name), 0.4) !important;
+        box-shadow: none !important;
+      }
+
+      &:not(:disabled) > .mat-button-focus-overlay {
+        background-color: rgba(map-get($app-raised-button-theme-overlays, $theme-name), 0.12) !important;
+      }
+
+      &:not(:disabled) .mat-ripple-element {
+        background-color: rgba(map-get($app-raised-button-theme-overlays, $theme-name), 0.2) !important;
+      }
+
+      &:disabled > .mat-button-focus-overlay {
+        background-color: rgba(map-get($app-raised-button-theme-overlays, $theme-name), 0.06) !important;
+      }
+
+      &:disabled .mat-ripple-element {
+        background-color: rgba(map-get($app-raised-button-theme-overlays, $theme-name), 0.1) !important;
+      }
+    }
+  }

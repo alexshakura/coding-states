@@ -154,9 +154,8 @@
 
         <div class="layout-inline__item">
           <button mat-raised-button
-                  color="primary"
-                  form="tableParamsForm"
-                  [disabled]="tableConfigForm.invalid">
+                  app-theme="primary"
+                  form="tableParamsForm">
             {{ isTableExist() ? 'Изменить' : 'Создать' }}
           </button>
         </div>
