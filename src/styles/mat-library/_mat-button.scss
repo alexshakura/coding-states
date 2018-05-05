@@ -1,0 +1,83 @@
+$app-button-default-theme: dark;
+$app-button-alternative-themes: light primary danger success;
+
+$app-button-theme-colors: (
+  dark: rgba($app-color-dark, 0.5),
+  light: rgba(white, 0.8),
+  primary: $app-color-primary,
+  danger: $app-color-danger,
+  success: $app-color-success
+);
+
+$app-button-theme-backgrounds: (
+  dark: rgba($app-color-dark, 0.5),
+  light: white,
+  primary: $app-color-primary,
+  danger: $app-color-danger,
+  success: $app-color-success
+);
+
+
+.mat-button {
+  display: block !important;
+  height: 36px;
+
+  text-transform: uppercase;
+
+  & > .mat-button-wrapper {
+    @extend %layout-inline;
+    justify-content: center !important;
+  }
+
+  // default theme
+  &:not(:disabled) {
+    color: map-get($app-button-theme-colors, $app-button-default-theme) !important;
+  }
+
+  &:disabled {
+    color: rgba(map-get($app-button-theme-colors, $app-button-default-theme), 0.4) !important;
+  }
+
+  &:not(:disabled) > .mat-button-focus-overlay {
+    background-color: rgba(map-get($app-button-theme-backgrounds, $app-button-default-theme), 0.12) !important;
+  }
+
+  &:not(:disabled) .mat-ripple-element {
+    background-color: rgba(map-get($app-button-theme-backgrounds, $app-button-default-theme), 0.2) !important;
+  }
+
+  &:disabled > .mat-button-focus-overlay {
+    background-color: rgba(map-get($app-button-theme-backgrounds, $app-button-default-theme), 0.06) !important;
+  }
+
+  &:disabled .mat-ripple-element {
+    background-color: rgba(map-get($app-button-theme-backgrounds, $app-button-default-theme), 0.1) !important;
+  }
+}
+  @each $theme-name in $app-button-alternative-themes {
+    .mat-button[app-theme="#{$theme-name}"] {
+      &:not(:disabled) {
+        color: map-get($app-button-theme-colors, $theme-name) !important;
+      }
+
+      &:disabled {
+        color: rgba(map-get($app-button-theme-colors, $theme-name), 0.4) !important;
+      }
+
+      &:not(:disabled) > .mat-button-focus-overlay {
+        background-color: rgba(map-get($app-button-theme-backgrounds, $theme-name), 0.12) !important;
+      }
+
+      &:not(:disabled) .mat-ripple-element {
+        background-color: rgba(map-get($app-button-theme-backgrounds, $theme-name), 0.2) !important;
+      }
+
+      &:disabled > .mat-button-focus-overlay {
+        background-color: rgba(map-get($app-button-theme-backgrounds, $theme-name), 0.06) !important;
+      }
+
+      &:disabled .mat-ripple-element {
+        background-color: rgba(map-get($app-button-theme-backgrounds, $theme-name), 0.1) !important;
+      }
+    }
+  }
