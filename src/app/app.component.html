@@ -9,7 +9,15 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="chooseCodingAlgorithm()">
+                  (click)="generateDoc()">
+            Сохранить
+          </button>
+        </div>
+
+        <div class="layout-inline__item">
+          <button mat-raised-button
+                  app-theme="warning"
+                  (click)="openCodingAlgorithmDialog()">
             Закодировать
           </button>
         </div>
@@ -17,7 +25,7 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="changeTableConfig()">
+                  (click)="openTableConfigDialog()">
             Изменить параметры СТП
           </button>
         </div>
@@ -28,7 +36,8 @@
   <mat-card-content>
     <mat-tab-group>
       <mat-tab label="Структурная таблица переходов">
-        <app-structure-table [tableConfig]="tableConfig">
+        <app-structure-table *ngIf="!isLoading"
+                             [tableConfig]="tableConfig">
         </app-structure-table>
       </mat-tab>
 

@@ -9,7 +9,7 @@
                 Кодирование состояний автомата
               </div>
               <div class="dialog-header__text">
-                Текст текст
+                Введите основные параметры СТП
               </div>
             </div>
           </div>
@@ -17,6 +17,43 @@
           <form id="tableParamsForm"
                 [formGroup]="tableConfigForm"
                 (ngSubmit)="save()">
+            <div class="layout-list__item">
+              <div class="layout-list layout-list--10px">
+                <div class="layout-list__item">
+                  Тип автомата
+                </div>
+                <div class="layout-list__item">
+                  <mat-radio-group formControlName="fsmType">
+                    <div class="layout-list layout-list--12px">
+                      <div class="layout-list__item">
+                        <label class="layout-inline-checkbox">
+                          <div class="layout-inline__item">
+                            <mat-radio-button [value]="MILI_FSM_TYPE"></mat-radio-button>
+                          </div>
+
+                          <div class="layout-inline__item layout-inline__item--expand">
+                            Автомат Мили
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class="layout-list__item">
+                        <label class="layout-inline-checkbox">
+                          <div class="layout-inline__item">
+                            <mat-radio-button [value]="MURA_FSM_TYPE"></mat-radio-button>
+                          </div>
+
+                          <div class="layout-inline__item layout-inline__item--expand">
+                            Автомат Мура
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </mat-radio-group>
+                </div>
+              </div>
+            </div>
+
             <div class="layout-list__item">
               <mat-form-field app-theme="dark">
                 <mat-label>Длина СТП</mat-label>
@@ -147,7 +184,8 @@
           <button mat-button
                   mat-dialog-close
                   lms-theme="primary"
-                  tabindex="3">
+                  tabindex="3"
+                  [disabled]="!isTableExist()">
             Выйти
           </button>
         </div>
@@ -155,8 +193,17 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="primary"
-                  form="tableParamsForm">
-            {{ isTableExist() ? 'Изменить' : 'Создать' }}
+                  form="tableParamsForm"
+                  [disabled]="isProcessing">
+            <ng-container *ngIf="!isProcessing">
+              {{ isTableExist() ? 'Изменить' : 'Создать' }}
+            </ng-container>
+
+            <mat-spinner *ngIf="isProcessing"
+                         [diameter]="20"
+                         strokeWidth="2"
+                         app-theme="light">
+            </mat-spinner>
           </button>
         </div>
       </div>

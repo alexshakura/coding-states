@@ -7,6 +7,9 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 @Injectable()
 export class TableDataService {
 
+  public static readonly MILI_FSM_TYPE: string = 'mili';
+  public static readonly MURA_FSM_TYPE: string = 'mura';
+
   public get tableData$(): Observable<App.TableRow[]> {
     return this._tableData$$.asObservable();
   }
@@ -23,10 +26,10 @@ export class TableDataService {
   }
 
   public generateRaw(newLength: number, startId: number = 0): App.TableRow[] {
-    const TableRow: App.TableRow[] = [];
+    const tableRow: App.TableRow[] = [];
 
     for (let i: number = 0; i < newLength; i++) {
-      TableRow.push({
+      tableRow.push({
         id: i + 1 + startId,
         srcState: null,
         codeSrcState: null,
@@ -39,7 +42,7 @@ export class TableDataService {
       });
     }
 
-    return TableRow;
+    return tableRow;
   }
 
   public rearrangeTableData(tableData: App.TableRow[], newLength: number): App.TableRow[] {

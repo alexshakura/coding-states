@@ -4,7 +4,10 @@ declare namespace App {
     numberOfStates: number;
     numberOfX: number;
     numberOfY: number;
+    fsmType: TFsmType;
   }
+
+  export type TFsmType = 'mili' | 'mura';
 
   export interface TableRow {
     id: number;

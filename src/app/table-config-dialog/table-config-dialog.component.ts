@@ -2,6 +2,10 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormControl, Validators, FormBuilder, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { SnackBarService } from '../services/snack-bar.service';
+import { TableDataService } from '../services/table-data.service';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import { BaseDialogComponent } from '../base-dialog-component';
 
 const fieldValidators: ValidatorFn[] = [
   Validators.required,
@@ -13,10 +17,16 @@ const fieldValidators: ValidatorFn[] = [
 @Component({
   selector: 'app-table-config-dialog',
   templateUrl: './table-config-dialog.component.html',
-  styleUrls: ['./table-config-dialog.component.css'],
   host: { class: 'component-wrapper' }
 })
-export class TableConfigDialogComponent {
+export class TableConfigDialogComponent extends BaseDialogComponent<[App.TableConfig, string], void> {
+
+  public readonly ERROR_MESSAGE: string = 'В форме присутствуют ошибки';
+  public readonly CREATE_SUCCESS_MESSAGE: string = 'Параметры СТП были успешно заданы';
+  public readonly EDIT_SUCCESS_MESSAGE: string = 'Параметры СТП были успешно отредактированы';
+
+  public readonly MILI_FSM_TYPE: string = TableDataService.MILI_FSM_TYPE;
+  public readonly MURA_FSM_TYPE: string = TableDataService.MURA_FSM_TYPE;
 
   public isProcessing: boolean = false;
 
@@ -24,18 +34,24 @@ export class TableConfigDialogComponent {
     length: [this.data.tableConfig.length, fieldValidators],
     numberOfStates: [this.data.tableConfig.numberOfStates, fieldValidators],
     numberOfX: [this.data.tableConfig.numberOfX, fieldValidators],
-    numberOfY: [this.data.tableConfig.numberOfY, fieldValidators]
+    numberOfY: [this.data.tableConfig.numberOfY, fieldValidators],
+    fsmType: TableDataService.MILI_FSM_TYPE
   });
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.TableConfig },
+    @Inject(MAT_DIALOG_DATA) public data: {
+      tableConfig: App.TableConfig,
+      isInitialized: boolean
+    },
     private _dialogRef: MatDialogRef<TableConfigDialogComponent>,
     private _snackBarService: SnackBarService,
     private _formBuilder: FormBuilder
-  ) { }
+  ) {
+    super();
+  }
 
   public isTableExist(): boolean {
-    return Object.keys(this.data.tableConfig).length > 0;
+    return this.data.isInitialized;
   }
 
   public hasNotice(fieldKey: string): boolean {
@@ -47,24 +63,32 @@ export class TableConfigDialogComponent {
 
   public save(): void {
     if (this.tableConfigForm.invalid) {
-      this._snackBarService.showError('В форме присутствуют ошибки');
+      this._snackBarService.showError(this.ERROR_MESSAGE);
       return;
     }
 
+    this.tableConfigForm.disable();
     this.isProcessing = true;
 
-    setTimeout(() => {
-      const newConfig: App.TableConfig = this.tableConfigForm.value;
+    Observable.of(this.tableConfigForm.getRawValue())
+      .delay(1000)
+      .takeUntil(this._destroy$$)
+      .subscribe((updatedConfig: App.TableConfig) => {
+        for (const key in updatedConfig) {
+          updatedConfig[key] = Number(updatedConfig[key]);
+        }
 
-      for (const key in newConfig) {
-        newConfig[key] = Number(newConfig[key]);
-      }
+        const successMessage: string = !this.isTableExist()
+          ? this.CREATE_SUCCESS_MESSAGE
+          : this.EDIT_SUCCESS_MESSAGE;
 
-      this._dialogRef.close(newConfig);
-    }, 1000);
+        this._success$$.next([updatedConfig, successMessage]);
+      });
   }
 
   public close(): void {
-    this._dialogRef.close();
+    if (this.isTableExist()) {
+      this._dialogRef.close();
+    }
   }
 }

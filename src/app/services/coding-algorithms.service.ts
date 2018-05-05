@@ -51,7 +51,7 @@ export class CodingAlgorithmsService {
   constructor() { }
 
   public code(algorithm: string, tableData: App.TableRow[]): Observable<void> {
-    const invalidRows: number[] = this._checkTableData(tableData);
+    const invalidRows: number[] = this.checkTableData(tableData);
 
     if (invalidRows.length) {
       return Observable.throw(invalidRows)
@@ -74,7 +74,7 @@ export class CodingAlgorithmsService {
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
   }
 
-  private _checkTableData(tableData: App.TableRow[]): number[] {
+  public checkTableData(tableData: App.TableRow[]): number[] {
     return tableData
       .filter((tableRow: App.TableRow) => {
         return !tableRow.distState
