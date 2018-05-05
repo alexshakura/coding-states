@@ -186,7 +186,25 @@
   <!-- Y column -->
   <ng-container matColumnDef="y">
     <mat-header-cell *matHeaderCellDef>
-      <div>Y</div>
+      <div class="layout-inline layout-inline--6px">
+        <div class="layout-inline__item">
+          Y
+        </div>
+        <div *ngIf="isMuraFsm()"
+             class="layout-inline__item">
+          <div class="icon icon--alert-circle icon--20px is--muted-70 is--interactive"
+               [appDynamicTooltip]="muraHintPopover"
+               elementPosition="topRight"
+               tooltipPosition="bottomLeft">
+          </div>
+        </div>
+      </div>
+
+      <ng-template #muraHintPopover>
+        <div class="popover">
+          Столбец заполняется по a<sub>s</sub>
+        </div>
+      </ng-template>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--0px">

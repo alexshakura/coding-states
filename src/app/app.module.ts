@@ -29,6 +29,8 @@ import {
   MatTooltipModule,
 } from '@angular/material';
 import { NgModule } from '@angular/core';
+import { PortalModule } from '@angular/cdk/portal';
+import { OverlayModule } from '@angular/cdk/overlay';
 
 import './rxjs-operators';
 
@@ -48,6 +50,8 @@ import { PaginatorComponent } from './paginator/paginator.component';
 import { ElectronService } from './services/electron.service';
 import { SnackBarService } from './services/snack-bar.service';
 import { SnackBarContentComponent } from './snack-bar-content/snack-bar-error.component';
+import { DynamicContentTooltipComponent } from './dynamic-content-tooltip/dynamic-content-tooltip.component';
+import { DynamicTooltipDirective } from './directives/dynamic-tooltip.directive';
 
 
 @NgModule({
@@ -55,6 +59,8 @@ import { SnackBarContentComponent } from './snack-bar-content/snack-bar-error.co
     AppComponent,
     CodingAlgorithmDialogComponent,
     DialogOverlayComponent,
+    DynamicContentTooltipComponent,
+    DynamicTooltipDirective,
     DiscreteExpressionComponent,
     OutputFunctionsTableComponent,
     PaginatorComponent,
@@ -88,10 +94,14 @@ import { SnackBarContentComponent } from './snack-bar-content/snack-bar-error.co
     MatSnackBarModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatInputModule
+    MatInputModule,
+
+    PortalModule,
+    OverlayModule
  ],
  entryComponents: [
     CodingAlgorithmDialogComponent,
+    DynamicContentTooltipComponent,
     TableConfigDialogComponent,
     SnackBarContentComponent
  ],

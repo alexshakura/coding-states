@@ -132,6 +132,10 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     return this._tableDataService.formatStateCode(stateCode, this.bitStateCapacity);
   }
 
+  public isMuraFsm(): boolean {
+    return this._tableConfig.fsmType === TableDataService.MURA_FSM_TYPE;
+  }
+
   public emitTableUpdate(): void {
     this._tableDataService.emitUpdatedTableData(this.dataSource.data);
   }

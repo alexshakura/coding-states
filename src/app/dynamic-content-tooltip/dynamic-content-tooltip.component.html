@@ -1,0 +1,7 @@
+<div class="dynamic-content-tooltip"
+     [style.transform-origin]="transformOrigin"
+     [@state]="visibility"
+     (@state.start)="animationStart()"
+     (@state.done)="animationDone($event)">
+  <ng-container [cdkPortalOutlet]="contentPortal"></ng-container>
+</div>

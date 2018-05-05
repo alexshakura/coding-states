@@ -29,7 +29,7 @@ export class AppComponent implements OnInit {
     numberOfStates: 8,
     numberOfX: 4,
     numberOfY: 4,
-    fsmType: 'mili'
+    fsmType: 'mura'
   };
 
   public constructor(
@@ -40,7 +40,8 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    setTimeout(() => this.openTableConfigDialog());
+    // setTimeout(() => this.openTableConfigDialog());
+    this.isLoading = false;
   }
 
   public openTableConfigDialog(): void {
