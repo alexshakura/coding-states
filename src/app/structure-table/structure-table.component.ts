@@ -9,7 +9,6 @@ import { Subject } from 'rxjs/Subject';
 @Component({
   selector: 'app-structure-table',
   templateUrl: './structure-table.component.html',
-  styleUrls: ['./structure-table.component.css'],
   host: { class: 'component-wrapper' }
 })
 export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit {

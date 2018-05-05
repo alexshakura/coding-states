@@ -5,16 +5,18 @@
     </div>
 
     <div class="layout-split__item">
-      <div class="layout-inline">
-        <div class="layout-inline__item">
-          <mat-slide-toggle color="accent"
-                            [(ngModel)]="editMode">
-          </mat-slide-toggle>
+      <label>
+        <div class="layout-inline">
+          <div class="layout-inline__item">
+            <mat-slide-toggle color="accent"
+                              [(ngModel)]="editMode">
+            </mat-slide-toggle>
+          </div>
+          <div class="layout-inline__item is--muted-70 is--interactive">
+            Режим редактирования
+          </div>
         </div>
-        <div class="layout-inline__item is--muted-70">
-          Режим редактирования
-        </div>
-      </div>
+      </label>
     </div>
   </div>
 </div>
