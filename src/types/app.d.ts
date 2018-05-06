@@ -49,6 +49,11 @@ declare namespace App {
     hasOperand(operandToCompare: App.Operand): boolean;
   }
 
+  export interface ICodingAlgorithm {
+    getCapacity(numOfStates: number): number;
+    getVertexCodeMap(tableData: App.TableRow[], numOfStates: number): App.TVertexData;
+  }
+
   export type TVertexData = Map<number, number>;
   export type TFunctionMap = Map<number, App.Expression>;
 }

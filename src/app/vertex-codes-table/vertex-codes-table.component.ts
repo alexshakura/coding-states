@@ -4,40 +4,41 @@ import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 
 import { Subject } from 'rxjs/Subject';
+import { BaseComponent } from '../base-component';
 
 
 @Component({
   selector: 'app-vertex-codes-table',
   templateUrl: './vertex-codes-table.component.html',
-  styleUrls: ['./vertex-codes-table.component.scss'],
   host: { class: 'component-wrapper' }
 })
-export class VertexCodesTableComponent implements OnInit, OnDestroy {
+export class VertexCodesTableComponent extends BaseComponent implements OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'code'];
 
   public dataSource: MatTableDataSource<{ id: number, code: number }> = new MatTableDataSource();
-  public bitCapacity: number;
+  public capacity: number;
 
   public triggerMode: string;
-
-  private _destroy$$: Subject<void> = new Subject<void>();
 
   public constructor(
     private _tableDataService: TableDataService,
     private _codingAlgorithmsService: CodingAlgorithmsService
-  ) { }
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this._codingAlgorithmsService.vertexCodes$
+      .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
-      .subscribe((vertexCodes: App.TVertexData) => {
+      .subscribe(([vertexCodes, capacity]: [App.TVertexData, number]) => {
         const newData = [];
 
         vertexCodes.forEach((value, key) => newData.push({ id: key, code: value }));
 
         this.dataSource.data = newData;
-        this.bitCapacity = vertexCodes.size;
+        this.capacity = capacity;
       });
 
     this._codingAlgorithmsService.triggerMode$
@@ -47,13 +48,8 @@ export class VertexCodesTableComponent implements OnInit, OnDestroy {
       });
   }
 
-  public ngOnDestroy(): void {
-    this._destroy$$.next();
-    this._destroy$$.complete();
-  }
-
   public formatStateCode(stateCode: number): string {
-    return this._tableDataService.formatStateCode(stateCode, this.bitCapacity);
+    return this._tableDataService.formatStateCode(stateCode, this.capacity);
   }
 
   public isTriggerModeD(): boolean {

@@ -66,7 +66,11 @@ export class AppComponent implements OnInit {
   }
 
   public openCodingAlgorithmDialog(): void {
-    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent);
+    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent, {
+      data: {
+        tableConfig: this.tableConfig
+      }
+    });
 
     dialogRef.componentInstance.success$
       .takeUntil(dialogRef.afterClosed())

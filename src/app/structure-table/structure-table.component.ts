@@ -23,8 +23,6 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this.conditionalSignals = this._tableDataService.generateConditionalSignals(tableConfig.numberOfX);
     this.outputSignals = this._tableDataService.generateOutputSignals(tableConfig.numberOfY);
 
-    this.bitStateCapacity = Math.ceil(Math.log2(tableConfig.length));
-
     this._tableConfig = tableConfig;
 
     this.emitTableUpdate();
@@ -38,7 +36,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
   public conditionalSignals: App.ConditionalSignal[] = [];
   public outputSignals: number[] = [];
 
-  public bitStateCapacity: number;
+  public capacity: number;
 
   @ViewChild(MatSort) public readonly sort: MatSort;
 
@@ -70,15 +68,16 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this.emitTableUpdate();
 
     this._codingAlgorithmsService.vertexCodes$
+      .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
-      .subscribe((vertexCodes: App.TVertexData) => {
+      .subscribe(([vertexCodes, capacity]: [App.TVertexData, number]) => {
         this.dataSource.data.forEach((tableRow: App.TableRow) => {
           tableRow.codeSrcState = vertexCodes.get(tableRow.srcState);
           tableRow.codeDistState = vertexCodes.get(tableRow.distState);
           tableRow.f = vertexCodes.get(tableRow.distState);
         });
 
-        this.bitStateCapacity = vertexCodes.size;
+        this.capacity = capacity;
       });
    }
 
@@ -128,7 +127,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
   }
 
   public formatStateCode(stateCode: number): string {
-    return this._tableDataService.formatStateCode(stateCode, this.bitStateCapacity);
+    return this._tableDataService.formatStateCode(stateCode, this.capacity);
   }
 
   public isMuraFsm(): boolean {

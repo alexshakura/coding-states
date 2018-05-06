@@ -4,14 +4,15 @@ import { MatTableDataSource } from '@angular/material';
 
 import { Subject } from 'rxjs/Subject';
 import { DisjunctiveExpression } from '../forms/disjunctive-expression';
+import { BaseComponent } from '../base-component';
+
 
 @Component({
   selector: 'app-output-functions-table',
   templateUrl: './output-functions-table.component.html',
-  styleUrls: ['./output-functions-table.component.scss'],
   host: { class: 'component-wrapper' }
 })
-export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
+export class OutputFunctionsTableComponent extends BaseComponent implements OnDestroy, OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
@@ -22,16 +23,20 @@ export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
   private _booleanFunctions: { id: number, function: App.Expression }[] = [];
   private _shefferFunctions: { id: number, function: App.Expression }[] = [];
 
-  private _destroy$$: Subject<void> = new Subject<void>();
 
   public constructor(
     private _codingAlgorithmsService: CodingAlgorithmsService
-  ) { }
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this._codingAlgorithmsService.outputBooleanFunctions$
       .takeUntil(this._destroy$$)
       .subscribe((outputBooleanFunctions: Map<number, App.Expression>) => {
+        this._booleanFunctions = [];
+        this._shefferFunctions = [];
+
         outputBooleanFunctions.forEach((value, key) => {
           this._booleanFunctions.push({
             id: key,
@@ -62,10 +67,5 @@ export class OutputFunctionsTableComponent implements OnDestroy, OnInit {
 
   public isDisjunctiveExpression(expression: App.Expression): expression is DisjunctiveExpression {
     return expression instanceof DisjunctiveExpression;
-  }
-
-  public ngOnDestroy(): void {
-    this._destroy$$.next();
-    this._destroy$$.complete();
   }
 }

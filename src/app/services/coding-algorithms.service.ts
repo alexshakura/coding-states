@@ -12,6 +12,12 @@ import { OneOperand } from '../forms/one-operand';
 import { ConjunctiveExpression } from '../forms/conjunctive-expression';
 import { ConditionSignalOperand } from '../forms/condition-signal-operand';
 import { FrequencyDAlgorithm } from '../algorithms/frequency-d-algorithm';
+import { NStateAlgorithm } from '../algorithms/n-state-d-algorithm';
+import { UnitaryDAlgorithm } from '../algorithms/unitary-d-algorithm';
+import { BaseFsmCoder } from '../fsm-coder/base-fsm-coder';
+import { TableDataService } from './table-data.service';
+import { MiliCoder } from '../fsm-coder/mili-coder';
+import { MuraCoder } from '../fsm-coder/mura-coder';
 
 
 @Injectable()
@@ -19,6 +25,7 @@ export class CodingAlgorithmsService {
 
   public static readonly UNITARY_D_ALGORITHM: string = 'unitary';
   public static readonly FREQUENCY_D_ALGORITHM: string = 'frequency';
+  public static readonly STATE_N_D_ALGORITHM: string = 'by_num_state';
 
   public static readonly DEFAULT_TIMEOUT: number = 1000;
 
@@ -48,9 +55,24 @@ export class CodingAlgorithmsService {
 
   private _transitionBooleanFunctions$$: ReplaySubject<App.TFunctionMap> = new ReplaySubject<App.TFunctionMap>(1);
 
-  constructor() { }
+  public get capacity$(): Observable<number> {
+    return this._capacity$$.asObservable();
+  }
 
-  public code(algorithm: string, tableData: App.TableRow[]): Observable<void> {
+  private _capacity$$: ReplaySubject<number> = new ReplaySubject<number>(1);
+
+  private _algorithmMap: { [propName: string]: App.ICodingAlgorithm } = {
+    [CodingAlgorithmsService.UNITARY_D_ALGORITHM]: new UnitaryDAlgorithm(),
+    [CodingAlgorithmsService.FREQUENCY_D_ALGORITHM]: new FrequencyDAlgorithm(),
+    [CodingAlgorithmsService.STATE_N_D_ALGORITHM]: new NStateAlgorithm()
+  };
+
+  private _fsmMap: { [propName: string]: BaseFsmCoder } = {
+    [TableDataService.MILI_FSM_TYPE]: new MiliCoder(),
+    [TableDataService.MURA_FSM_TYPE]: new MuraCoder()
+  };
+
+  public code(algorithm: string, tableData: App.TableRow[], tableConfig: Readonly<App.TableConfig>): Observable<void> {
     const invalidRows: number[] = this.checkTableData(tableData);
 
     if (invalidRows.length) {
@@ -58,17 +80,21 @@ export class CodingAlgorithmsService {
         .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
 
-    switch (algorithm) {
-      case CodingAlgorithmsService.UNITARY_D_ALGORITHM:
-        this.unitaryD(tableData);
-        break;
-      case CodingAlgorithmsService.FREQUENCY_D_ALGORITHM:
-        this.frequencyD(tableData);
-        break;
-      default:
-        return Observable.throw(null)
-          .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
+    if (!this._algorithmMap[algorithm] || !this._fsmMap[tableConfig.fsmType]) {
+      return Observable.throw(null)
+        .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
+
+    const algorithmCoder = this._algorithmMap[algorithm];
+    const fsmCoder = this._fsmMap[tableConfig.fsmType];
+
+    const vertexCodeMap = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
+    const capacity = algorithmCoder.getCapacity(tableConfig.numberOfStates);
+
+    this._capacity$$.next(capacity);
+    this._vertexCodes$$.next(vertexCodeMap);
+    this._outputBooleanFunctions$$.next(fsmCoder.getOutputBooleanFunctions(tableData));
+    this._transitionBooleanFunctions$$.next(fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity));
 
     return Observable.of(null)
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
@@ -82,82 +108,6 @@ export class CodingAlgorithmsService {
           || (!tableRow.unconditionalX && !tableRow.x.size);
       })
       .map((tableRow: App.TableRow) => tableRow.id);
-  }
-
-  public unitaryD(tableData: App.TableRow[]) {
-    const vertexCodes: App.TVertexData = new Map();
-
-    const tableCodingStates: number[] = tableData.map((TableRow: App.TableRow) => TableRow.distState);
-    const capacity: number = Math.max(...tableCodingStates);
-
-    for (let i: number = 0; i < capacity; i++) {
-      vertexCodes.set(i + 1, 1 << i);
-    }
-
-    const outputBooleanFunctions: App.TFunctionMap = new Map();
-
-    tableData
-      .filter((tableRow: App.TableRow) => tableRow.y.size > 0)
-      .forEach((tableRow: App.TableRow) => {
-        const stateOperand: StateOperand = new StateOperand(tableRow.distState, false);
-
-        tableRow.y.forEach((y: number) => {
-          if (!outputBooleanFunctions.has(y)) {
-            outputBooleanFunctions.set(y, new DisjunctiveExpression([]));
-          }
-
-          const outputBooleanFunction: App.Expression = outputBooleanFunctions.get(y);
-
-          if (!outputBooleanFunction.hasOperand(stateOperand)) {
-            outputBooleanFunction.addOperand(stateOperand);
-          }
-        });
-      });
-
-    const transitionBooleanFunctions: Map<number, App.Expression> = new Map();
-
-    tableData
-      .forEach((tableRow: App.TableRow) => {
-        if (!transitionBooleanFunctions.has(tableRow.distState)) {
-          transitionBooleanFunctions.set(tableRow.distState, new DisjunctiveExpression([]));
-        }
-
-        if (tableRow.unconditionalX || !tableRow.x.size) {
-          return transitionBooleanFunctions
-            .get(tableRow.distState)
-            .addOperand(new StateOperand(tableRow.srcState, false));
-        }
-
-        const rowExpression = new ConjunctiveExpression([new StateOperand(tableRow.srcState, false)]);
-
-        if (!tableRow.unconditionalX) {
-          tableRow.x.forEach((conditionSignal) =>
-            rowExpression.addOperand(new ConditionSignalOperand(conditionSignal.id, conditionSignal.inverted))
-          );
-        }
-
-        transitionBooleanFunctions.get(tableRow.distState).addOperand(rowExpression);
-      });
-
-    this._triggerMode$$.next(CodingAlgorithmsService.D_TRIGGER_MODE);
-
-    this._outputBooleanFunctions$$.next(outputBooleanFunctions);
-    this._transitionBooleanFunctions$$.next(transitionBooleanFunctions);
-
-    this._vertexCodes$$.next(vertexCodes);
-  }
-
-  public frequencyD(tableData: App.TableRow[]) {
-    const handler = new FrequencyDAlgorithm();
-
-    const vertexCodeMap = handler.getVertexCodeMap(tableData);
-    const outputBooleanFunctions = handler.getOutputBooleanFunctions(tableData);
-    const transitionBooleanFunctions = handler.getTransitionBooleanFunctions(tableData, vertexCodeMap);
-
-    this._triggerMode$$.next(CodingAlgorithmsService.D_TRIGGER_MODE);
-    this._outputBooleanFunctions$$.next(outputBooleanFunctions);
-    this._transitionBooleanFunctions$$.next(transitionBooleanFunctions);
-    this._vertexCodes$$.next(vertexCodeMap);
   }
 
   // DNF -> Sheffer Basis

@@ -102,11 +102,11 @@ export class TableDataService {
       );
   }
 
-  public formatStateCode(stateCode: number, bitStateCapacity: number): string {
+  public formatStateCode(stateCode: number, capacity: number): string {
     const formattedCodingState: string = stateCode.toString(2);
 
-    return bitStateCapacity > 1
-      ? '0'.repeat(bitStateCapacity - formattedCodingState.length) + formattedCodingState
+    return capacity > 1
+      ? '0'.repeat(capacity - formattedCodingState.length) + formattedCodingState
       : formattedCodingState;
   }
 
