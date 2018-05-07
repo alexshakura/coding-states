@@ -1,8 +1,9 @@
 import { BaseFsmCoder } from "./base-fsm-coder";
-import { StateOperand } from "../forms/state-operand";
-import { ConjunctiveExpression } from "../forms/conjunctive-expression";
-import { ConditionSignalOperand } from "../forms/condition-signal-operand";
-import { DisjunctiveExpression } from "../forms/disjunctive-expression";
+import { StateOperand } from "../../shared/expression/state-operand";
+import { ConjunctiveExpression } from "../../shared/expression/conjunctive-expression";
+import { ConditionSignalOperand } from "../../shared/expression/condition-signal-operand";
+import { DisjunctiveExpression } from "../../shared/expression/disjunctive-expression";
+
 
 export class MiliCoder extends BaseFsmCoder {
 

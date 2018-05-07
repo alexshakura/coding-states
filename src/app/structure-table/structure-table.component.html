@@ -9,7 +9,8 @@
         <div class="layout-inline">
           <div class="layout-inline__item">
             <mat-slide-toggle color="accent"
-                              [(ngModel)]="editMode">
+                              [(ngModel)]="editMode"
+                              [disabled]="disabled">
             </mat-slide-toggle>
           </div>
           <div class="layout-inline__item is--muted-70 is--interactive">

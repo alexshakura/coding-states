@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material';
 
 import { Observable } from 'rxjs/Observable';
 
-import { SnackBarContentComponent } from '../snack-bar-content/snack-bar-error.component';
+import { SnackBarContentComponent } from '../shared/components/snack-bar-content/snack-bar-content.component';
 
 
 @Injectable()

@@ -27,7 +27,7 @@ import { merge } from 'rxjs/observable/merge';
 import { take } from 'rxjs/operators/take';
 import { Subject } from 'rxjs/Subject';
 
-import { DynamicContentTooltipComponent } from '../dynamic-content-tooltip/dynamic-content-tooltip.component';
+import { DynamicContentTooltipComponent } from '../components/dynamic-content-tooltip/dynamic-content-tooltip.component';
 
 type TInvertedPossition = {
   x: HorizontalConnectionPos,

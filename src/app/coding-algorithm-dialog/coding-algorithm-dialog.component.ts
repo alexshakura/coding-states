@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
-import { BaseDialogComponent } from '../base-dialog-component';
+import { BaseDialogComponent } from '../shared/base-dialog-component';
 
 
 @Component({

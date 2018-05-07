@@ -1,14 +1,14 @@
-import { Component, Input, HostBinding } from '@angular/core';
-import { Expression } from '../forms/expression';
-import { Operand } from '../forms/operand';
-import { DisjunctiveExpression } from '../forms/disjunctive-expression';
-import { ConjunctiveExpression } from '../forms/conjunctive-expression';
+import { Component, Input } from '@angular/core';
+
+import { Expression } from '../../expression/expression';
+import { Operand } from '../../expression/operand';
+import { DisjunctiveExpression } from '../../expression/disjunctive-expression';
+import { ConjunctiveExpression } from '../../expression/conjunctive-expression';
 
 
 @Component({
   selector: 'app-discrete-expression',
   templateUrl: './discrete-expression.component.html',
-  styleUrls: ['./discrete-expression.component.scss'],
   host: { class: 'component-wrapper' }
 })
 export class DiscreteExpressionComponent {

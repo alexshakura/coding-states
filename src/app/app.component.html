@@ -9,15 +9,25 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="generateDoc()">
-            Сохранить
+                  (click)="generateDoc()"
+                  [disabled]="isGeneratingDoc">
+            <ng-container *ngIf="!isGeneratingDoc">
+              Сохранить
+            </ng-container>
+
+            <mat-spinner *ngIf="isGeneratingDoc"
+                         [diameter]="20"
+                         strokeWidth="2"
+                         app-theme="light">
+            </mat-spinner>
           </button>
         </div>
 
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="openCodingAlgorithmDialog()">
+                  (click)="openCodingAlgorithmDialog()"
+                  [disabled]="isGeneratingDoc">
             Закодировать
           </button>
         </div>
@@ -25,7 +35,8 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="openTableConfigDialog()">
+                  (click)="openTableConfigDialog()"
+                  [disabled]="isGeneratingDoc">
             Изменить параметры СТП
           </button>
         </div>
@@ -37,7 +48,8 @@
     <mat-tab-group>
       <mat-tab label="Структурная таблица переходов">
         <app-structure-table *ngIf="!isLoading"
-                             [tableConfig]="tableConfig">
+                             [tableConfig]="tableConfig"
+                             [disabled]="isGeneratingDoc">
         </app-structure-table>
       </mat-tab>
 

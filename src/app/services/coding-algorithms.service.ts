@@ -2,22 +2,23 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
-import { DisjunctiveExpression } from '../forms/disjunctive-expression';
-import { StateOperand } from '../forms/state-operand';
-import { ShefferExpression } from '../forms/sheffer-expression';
-import { Expression } from '../forms/expression';
-import { Operand } from '../forms/operand';
-import { SignalOperand } from '../forms/signal-operand';
-import { OneOperand } from '../forms/one-operand';
-import { ConjunctiveExpression } from '../forms/conjunctive-expression';
-import { ConditionSignalOperand } from '../forms/condition-signal-operand';
-import { FrequencyDAlgorithm } from '../algorithms/frequency-d-algorithm';
-import { NStateAlgorithm } from '../algorithms/n-state-d-algorithm';
-import { UnitaryDAlgorithm } from '../algorithms/unitary-d-algorithm';
-import { BaseFsmCoder } from '../fsm-coder/base-fsm-coder';
+
+import { BaseFsmCoder } from '../coding-algorithms/fsm-coder/base-fsm-coder';
+import { ConditionSignalOperand } from '../shared/expression/condition-signal-operand';
+import { ConjunctiveExpression } from '../shared/expression/conjunctive-expression';
+import { DisjunctiveExpression } from '../shared/expression/disjunctive-expression';
+import { Expression } from '../shared/expression/expression';
+import { FrequencyDAlgorithm } from '../coding-algorithms/algorithms/frequency-d-algorithm';
+import { MiliCoder } from '../coding-algorithms/fsm-coder/mili-coder';
+import { MuraCoder } from '../coding-algorithms/fsm-coder/mura-coder';
+import { NStateAlgorithm } from '../coding-algorithms/algorithms/n-state-d-algorithm';
+import { OneOperand } from '../shared/expression/one-operand';
+import { Operand } from '../shared/expression/operand';
+import { ShefferExpression } from '../shared/expression/sheffer-expression';
+import { SignalOperand } from '../shared/expression/signal-operand';
+import { StateOperand } from '../shared/expression/state-operand';
 import { TableDataService } from './table-data.service';
-import { MiliCoder } from '../fsm-coder/mili-coder';
-import { MuraCoder } from '../fsm-coder/mura-coder';
+import { UnitaryDAlgorithm } from '../coding-algorithms/algorithms/unitary-d-algorithm';
 
 
 @Injectable()

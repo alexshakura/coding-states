@@ -30,6 +30,17 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
 
   private _tableConfig: App.TableConfig;
 
+  @Input() public set disabled(isDisabled: boolean) {
+    this.editMode = !isDisabled;
+    this._disabled = isDisabled;
+  }
+
+  public get disabled(): boolean {
+    return this._disabled;
+  }
+
+  private _disabled: boolean = false;
+
   public editMode: boolean = true;
 
   public states: number[] = [];

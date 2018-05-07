@@ -4,7 +4,7 @@ import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 
 import { Subject } from 'rxjs/Subject';
-import { BaseComponent } from '../base-component';
+import { BaseComponent } from '../shared/base-component';
 
 
 @Component({

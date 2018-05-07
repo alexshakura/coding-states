@@ -1,10 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 
-import { Subject } from 'rxjs/Subject';
-import { DisjunctiveExpression } from '../forms/disjunctive-expression';
-import { BaseComponent } from '../base-component';
+import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { DisjunctiveExpression } from '../shared/expression/disjunctive-expression';
+import { BaseComponent } from '../shared/base-component';
 
 
 @Component({
@@ -12,7 +11,7 @@ import { BaseComponent } from '../base-component';
   templateUrl: './output-functions-table.component.html',
   host: { class: 'component-wrapper' }
 })
-export class OutputFunctionsTableComponent extends BaseComponent implements OnDestroy, OnInit {
+export class OutputFunctionsTableComponent extends BaseComponent implements OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 

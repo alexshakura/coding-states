@@ -5,7 +5,7 @@ import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import { BaseDialogComponent } from '../base-dialog-component';
+import { BaseDialogComponent } from '../shared/base-dialog-component';
 
 const fieldValidators: ValidatorFn[] = [
   Validators.required,
