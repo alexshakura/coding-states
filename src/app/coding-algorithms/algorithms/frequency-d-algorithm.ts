@@ -1,3 +1,5 @@
+type TVertexFrequencyValue = { id: number, frequency: number };
+
 export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
 
   public getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData {
@@ -35,8 +37,8 @@ export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
     return new Map(sortedByIndexVertexes);
   }
 
-  private _getSortedByFrequencyVertexes(tableData: App.ITableRow[]): { id: number, frequency: number}[] {
-    const vertexFrequencyMap: Map<number, { id: number, frequency: number }> = new Map();
+  private _getSortedByFrequencyVertexes(tableData: App.ITableRow[]): TVertexFrequencyValue[] {
+    const vertexFrequencyMap: Map<number, TVertexFrequencyValue> = new Map();
 
     tableData.forEach((tableRow: App.ITableRow) => {
       const distStateId: number = tableRow.distState.id;
@@ -49,7 +51,7 @@ export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
     });
 
     return Array.from(vertexFrequencyMap.values())
-      .sort((a, b) => {
+      .sort((a: TVertexFrequencyValue, b: TVertexFrequencyValue) => {
         if (a.frequency < b.frequency) {
           return 1;
         }

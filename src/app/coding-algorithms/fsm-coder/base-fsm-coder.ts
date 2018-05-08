@@ -1,6 +1,5 @@
-import { StateOperand } from "../../shared/expression/state-operand";
-import { ConjunctiveExpression } from "../../shared/expression/conjunctive-expression";
-import { DisjunctiveExpression } from "../../shared/expression/disjunctive-expression";
+import { ConjunctiveExpression } from '../../shared/expression/conjunctive-expression';
+import { DisjunctiveExpression } from '../../shared/expression/disjunctive-expression';
 
 
 export abstract class BaseFsmCoder {
@@ -18,12 +17,12 @@ export abstract class BaseFsmCoder {
       const fCode: number = vertexCodesMap.get(tableRow.distState.id);
 
       const stateOperand: App.ISignalOperand = tableRow.srcState;
-      let conditionalExpression;
+      let conditionalExpression: App.IExpression;
 
       if (!tableRow.unconditionalX) {
         conditionalExpression = new ConjunctiveExpression([stateOperand]);
 
-        tableRow.x.forEach((conditionalSignal) => {
+        tableRow.x.forEach((conditionalSignal: App.ISignalOperand) => {
           conditionalExpression.addOperand(conditionalSignal);
         });
       }
@@ -37,7 +36,7 @@ export abstract class BaseFsmCoder {
             transitionBooleanFunctions.set(functionIndex, new DisjunctiveExpression([]));
           }
 
-          const transitionBooleanFunction = transitionBooleanFunctions.get(functionIndex);
+          const transitionBooleanFunction: App.IExpression = transitionBooleanFunctions.get(functionIndex);
 
           if (conditionalExpression) {
             transitionBooleanFunction.addOperand(conditionalExpression);

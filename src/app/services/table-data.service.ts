@@ -53,7 +53,6 @@ export class TableDataService {
 
 
     if (tableData.length > newLength) {
-      // check this
       newTableData.splice(-1, tableData.length - newLength);
     } else {
       newTableData.push(

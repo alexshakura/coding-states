@@ -4,9 +4,6 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { BaseFsmCoder } from '../coding-algorithms/fsm-coder/base-fsm-coder';
-import { ConditionSignalOperand } from '../shared/expression/condition-signal-operand';
-import { ConjunctiveExpression } from '../shared/expression/conjunctive-expression';
-import { DisjunctiveExpression } from '../shared/expression/disjunctive-expression';
 import { Expression } from '../shared/expression/expression';
 import { FrequencyDAlgorithm } from '../coding-algorithms/algorithms/frequency-d-algorithm';
 import { MiliCoder } from '../coding-algorithms/fsm-coder/mili-coder';
@@ -16,7 +13,6 @@ import { OneOperand } from '../shared/expression/one-operand';
 import { Operand } from '../shared/expression/operand';
 import { ShefferExpression } from '../shared/expression/sheffer-expression';
 import { SignalOperand } from '../shared/expression/signal-operand';
-import { StateOperand } from '../shared/expression/state-operand';
 import { TableDataService } from './table-data.service';
 import { UnitaryDAlgorithm } from '../coding-algorithms/algorithms/unitary-d-algorithm';
 
@@ -86,17 +82,17 @@ export class CodingAlgorithmsService {
         .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
 
-    const algorithmCoder = this._algorithmMap[algorithm];
-    const fsmCoder = this._fsmMap[tableConfig.fsmType];
+    const algorithmCoder: App.ICodingAlgorithm = this._algorithmMap[algorithm];
+    const fsmCoder: BaseFsmCoder = this._fsmMap[tableConfig.fsmType];
 
-    const vertexCodeMap = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
-    const capacity = algorithmCoder.getCapacity(tableConfig.numberOfStates);
+    const vertexCodeMap: App.TVertexData = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
+    const capacity: number = algorithmCoder.getCapacity(tableConfig.numberOfStates);
 
-    const outputBooleanFunctions = fsmCoder.getOutputBooleanFunctions(tableData);
-    const outputShefferFunctions = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
+    const outputBooleanFunctions: App.TFunctionMap = fsmCoder.getOutputBooleanFunctions(tableData);
+    const outputShefferFunctions: App.TFunctionMap = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
 
-    const transitionBooleanFunctions = fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity);
-    const transitionShefferFunctions = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
+    const transitionBooleanFunctions: App.TFunctionMap = fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity);
+    const transitionShefferFunctions: App.TFunctionMap = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
 
     this._capacity$$.next(capacity);
     this._vertexCodes$$.next(vertexCodeMap);
@@ -128,7 +124,7 @@ export class CodingAlgorithmsService {
   private _convertBooleanFunctionsToSheffer(booleanFunctions: App.TFunctionMap): App.TFunctionMap {
     const shefferFunctions: App.TFunctionMap = new Map<number, App.IExpression>();
 
-    booleanFunctions.forEach((val, key) => {
+    booleanFunctions.forEach((val: App.IExpression, key: number) => {
       shefferFunctions.set(key, this.convertToShefferBasis(val));
     });
 
@@ -157,7 +153,7 @@ export class CodingAlgorithmsService {
       return shefferExpression;
     }
 
-    expression.operands.forEach((operand) => {
+    expression.operands.forEach((operand: App.IExpression | App.IOperand) => {
       if (operand instanceof Expression) {
         shefferExpression.addOperand(new ShefferExpression(operand.operands));
       }

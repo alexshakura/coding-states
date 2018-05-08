@@ -1,9 +1,7 @@
 import { Component, Input } from '@angular/core';
 
-import { Expression } from '../../expression/expression';
 import { Operand } from '../../expression/operand';
 import { DisjunctiveExpression } from '../../expression/disjunctive-expression';
-import { ConjunctiveExpression } from '../../expression/conjunctive-expression';
 
 
 @Component({
@@ -17,7 +15,7 @@ export class DiscreteExpressionComponent {
   @Input() public function: App.IExpression;
   @Input() public nested: boolean = false;
 
-  public isOperand(operand): boolean {
+  public isOperand(operand): operand is Operand {
     return operand instanceof Operand;
   }
 

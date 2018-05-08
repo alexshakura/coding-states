@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
+import { BaseDialogComponent } from '../shared/base-dialog-component';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
-import { BaseDialogComponent } from '../shared/base-dialog-component';
 
 
 @Component({
@@ -18,8 +18,9 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
   public readonly FREQUENCY_D_ALGORITHM: string = CodingAlgorithmsService.FREQUENCY_D_ALGORITHM;
   public readonly STATE_N_D_ALGORITHM: string = CodingAlgorithmsService.STATE_N_D_ALGORITHM;
 
-  public readonly INVALID_ROWS_ERROR_STRING: string = 'Заполните следующие ряды: ';
-  public readonly INVALID_ROW_ERROR_STRING: string = 'Заполните следующий ряд: ';
+  public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм кодирования';
+  public readonly INVALID_ROWS_ERROR: string = 'Заполните следующие ряды: ';
+  public readonly INVALID_ROW_ERROR: string = 'Заполните следующий ряд: ';
   public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
   public codingAlgorithm: string;
@@ -38,7 +39,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
 
   public performCoding(): void {
     if (!this.codingAlgorithm) {
-      this._snackBarService.showError('Выберите алгоритм кодирования');
+      this._snackBarService.showError(this.UNSELECTED_ALGORITHM_ERROR);
       return;
     }
 
@@ -63,8 +64,8 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
             const rowsSlice: number[] = invalidRows.slice(0, 3);
 
             errorMessage = rowsSlice.length > 1
-              ? this.INVALID_ROWS_ERROR_STRING
-              : this.INVALID_ROW_ERROR_STRING;
+              ? this.INVALID_ROWS_ERROR
+              : this.INVALID_ROW_ERROR;
 
             errorMessage += rowsSlice.join(', ');
           }

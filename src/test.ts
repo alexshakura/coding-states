@@ -7,7 +7,6 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 import { Observable } from 'rxjs/Observable';
-import { TranslateLoader, TranslateService } from '@ngx-translate/core';
 
 declare const require: any;
 
