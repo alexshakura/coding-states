@@ -1,22 +1,27 @@
 {
-  "productName": "angular-electron",
+  "productName": "coding-states",
   "directories": {
     "output": "app-builds"
   },
+  "icon": "dist/icon.png",
+  "artifactName": "${productName}.${ext}",
+  "extraResources": [
+    {
+      "from": "dist/assets/doc-templates/table_min.docx",
+      "to": "assets/doc-templates/table_min.docx"
+    }
+  ],
   "win": {
-    "icon": "dist",
     "target": [
       "portable"
     ]
   },
   "mac": {
-    "icon": "dist",
     "target": [
       "dmg"
     ]
   },
   "linux": {
-    "icon": "dist",
     "target": [
       "AppImage"
     ]
