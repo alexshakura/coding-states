@@ -3,7 +3,7 @@ import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
 import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 
-import { Subject } from 'rxjs/Subject';
+import { BaseComponent } from '../shared/base-component';
 
 
 @Component({
@@ -11,8 +11,8 @@ import { Subject } from 'rxjs/Subject';
   templateUrl: './structure-table.component.html',
   host: { class: 'component-wrapper' }
 })
-export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input('tableConfig') public set defineTableData(tableConfig: App.TableConfig) {
+export class StructureTableComponent extends BaseComponent implements OnInit, AfterViewInit {
+  @Input('tableConfig') public set defineTableData(tableConfig: App.ITableConfig) {
     if (!this._tableConfig || this._tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
       this.dataSource.data = this._tableDataService.generateRaw(tableConfig.length);
     } else {
@@ -28,7 +28,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this.emitTableUpdate();
   }
 
-  private _tableConfig: App.TableConfig;
+  private _tableConfig: App.ITableConfig;
 
   @Input() public set disabled(isDisabled: boolean) {
     this.editMode = !isDisabled;
@@ -43,15 +43,15 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
 
   public editMode: boolean = true;
 
-  public states: number[] = [];
-  public conditionalSignals: App.ConditionalSignal[] = [];
+  public states: App.ISignalOperand[] = [];
+  public conditionalSignals: App.ISignalOperand[] = [];
   public outputSignals: number[] = [];
 
   public capacity: number;
 
   @ViewChild(MatSort) public readonly sort: MatSort;
 
-  public dataSource: MatTableDataSource<App.TableRow> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<App.ITableRow> = new MatTableDataSource();
 
   public readonly displayedColumns: string[] = [
     'num',
@@ -67,12 +67,13 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
   @ViewChild('myPaginator')
   public myPaginator: MatPaginator;
 
-  private _destroy$$: Subject<void> = new Subject<void>();
 
   public constructor(
     private _tableDataService: TableDataService,
     private _codingAlgorithmsService: CodingAlgorithmsService
-  ) { }
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
     this.dataSource.data = this._tableDataService.getMockDataForUnitaryD();
@@ -82,32 +83,27 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
       .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
       .subscribe(([vertexCodes, capacity]: [App.TVertexData, number]) => {
-        this.dataSource.data.forEach((tableRow: App.TableRow) => {
-          tableRow.codeSrcState = vertexCodes.get(tableRow.srcState);
-          tableRow.codeDistState = vertexCodes.get(tableRow.distState);
-          tableRow.f = vertexCodes.get(tableRow.distState);
+        this.dataSource.data.forEach((tableRow: App.ITableRow) => {
+          tableRow.codeSrcState = vertexCodes.get(tableRow.srcState.id);
+          tableRow.codeDistState = vertexCodes.get(tableRow.distState.id);
+          tableRow.f = tableRow.codeDistState;
         });
 
         this.capacity = capacity;
       });
-   }
-
-   public ngOnDestroy(): void {
-     this._destroy$$.next();
-     this._destroy$$.complete();
-   }
+  }
 
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.myPaginator;
     this.dataSource.sort = this.sort;
   }
 
-  public getSignalsIterator(signalContainer: Set<number | App.ConditionalSignal>): (number | App.ConditionalSignal)[] {
+  public getSignalsIterator(signalContainer: Set<number | App.ISignalOperand>): (number | App.ISignalOperand)[] {
     return Array.from(signalContainer);
   }
 
   public isConditionalSignalDisabled(
-    tableRow: { unconditionalX: boolean, x: Set<App.ConditionalSignal> },
+    tableRow: { unconditionalX: boolean, x: Set<App.ISignalOperand> },
     currentIndex: number,
     isInverted: boolean
   ): boolean {
@@ -125,7 +121,7 @@ export class StructureTableComponent implements OnInit, OnDestroy, AfterViewInit
     this.emitTableUpdate();
   }
 
-  public selectSignal(value: number, signalContainer: Set<number | App.ConditionalSignal>): void {
+  public selectSignal(value: number, signalContainer: Set<number | App.ISignalOperand>): void {
     signalContainer.has(value)
       ? signalContainer.delete(value)
       : signalContainer.add(value);

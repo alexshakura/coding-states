@@ -1,5 +1,5 @@
 declare namespace App {
-  export interface TableConfig {
+  export interface ITableConfig {
     length: number;
     numberOfStates: number;
     numberOfX: number;
@@ -9,53 +9,48 @@ declare namespace App {
 
   export type TFsmType = 'mili' | 'mura';
 
-  export interface TableRow {
+  export interface ITableRow {
     id: number;
-    srcState: number;
+    srcState: ISignalOperand;
     codeSrcState: number;
-    distState: number;
+    distState: ISignalOperand;
     codeDistState: number;
-    x: Set<ConditionalSignal>;
+    x: Set<ISignalOperand>;
     unconditionalX: boolean;
     y: Set<number>;
     f: number;
   }
 
-  export interface ConditionalSignal {
-    id: number;
-    inverted: boolean
-  }
-
-  export interface Operand {
+  export interface IOperand {
     sign: string;
-    equalTo(operand: App.Operand): boolean;
-    copy(): App.Operand;
+    equalTo(operand: IOperand): boolean;
+    copy(): IOperand;
   }
 
-  export interface SignalOperand extends Operand {
+  export interface ISignalOperand extends IOperand {
     id: number;
     inverted: boolean;
   }
 
-  export interface ConstantOperand extends Operand {
+  export interface IConstantOperand extends IOperand {
     value: number;
   }
 
-  export interface Expression {
+  export interface IExpression {
     sign: string;
-    operands: (Operand | Expression)[];
+    operands: (IOperand | IExpression)[];
 
-    addOperand(newOperand: (App.Operand | App.Expression)): void;
-    hasOperand(operandToCompare: App.Operand): boolean;
+    addOperand(newOperand: (App.IOperand | App.IExpression)): void;
+    hasOperand(operandToCompare: App.IOperand): boolean;
   }
 
   export interface ICodingAlgorithm {
     getCapacity(numOfStates: number): number;
-    getVertexCodeMap(tableData: App.TableRow[], numOfStates: number): App.TVertexData;
+    getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData;
   }
 
   export type TVertexData = Map<number, number>;
-  export type TFunctionMap = Map<number, App.Expression>;
+  export type TFunctionMap = Map<number, App.IExpression>;
 
   export interface IFunctions {
     boolean: TFunctionMap;

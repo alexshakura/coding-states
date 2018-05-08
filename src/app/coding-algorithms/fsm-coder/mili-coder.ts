@@ -1,27 +1,26 @@
 import { BaseFsmCoder } from "./base-fsm-coder";
 import { StateOperand } from "../../shared/expression/state-operand";
 import { ConjunctiveExpression } from "../../shared/expression/conjunctive-expression";
-import { ConditionSignalOperand } from "../../shared/expression/condition-signal-operand";
 import { DisjunctiveExpression } from "../../shared/expression/disjunctive-expression";
 
 
 export class MiliCoder extends BaseFsmCoder {
 
-  public getOutputBooleanFunctions(tableData: App.TableRow[]): App.TFunctionMap {
+  public getOutputBooleanFunctions(tableData: App.ITableRow[]): App.TFunctionMap {
     const outputBooleanFunctions: App.TFunctionMap = new Map();
 
     tableData
-      .filter((tableRow: App.TableRow) => tableRow.y.size > 0)
-      .forEach((tableRow: App.TableRow) => {
-        const stateOperand: StateOperand = new StateOperand(tableRow.srcState, false);
+      .filter((tableRow: App.ITableRow) => tableRow.y.size > 0)
+      .forEach((tableRow: App.ITableRow) => {
+        const stateOperand: App.ISignalOperand = tableRow.srcState;
 
-        let conditionalExpression: App.Expression;
+        let conditionalExpression: App.IExpression;
 
         if (!tableRow.unconditionalX) {
           conditionalExpression = new ConjunctiveExpression([stateOperand]);
 
           tableRow.x.forEach((conditionalSignal) => {
-            conditionalExpression.addOperand(new ConditionSignalOperand(conditionalSignal.id, conditionalSignal.inverted));
+            conditionalExpression.addOperand(conditionalSignal);
           });
         }
 
@@ -30,7 +29,7 @@ export class MiliCoder extends BaseFsmCoder {
             outputBooleanFunctions.set(y, new DisjunctiveExpression([]));
           }
 
-          const outputBooleanFunction: App.Expression = outputBooleanFunctions.get(y);
+          const outputBooleanFunction: App.IExpression = outputBooleanFunctions.get(y);
 
           if (conditionalExpression) {
             outputBooleanFunction.addOperand(conditionalExpression);

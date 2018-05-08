@@ -35,7 +35,7 @@ export class AppComponent implements OnInit {
 
   public isGeneratingDoc: boolean = false;
 
-  public tableConfig: App.TableConfig = {
+  public tableConfig: App.ITableConfig = {
     length: 16,
     numberOfStates: 8,
     numberOfX: 4,
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 
     dialogRef.componentInstance.success$
       .takeUntil(dialogRef.afterClosed())
-      .subscribe(([tableConfig, successMessage]: [App.TableConfig, string]) => {
+      .subscribe(([tableConfig, successMessage]: [App.ITableConfig, string]) => {
         this.tableConfig = tableConfig;
         this._snackBarService.showMessage(successMessage);
         this.isTableCoded = false;
@@ -113,7 +113,7 @@ export class AppComponent implements OnInit {
         this._codingAlgorithmsService.outputFunctions$,
         this._codingAlgorithmsService.transitionFunctions$
       )
-      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [App.TableRow[], number, App.IFunctions, App.IFunctions]) => {
+      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [App.ITableRow[], number, App.IFunctions, App.IFunctions]) => {
         const updatedTableData = tableData.map((tableRow) => {
           return {
             ...tableRow,

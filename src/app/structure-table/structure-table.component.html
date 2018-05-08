@@ -39,7 +39,7 @@
       <div class="layout-inline">
         <div class="layout-inline__item">
           <ng-container *ngIf="row.srcState; else emptyValue">
-            a<sub>{{ row.srcState }}</sub>
+            a<sub>{{ row.srcState.id }}</sub>
           </ng-container>
         </div>
         <div *ngIf="editMode"
@@ -54,10 +54,10 @@
 
           <mat-menu #statesMenu="matMenu"
                     [overlapTrigger]="false">
-            <button *ngFor="let stateIndex of states"
-                    (click)="row.srcState = stateIndex; emitTableUpdate()"
+            <button *ngFor="let state of states"
+                    (click)="row.srcState = state; emitTableUpdate()"
                     mat-menu-item>
-              a<sub>{{ stateIndex }}</sub>
+              a<sub>{{ state.id }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -89,7 +89,7 @@
       <div class="layout-inline">
         <div class="layout-inline__item">
           <ng-container *ngIf="row.distState; else emptyValue">
-            a<sub>{{ row.distState }}</sub>
+            a<sub>{{ row.distState.id }}</sub>
           </ng-container>
         </div>
         <div *ngIf="editMode"
@@ -104,10 +104,10 @@
 
           <mat-menu #statesMenu="matMenu"
                     [overlapTrigger]="false">
-            <button *ngFor="let stateIndex of states"
-                    (click)="row.distState = stateIndex; emitTableUpdate()"
+            <button *ngFor="let state of states"
+                    (click)="row.distState = state; emitTableUpdate()"
                     mat-menu-item>
-              a<sub>{{ stateIndex }}</sub>
+              a<sub>{{ state.id }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -213,8 +213,8 @@
       <div class="layout-inline layout-inline--0px">
         <div class="layout-inline__item layout-inline__item--60per">
           <div *ngIf="row.y.size > 0; else emptyValue">
-            <ng-container *ngFor="let outputSignal of getSignalsIterator(row.y)">
-              y <sub>{{ outputSignal}}</sub>
+            <ng-container *ngFor="let outputSignal of getSignalsIterator(row.y); last as isLast">
+              y <sub>{{ outputSignal}}</sub><ng-container *ngIf="row.y.size > 1 && !isLast">,</ng-container>
             </ng-container>
           </div>
         </div>

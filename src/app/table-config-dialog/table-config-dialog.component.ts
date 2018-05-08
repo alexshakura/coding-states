@@ -19,7 +19,7 @@ const fieldValidators: ValidatorFn[] = [
   templateUrl: './table-config-dialog.component.html',
   host: { class: 'component-wrapper' }
 })
-export class TableConfigDialogComponent extends BaseDialogComponent<[App.TableConfig, string], void> {
+export class TableConfigDialogComponent extends BaseDialogComponent<[App.ITableConfig, string], void> {
 
   public readonly ERROR_MESSAGE: string = 'В форме присутствуют ошибки';
   public readonly CREATE_SUCCESS_MESSAGE: string = 'Параметры СТП были успешно заданы';
@@ -40,7 +40,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[App.TableCo
 
   public constructor(
     @Inject(MAT_DIALOG_DATA) public data: {
-      tableConfig: App.TableConfig,
+      tableConfig: App.ITableConfig,
       isInitialized: boolean
     },
     private _dialogRef: MatDialogRef<TableConfigDialogComponent>,
@@ -73,7 +73,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[App.TableCo
     Observable.of(this.tableConfigForm.getRawValue())
       .delay(1000)
       .takeUntil(this._destroy$$)
-      .subscribe((updatedConfig: App.TableConfig) => {
+      .subscribe((updatedConfig: App.ITableConfig) => {
         for (const key in updatedConfig) {
           updatedConfig[key] = Number(updatedConfig[key]);
         }

@@ -16,10 +16,10 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
-  public dataSource: MatTableDataSource<{ id: number, function: App.Expression }> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<{ id: number, function: App.IExpression }> = new MatTableDataSource();
 
-  private _booleanFunctions: { id: number, function: App.Expression }[] = [];
-  private _shefferFunctions: { id: number, function: App.Expression }[] = [];
+  private _booleanFunctions: { id: number, function: App.IExpression }[] = [];
+  private _shefferFunctions: { id: number, function: App.IExpression }[] = [];
 
   private _destroy$$: Subject<void> = new Subject<void>();
 

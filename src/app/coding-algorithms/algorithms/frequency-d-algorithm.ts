@@ -1,6 +1,6 @@
 export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
 
-  public getVertexCodeMap(tableData: App.TableRow[], numOfStates: number): App.TVertexData {
+  public getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData {
     const capacity: number = this.getCapacity(numOfStates);
 
     const sortedByFrequencyVertexes: { id: number, frequency: number }[] = this._getSortedByFrequencyVertexes(tableData);
@@ -35,15 +35,17 @@ export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
     return new Map(sortedByIndexVertexes);
   }
 
-  private _getSortedByFrequencyVertexes(tableData: App.TableRow[]): { id: number, frequency: number}[] {
+  private _getSortedByFrequencyVertexes(tableData: App.ITableRow[]): { id: number, frequency: number}[] {
     const vertexFrequencyMap: Map<number, { id: number, frequency: number }> = new Map();
 
-    tableData.forEach((tableRow: App.TableRow) => {
-      if (!vertexFrequencyMap.has(tableRow.distState)) {
-        vertexFrequencyMap.set(tableRow.distState, { id: tableRow.distState, frequency: 0 });
+    tableData.forEach((tableRow: App.ITableRow) => {
+      const distStateId: number = tableRow.distState.id;
+
+      if (!vertexFrequencyMap.has(distStateId)) {
+        vertexFrequencyMap.set(distStateId, { id: distStateId, frequency: 0 });
       }
 
-      vertexFrequencyMap.get(tableRow.distState).frequency++;
+      vertexFrequencyMap.get(distStateId).frequency++;
     });
 
     return Array.from(vertexFrequencyMap.values())

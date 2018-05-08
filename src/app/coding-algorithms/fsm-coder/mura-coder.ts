@@ -5,20 +5,20 @@ import { DisjunctiveExpression } from "../../shared/expression/disjunctive-expre
 
 export class MuraCoder extends BaseFsmCoder {
 
-  public getOutputBooleanFunctions(tableData: App.TableRow[]): App.TFunctionMap {
+  public getOutputBooleanFunctions(tableData: App.ITableRow[]): App.TFunctionMap {
     const outputBooleanFunctions: App.TFunctionMap = new Map();
 
     tableData
-      .filter((tableRow: App.TableRow) => tableRow.y.size > 0)
-      .forEach((tableRow: App.TableRow) => {
-        const stateOperand: StateOperand = new StateOperand(tableRow.distState, false);
+      .filter((tableRow: App.ITableRow) => tableRow.y.size > 0)
+      .forEach((tableRow: App.ITableRow) => {
+        const stateOperand: App.ISignalOperand = tableRow.distState;
 
         tableRow.y.forEach((y: number) => {
           if (!outputBooleanFunctions.has(y)) {
             outputBooleanFunctions.set(y, new DisjunctiveExpression([]));
           }
 
-          const outputBooleanFunction: App.Expression = outputBooleanFunctions.get(y);
+          const outputBooleanFunction: App.IExpression = outputBooleanFunctions.get(y);
 
           if (!outputBooleanFunction.hasOperand(stateOperand)) {
             outputBooleanFunction.addOperand(stateOperand);

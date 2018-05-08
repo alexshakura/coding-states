@@ -4,7 +4,7 @@ export class OneOperand extends ConstantOperand {
   public readonly value: number = 1;
   public readonly sign: string = '1';
 
-  public copy(): App.Operand {
+  public copy(): App.IOperand {
     return new OneOperand();
   }
 }

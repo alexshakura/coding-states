@@ -73,7 +73,7 @@ export class CodingAlgorithmsService {
     [TableDataService.MURA_FSM_TYPE]: new MuraCoder()
   };
 
-  public code(algorithm: string, tableData: App.TableRow[], tableConfig: Readonly<App.TableConfig>): Observable<void> {
+  public code(algorithm: string, tableData: App.ITableRow[], tableConfig: Readonly<App.ITableConfig>): Observable<void> {
     const invalidRows: number[] = this.checkTableData(tableData);
 
     if (invalidRows.length) {
@@ -115,18 +115,18 @@ export class CodingAlgorithmsService {
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
   }
 
-  public checkTableData(tableData: App.TableRow[]): number[] {
+  public checkTableData(tableData: App.ITableRow[]): number[] {
     return tableData
-      .filter((tableRow: App.TableRow) => {
+      .filter((tableRow: App.ITableRow) => {
         return !tableRow.distState
           || !tableRow.srcState
           || (!tableRow.unconditionalX && !tableRow.x.size);
       })
-      .map((tableRow: App.TableRow) => tableRow.id);
+      .map((tableRow: App.ITableRow) => tableRow.id);
   }
 
   private _convertBooleanFunctionsToSheffer(booleanFunctions: App.TFunctionMap): App.TFunctionMap {
-    const shefferFunctions: App.TFunctionMap = new Map<number, App.Expression>();
+    const shefferFunctions: App.TFunctionMap = new Map<number, App.IExpression>();
 
     booleanFunctions.forEach((val, key) => {
       shefferFunctions.set(key, this.convertToShefferBasis(val));
@@ -136,20 +136,20 @@ export class CodingAlgorithmsService {
   }
 
   // DNF -> Sheffer Basis
-  public convertToShefferBasis(expression: App.Expression): ShefferExpression {
+  public convertToShefferBasis(expression: App.IExpression): ShefferExpression {
     const shefferExpression: ShefferExpression = new ShefferExpression([]);
 
     if (expression.operands.length === 1) {
       if (expression.operands[0] instanceof Operand) {
-        shefferExpression.addOperand((expression.operands[0] as App.Operand).copy());
+        shefferExpression.addOperand((expression.operands[0] as App.IOperand).copy());
       }
 
       if (expression.operands[0] instanceof Expression) {
         shefferExpression.addOperand(
-          new ShefferExpression((expression.operands[0] as App.Expression).operands)
+          new ShefferExpression((expression.operands[0] as App.IExpression).operands)
         );
 
-        if ((expression.operands[0] as App.Expression).operands.length > 1) {
+        if ((expression.operands[0] as App.IExpression).operands.length > 1) {
           shefferExpression.addOperand(new OneOperand());
         }
       }
@@ -163,7 +163,7 @@ export class CodingAlgorithmsService {
       }
 
       if (operand instanceof SignalOperand) {
-        const newOperand: SignalOperand = operand.copy() as App.SignalOperand;
+        const newOperand: SignalOperand = operand.copy() as App.ISignalOperand;
         newOperand.inverted = !newOperand.inverted;
 
         shefferExpression.addOperand(newOperand);

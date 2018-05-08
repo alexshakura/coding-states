@@ -1,31 +1,30 @@
 import { StateOperand } from "../../shared/expression/state-operand";
 import { ConjunctiveExpression } from "../../shared/expression/conjunctive-expression";
-import { ConditionSignalOperand } from "../../shared/expression/condition-signal-operand";
 import { DisjunctiveExpression } from "../../shared/expression/disjunctive-expression";
 
 
 export abstract class BaseFsmCoder {
 
-  public getTransitionBooleanFunctions(tableData: App.TableRow[], vertexCodesMap: App.TVertexData, capacity: number): App.TFunctionMap {
+  public getTransitionBooleanFunctions(tableData: App.ITableRow[], vertexCodesMap: App.TVertexData, capacity: number): App.TFunctionMap {
     const transitionCheckList: number[] = [];
 
     for (let i: number = 0; i < capacity; i++) {
       transitionCheckList.push(1 << i);
     }
 
-    const transitionBooleanFunctions: Map<number, App.Expression> = new Map();
+    const transitionBooleanFunctions: Map<number, App.IExpression> = new Map();
 
-    tableData.forEach((tableRow: App.TableRow) => {
-      const fCode: number = vertexCodesMap.get(tableRow.distState);
+    tableData.forEach((tableRow: App.ITableRow) => {
+      const fCode: number = vertexCodesMap.get(tableRow.distState.id);
 
-      const stateOperand = new StateOperand(tableRow.srcState, false);
+      const stateOperand: App.ISignalOperand = tableRow.srcState;
       let conditionalExpression;
 
       if (!tableRow.unconditionalX) {
         conditionalExpression = new ConjunctiveExpression([stateOperand]);
 
         tableRow.x.forEach((conditionalSignal) => {
-          conditionalExpression.addOperand(new ConditionSignalOperand(conditionalSignal.id, conditionalSignal.inverted));
+          conditionalExpression.addOperand(conditionalSignal);
         });
       }
 
@@ -51,6 +50,6 @@ export abstract class BaseFsmCoder {
     return transitionBooleanFunctions;
   }
 
-  public abstract getOutputBooleanFunctions(tableData: App.TableRow[]): App.TFunctionMap;
+  public abstract getOutputBooleanFunctions(tableData: App.ITableRow[]): App.TFunctionMap;
 
 }

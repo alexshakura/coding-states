@@ -15,12 +15,12 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
-  public dataSource: MatTableDataSource<{ id: number, function: App.Expression }> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<{ id: number, function: App.IExpression }> = new MatTableDataSource();
 
   public isBooleanBasisMode: boolean;
 
-  private _booleanFunctions: { id: number, function: App.Expression }[] = [];
-  private _shefferFunctions: { id: number, function: App.Expression }[] = [];
+  private _booleanFunctions: { id: number, function: App.IExpression }[] = [];
+  private _shefferFunctions: { id: number, function: App.IExpression }[] = [];
 
 
   public constructor(
@@ -60,7 +60,7 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
       : [...this._shefferFunctions];
   }
 
-  public isDisjunctiveExpression(expression: App.Expression): expression is DisjunctiveExpression {
+  public isDisjunctiveExpression(expression: App.IExpression): expression is DisjunctiveExpression {
     return expression instanceof DisjunctiveExpression;
   }
 }

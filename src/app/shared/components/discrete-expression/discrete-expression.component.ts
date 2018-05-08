@@ -14,7 +14,7 @@ import { ConjunctiveExpression } from '../../expression/conjunctive-expression';
 export class DiscreteExpressionComponent {
 
   @Input() public isBooleanBasisMode: boolean = true;
-  @Input() public function: App.Expression;
+  @Input() public function: App.IExpression;
   @Input() public nested: boolean = false;
 
   public isOperand(operand): boolean {

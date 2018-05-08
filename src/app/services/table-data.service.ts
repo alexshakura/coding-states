@@ -3,6 +3,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 
+import { StateOperand } from '../shared/expression/state-operand';
+import { ConditionSignalOperand } from '../shared/expression/condition-signal-operand';
+
 
 @Injectable()
 export class TableDataService {
@@ -10,23 +13,23 @@ export class TableDataService {
   public static readonly MILI_FSM_TYPE: string = 'mili';
   public static readonly MURA_FSM_TYPE: string = 'mura';
 
-  public get tableData$(): Observable<App.TableRow[]> {
+  public get tableData$(): Observable<App.ITableRow[]> {
     return this._tableData$$.asObservable();
   }
 
-  private _tableData$$: ReplaySubject<App.TableRow[]> = new ReplaySubject(1);
+  private _tableData$$: ReplaySubject<App.ITableRow[]> = new ReplaySubject(1);
 
-  private _conditionalSignals: App.ConditionalSignal[] = [];
+  private _conditionalSignals: App.ISignalOperand[] = [];
   private _outputSignals: number[] = [];
 
-  private _states: number[] = [];
+  private _states: App.ISignalOperand[] = [];
 
-  public emitUpdatedTableData(updatedTableData: App.TableRow[]): void {
+  public emitUpdatedTableData(updatedTableData: App.ITableRow[]): void {
     this._tableData$$.next(updatedTableData);
   }
 
-  public generateRaw(newLength: number, startId: number = 0): App.TableRow[] {
-    const tableRow: App.TableRow[] = [];
+  public generateRaw(newLength: number, startId: number = 0): App.ITableRow[] {
+    const tableRow: App.ITableRow[] = [];
 
     for (let i: number = 0; i < newLength; i++) {
       tableRow.push({
@@ -45,11 +48,12 @@ export class TableDataService {
     return tableRow;
   }
 
-  public rearrangeTableData(tableData: App.TableRow[], newLength: number): App.TableRow[] {
-    const newTableData: App.TableRow[] = tableData.slice();
+  public rearrangeTableData(tableData: App.ITableRow[], newLength: number): App.ITableRow[] {
+    const newTableData: App.ITableRow[] = tableData.slice();
 
 
     if (tableData.length > newLength) {
+      // check this
       newTableData.splice(-1, tableData.length - newLength);
     } else {
       newTableData.push(
@@ -60,18 +64,24 @@ export class TableDataService {
     return newTableData;
   }
 
-  public generateStates(numberOfStates: number): number[] {
-    return this._generateProgressionArray(this._states, numberOfStates);
+  public generateStates(numberOfStates: number): App.ISignalOperand[] {
+    if (this._states.length !== numberOfStates) {
+      this._states = new Array(numberOfStates)
+          .fill(1)
+          .map((val: number, index: number) => new StateOperand(index + 1, false));
+    }
+
+    return this._states;
   }
 
-  public generateConditionalSignals(numberOfConditionalSignals: number): App.ConditionalSignal[] {
+  public generateConditionalSignals(numberOfConditionalSignals: number): App.ISignalOperand[] {
     if (this._conditionalSignals.length !== numberOfConditionalSignals) {
       this._conditionalSignals = [];
 
       for (let i: number = 0; i < numberOfConditionalSignals; i++) {
         this._conditionalSignals.push(
-          { id: i + 1, inverted: false },
-          { id: i + 1, inverted: true }
+          new ConditionSignalOperand(i + 1, false),
+          new ConditionSignalOperand(i + 1, true)
         );
       }
     }
@@ -94,7 +104,7 @@ export class TableDataService {
     return currentArray;
   }
 
-  public shouldResetTableData(newTableConfig: App.TableConfig, previousTableConfig: App.TableConfig): boolean {
+  public shouldResetTableData(newTableConfig: App.ITableConfig, previousTableConfig: App.ITableConfig): boolean {
     return previousTableConfig &&
       ( previousTableConfig.numberOfStates > newTableConfig.numberOfStates
         || previousTableConfig.numberOfX > newTableConfig.numberOfX
@@ -110,13 +120,16 @@ export class TableDataService {
       : formattedCodingState;
   }
 
-  public getMockDataForUnitaryD(): App.TableRow[] {
+  public getMockDataForUnitaryD(): App.ITableRow[] {
+    this.generateStates(7);
+    this.generateConditionalSignals(3);
+
     return [
       {
         id: 1,
-        srcState: 7,
+        srcState: this._states[6],
         codeSrcState: null,
-        distState: 1,
+        distState: this._states[0],
         codeDistState: null,
         unconditionalX: true,
         x: new Set(),
@@ -125,54 +138,39 @@ export class TableDataService {
       },
       {
         id: 2,
-        srcState: 6,
+        srcState: this._states[5],
         codeSrcState: null,
-        distState: 1,
+        distState: this._states[0],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 3,
-          inverted: true
-        }]),
+        x: new Set([this._conditionalSignals[5]]),
         y: new Set(),
         f: null
       },
       {
         id: 3,
-        srcState: 5,
+        srcState: this._states[4],
         codeSrcState: null,
-        distState: 1,
+        distState: this._states[0],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 3,
-            inverted: true
-          }
-      ]),
+          this._conditionalSignals[1],
+          this._conditionalSignals[5]
+        ]),
         y: new Set(),
         f: null
       },
       {
         id: 4,
-        srcState: 4,
+        srcState: this._states[3],
         codeSrcState: null,
-        distState: 1,
+        distState: this._states[0],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 3,
-            inverted: true
-          }
+          this._conditionalSignals[1],
+          this._conditionalSignals[5],
         ]),
         y: new Set(),
         f: null
@@ -180,9 +178,9 @@ export class TableDataService {
 
       {
         id: 5,
-        srcState: 1,
+        srcState: this._states[0],
         codeSrcState: null,
-        distState: 2,
+        distState: this._states[1],
         codeDistState: null,
         unconditionalX: true,
         x: new Set(),
@@ -192,35 +190,26 @@ export class TableDataService {
 
       {
         id: 6,
-        srcState: 2,
+        srcState: this._states[1],
         codeSrcState: null,
-        distState: 3,
+        distState: this._states[2],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 1,
-          inverted: false
-        }]),
+        x: new Set([this._conditionalSignals[0]]),
         y: new Set([3]),
         f: null
       },
 
       {
         id: 7,
-        srcState: 2,
+        srcState: this._states[1],
         codeSrcState: null,
-        distState: 4,
+        distState: this._states[3],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 2,
-            inverted: false
-          }
+          this._conditionalSignals[1],
+          this._conditionalSignals[2],
         ]),
         y: new Set([4]),
         f: null
@@ -229,35 +218,26 @@ export class TableDataService {
 
       {
         id: 8,
-        srcState: 3,
+        srcState: this._states[2],
         codeSrcState: null,
-        distState: 4,
+        distState: this._states[3],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 2,
-          inverted: false
-        }]),
+        x: new Set([this._conditionalSignals[2]]),
         y: new Set([4]),
         f: null
       },
 
       {
         id: 9,
-        srcState: 2,
+        srcState: this._states[1],
         codeSrcState: null,
-        distState: 5,
+        distState: this._states[4],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 2,
-            inverted: true
-          }
+          this._conditionalSignals[1],
+          this._conditionalSignals[3],
         ]),
         y: new Set([5]),
         f: null
@@ -265,99 +245,75 @@ export class TableDataService {
 
       {
         id: 10,
-        srcState: 3,
+        srcState: this._states[2],
         codeSrcState: null,
-        distState: 5,
+        distState: this._states[4],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 2,
-          inverted: true
-        }]),
+        x: new Set([this._conditionalSignals[3]]),
         y: new Set([5]),
         f: null
       },
 
       {
         id: 11,
-        srcState: 4,
+        srcState: this._states[3],
         codeSrcState: null,
-        distState: 6,
+        distState: this._states[5],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 1,
-          inverted: false
-        }]),
+        x: new Set([this._conditionalSignals[0]]),
         y: new Set([3]),
         f: null
       },
 
       {
         id: 12,
-        srcState: 5,
+        srcState: this._states[4],
         codeSrcState: null,
-        distState: 6,
+        distState: this._states[5],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 1,
-          inverted: false
-        }]),
+        x: new Set([this._conditionalSignals[0]]),
         y: new Set([3]),
         f: null
       },
 
       {
         id: 13,
-        srcState: 6,
+        srcState: this._states[5],
         codeSrcState: null,
-        distState: 7,
+        distState: this._states[6],
         codeDistState: null,
         unconditionalX: false,
-        x: new Set([{
-          id: 3,
-          inverted: false
-        }]),
+        x: new Set([this._conditionalSignals[4]]),
         y: new Set([6]),
         f: null
       },
       {
         id: 14,
-        srcState: 5,
+        srcState: this._states[4],
         codeSrcState: null,
-        distState: 7,
+        distState: this._states[6],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 3,
-            inverted: false
-          }
+          this._conditionalSignals[1],
+          this._conditionalSignals[4],
         ]),
         y: new Set([6]),
         f: null
       },
       {
         id: 15,
-        srcState: 4,
+        srcState: this._states[3],
         codeSrcState: null,
-        distState: 7,
+        distState: this._states[6],
         codeDistState: null,
         unconditionalX: false,
         x: new Set([
-          {
-            id: 1,
-            inverted: true
-          },
-          {
-            id: 3,
-            inverted: false
-          }
+          this._conditionalSignals[1],
+          this._conditionalSignals[4],
         ]),
         y: new Set([6]),
         f: null

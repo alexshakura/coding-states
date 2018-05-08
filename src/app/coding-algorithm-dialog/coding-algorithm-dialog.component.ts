@@ -27,7 +27,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
   public isProcessing: boolean = false;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.TableConfig },
+    @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.ITableConfig },
     private _codingAlgorithmsService: CodingAlgorithmsService,
     private _dialogRef: MatDialogRef<CodingAlgorithmDialogComponent>,
     private _snackBarService: SnackBarService,
@@ -45,7 +45,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
     this.isProcessing = true;
 
     this._tableDataService.tableData$
-      .switchMap((tableData: App.TableRow[]) => {
+      .switchMap((tableData: App.ITableRow[]) => {
         return this._codingAlgorithmsService.code(this.codingAlgorithm, tableData, this.data.tableConfig);
       })
       .take(1)

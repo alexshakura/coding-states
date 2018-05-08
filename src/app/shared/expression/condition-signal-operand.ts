@@ -3,7 +3,7 @@ import { SignalOperand } from "./signal-operand";
 export class ConditionSignalOperand extends SignalOperand {
   public sign: string = 'x';
 
-  public copy(): App.SignalOperand {
+  public copy(): App.ISignalOperand {
     return new ConditionSignalOperand(this.id, this.inverted);
   }
 }

@@ -1,6 +1,6 @@
 export class NStateAlgorithm implements App.ICodingAlgorithm {
 
-  public getVertexCodeMap(tableData: App.TableRow[], numOfStates: number): App.TVertexData {
+  public getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData {
     const vertexCodesMap: App.TVertexData = new Map();
 
     for (let i: number = 0; i < numOfStates; i++) {
