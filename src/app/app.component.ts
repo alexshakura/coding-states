@@ -1,20 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
-import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
-import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
-import { CodingAlgorithmsService } from './services/coding-algorithms.service';
-import { TableDataService } from './services/table-data.service';
-
 import * as JSZip from 'jszip';
 import * as JSZipUtils from 'jszip-utils';
 import * as Docxtemplater from 'docxtemplater';
 import * as FileSaver from 'file-saver';
-import { SnackBarService } from './services/snack-bar.service';
-import { Expression } from './shared/expression/expression';
 
-import * as expressions from 'angular-expressions';
+import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
+import { CodingAlgorithmsService } from './services/coding-algorithms.service';
 import { ConstantOperand } from './shared/expression/constant-operand';
+import { DocxGeneratorService } from './services/docx-generator.service';
+import { Expression } from './shared/expression/expression';
+import { SnackBarService } from './services/snack-bar.service';
+import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
+import { TableDataService } from './services/table-data.service';
 
 
 @Component({
@@ -44,6 +43,7 @@ export class AppComponent implements OnInit {
 
   public constructor(
     private _dialog: MatDialog,
+    private _docxGeneratorService: DocxGeneratorService,
     private _tableDataService: TableDataService,
     private _codingAlgorithmsService: CodingAlgorithmsService,
     private _snackBarService: SnackBarService
@@ -106,112 +106,35 @@ export class AppComponent implements OnInit {
 
     this.isGeneratingDoc = true;
 
-    this._tableDataService.tableData$
-      .combineLatest(
-        this._codingAlgorithmsService.capacity$,
-        this._codingAlgorithmsService.outputFunctions$,
-        this._codingAlgorithmsService.transitionFunctions$
-      )
-      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [App.ITableRow[], number, App.IFunctions, App.IFunctions]) => {
-        const updatedTableData = tableData.map((tableRow) => {
-          return {
-            ...tableRow,
-            codeSrcState: this._tableDataService.formatStateCode(tableRow.codeSrcState, capacity),
-            codeDistState: this._tableDataService.formatStateCode(tableRow.codeDistState, capacity),
-            f: this._tableDataService.formatStateCode(tableRow.f, capacity),
-            x: Array.from(tableRow.x),
-            y: Array.from(tableRow.y)
-          };
-        });
-
-        const rearrangedOutputFunctions = [];
-        const rearrangedTransitionFunctions = [];
-
-        outputFunctions.boolean.forEach((val, key) => {
-          rearrangedOutputFunctions.push({
-            boolean: val,
-            sheffer: outputFunctions.sheffer.get(key)
-          });
-        });
-
-        transitionFunctions.boolean.forEach((val, key) => {
-          rearrangedTransitionFunctions.push({
-            boolean: val,
-            sheffer: transitionFunctions.sheffer.get(key)
-          });
-        });
-
-        return [updatedTableData, rearrangedOutputFunctions, rearrangedTransitionFunctions];
-      })
+    this._docxGeneratorService.getData$()
       .take(1)
       .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
-        JSZipUtils.getBinaryContent('/assets/doc-templates/table_min.docx', (error, content) => {
+        JSZipUtils.getBinaryContent('/assets/doc-templates/table_min.docx', (error, content: ArrayBuffer) => {
           if (error) {
             throw error;
           }
 
-          const angularParser = (tag: string) => {
-            return {
-                get: (scope, context) => {
-                  if (tag.includes('$index')) {
-                    const indexes: number[] = context.scopePathItem;
-                    const val: number =  indexes[indexes.length - 1];
-
-                    return expressions.compile(tag.replace('$index', val.toString(10)))();
-                  }
-
-                  if (tag === 'isExpression') {
-                    return scope instanceof Expression;
-                  }
-
-                  if (tag === 'isConstantOperand') {
-                    return scope instanceof ConstantOperand;
-                  }
-
-                  if (tag === 'isNotLastItem') {
-                    const parent = context.scopeList[context.scopeList.length - 2];
-                    const iterablePath: string[] = context.scopePath[context.scopePath.length - 1].split('.');
-
-                    let iterable = parent;
-
-                    iterablePath.forEach((prop: string) => iterable = iterable[prop]);
-
-                    return iterable.indexOf(scope) !== iterable.length - 1;
-                  }
-
-                  if (tag === 'expressionSign') {
-                    return this._getParentExpressionSign(context);
-                  }
-
-                  const result = tag === '.'
-                    ? function(s) { return s; }
-                    : function(s) { return expressions.compile(tag.replace(/(’|“|”)/g, '\''))(s); };
-
-                  return result(scope);
-                }
-            };
-          };
-
           const zip = new JSZip(content);
-          const doc = new Docxtemplater().loadZip(zip).setOptions({ parser: angularParser, paragraphLoop: true });
 
-          doc.setData({
+          const docxTemplate = new Docxtemplater()
+            .loadZip(zip)
+            .setOptions({ parser: this._docxGeneratorService.getParser(), paragraphLoop: true });
+
+          docxTemplate.setData({
             tableData,
             isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
             outputFunctions,
             transitionFunctions
           });
 
-
           try {
-            doc.render();
+            docxTemplate.render();
 
-            const out = doc.getZip().generate({
-              type: 'blob',
-              mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-            });
+            const generatedFile: Blob = docxTemplate
+              .getZip()
+              .generate({ type: 'blob', mimeType: DocxGeneratorService.MIME_TYPE });
 
-            FileSaver.saveAs(out, 'coding_results.docx');
+            FileSaver.saveAs(generatedFile, 'coding_results.docx');
 
             this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
           } catch {
@@ -221,18 +144,5 @@ export class AppComponent implements OnInit {
           }
         });
       });
-  }
-
-  private _getParentExpressionSign(context): string {
-    const iterableIndex: number = context.scopePath.length - 2;
-    const iterablePath: string[] = context.scopePath[iterableIndex].split('.');
-    const parent = context.scopeList[iterableIndex];
-
-    iterablePath.pop();
-    let iterable = parent;
-
-    iterablePath.forEach((path: string) => iterable = iterable[path]);
-    // debugger;
-    return iterable && iterable.sign;
   }
 }
