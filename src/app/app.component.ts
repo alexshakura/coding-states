@@ -26,6 +26,8 @@ import { ConstantOperand } from './shared/expression/constant-operand';
 export class AppComponent implements OnInit {
 
   public readonly GENERATE_DOC_TABLE_ERROR: string = 'Таблица не закодирована';
+  public readonly GENERATE_DOC_SUCCESS: string = 'Файл с кодировками был успешно сгенерирован';
+  public readonly GENERATE_DOC_ERROR: string = 'Что-то пошло не так, перепроверьте Ваши данные';
 
   public isLoading: boolean = true;
   public isTableCoded: boolean = false;
@@ -123,14 +125,6 @@ export class AppComponent implements OnInit {
           };
         });
 
-        // outputFunctions.boolean.forEach((expression, id) => {
-        //   expression['expressionSign'] = expression.sign;
-        // });
-
-        // outputFunctions.sheffer.forEach((expression, id) => {
-        //   expression['expressionSign'] = expression.sign;
-        // });
-
         const rearrangedOutputFunctions = [];
         const rearrangedTransitionFunctions = [];
 
@@ -201,7 +195,7 @@ export class AppComponent implements OnInit {
 
           const zip = new JSZip(content);
           const doc = new Docxtemplater().loadZip(zip).setOptions({ parser: angularParser, paragraphLoop: true });
-          // debugger;
+
           doc.setData({
             tableData,
             isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
@@ -211,27 +205,21 @@ export class AppComponent implements OnInit {
 
 
           try {
-            // render the document (replace all occurences of {first_name} by John, {last_name} by Doe, ...)
             doc.render();
-          }
-          catch (error) {
-              var e = {
-                  message: error.message,
-                  name: error.name,
-                  stack: error.stack,
-                  properties: error.properties,
-              }
-              console.log(JSON.stringify({error: e}));
-              // The error thrown here contains additional information when logged with JSON.stringify (it contains a property object).
-              throw error;
-          }
 
-          var out=doc.getZip().generate({
-              type:"blob",
-              mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          }); //Output the document using Data-URI
+            const out = doc.getZip().generate({
+              type: 'blob',
+              mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            });
 
-          FileSaver.saveAs(out,"output.docx");
+            FileSaver.saveAs(out, 'coding_results.docx');
+
+            this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+          } catch {
+            this._snackBarService.showMessage(this.GENERATE_DOC_ERROR);
+          } finally {
+            this.isGeneratingDoc = false;
+          }
         });
       });
   }
