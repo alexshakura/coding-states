@@ -145,7 +145,7 @@ export class AppComponent implements OnInit {
       })
       .take(1)
       .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
-        JSZipUtils.getBinaryContent('/assets/doc-templates/table.docx', (error, content) => {
+        JSZipUtils.getBinaryContent('/assets/doc-templates/table_min.docx', (error, content) => {
           if (error) {
             throw error;
           }
