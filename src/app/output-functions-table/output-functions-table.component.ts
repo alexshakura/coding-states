@@ -30,22 +30,18 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
   }
 
   public ngOnInit(): void {
-    this._codingAlgorithmsService.outputBooleanFunctions$
+    this._codingAlgorithmsService.outputFunctions$
       .takeUntil(this._destroy$$)
-      .subscribe((outputBooleanFunctions: Map<number, App.Expression>) => {
+      .subscribe((outputFunctions: App.IFunctions) => {
         this._booleanFunctions = [];
         this._shefferFunctions = [];
 
-        outputBooleanFunctions.forEach((value, key) => {
-          this._booleanFunctions.push({
-            id: key,
-            function: value
-          });
+        outputFunctions.boolean.forEach((value, key) => {
+          this._booleanFunctions.push({ id: key, function: value });
+        });
 
-          this._shefferFunctions.push({
-            id: key,
-            function: this._codingAlgorithmsService.convertToShefferBasis(value)
-          });
+        outputFunctions.sheffer.forEach((value, key) => {
+          this._shefferFunctions.push({ id: key, function: value });
         });
 
         this.toggleBasisMode(true);

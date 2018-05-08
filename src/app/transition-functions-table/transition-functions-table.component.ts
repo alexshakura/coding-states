@@ -34,18 +34,19 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
         this.triggerMode = triggerMode;
       });
 
-    this._codingAlgorithmsService.transitionBooleanFunctions$
+    this._codingAlgorithmsService.transitionFunctions$
       .takeUntil(this._destroy$$)
-      .subscribe((transitionBooleanFunctions) => {
+      .subscribe((transitionBooleanFunctions: App.IFunctions) => {
         this._booleanFunctions = [];
         this._shefferFunctions = [];
 
-        for (let i: number = 1; i <= transitionBooleanFunctions.size; i++) {
-          const expression = transitionBooleanFunctions.get(i);
+        transitionBooleanFunctions.boolean.forEach((value, key) => {
+          this._booleanFunctions.push({ id: key, function: value });
+        });
 
-          this._booleanFunctions[i - 1] = { id: i, function: expression };
-          this._shefferFunctions[i - 1] = { id: i, function: this._codingAlgorithmsService.convertToShefferBasis(expression) };
-        }
+        transitionBooleanFunctions.sheffer.forEach((value, key) => {
+          this._shefferFunctions.push({ id: key, function: value });
+        });
 
         this.toggleBasisMode(true);
       });

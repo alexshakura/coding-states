@@ -13,6 +13,10 @@ import * as FileSaver from 'file-saver';
 import { SnackBarService } from './services/snack-bar.service';
 import { Expression } from './shared/expression/expression';
 
+import * as expressions from 'angular-expressions';
+import { Operand } from './shared/expression/operand';
+import { ConstantOperand } from './shared/expression/constant-operand';
+
 
 @Component({
   selector: 'app-root',
@@ -34,7 +38,7 @@ export class AppComponent implements OnInit {
     numberOfStates: 8,
     numberOfX: 4,
     numberOfY: 4,
-    fsmType: 'mura'
+    fsmType: 'mili'
   };
 
   public constructor(
@@ -104,61 +108,105 @@ export class AppComponent implements OnInit {
     this._tableDataService.tableData$
       .combineLatest(
         this._codingAlgorithmsService.capacity$,
-        this._codingAlgorithmsService.outputBooleanFunctions$
+        this._codingAlgorithmsService.outputFunctions$,
+        this._codingAlgorithmsService.transitionFunctions$
       )
-      .map(([tableData, capacity, booleanFunctions]: [App.TableRow[], number, App.TFunctionMap]) => {
+      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [App.TableRow[], number, App.IFunctions, App.IFunctions]) => {
         const updatedTableData = tableData.map((tableRow) => {
-          const conditionals = Array.from(tableRow.x)
-            .map((conditional) => ({ conditionalId: conditional.id, inverted: conditional.inverted }));
-
           return {
             ...tableRow,
             codeSrcState: this._tableDataService.formatStateCode(tableRow.codeSrcState, capacity),
             codeDistState: this._tableDataService.formatStateCode(tableRow.codeDistState, capacity),
             f: this._tableDataService.formatStateCode(tableRow.f, capacity),
-            x: conditionals,
-            hasY: tableRow.y.size === 0,
+            x: Array.from(tableRow.x),
             y: Array.from(tableRow.y)
           };
         });
 
-        const temp = [];
+        // outputFunctions.boolean.forEach((expression, id) => {
+        //   expression['expressionSign'] = expression.sign;
+        // });
 
-        booleanFunctions.forEach((expression, id) => {
-          const updatedOperands = expression.operands.map((operand) => {
-            return {
-              ...operand,
-              isExpression: operand instanceof Expression
-            };
-          });
+        // outputFunctions.sheffer.forEach((expression, id) => {
+        //   expression['expressionSign'] = expression.sign;
+        // });
 
-          updatedOperands[updatedOperands.length - 1]['isLast'] = true;
+        const rearrangedOutputFunctions = [];
+        const rearrangedTransitionFunctions = [];
 
-          temp.push({
-            index: id,
-            expression: {
-              ...expression,
-              operands: updatedOperands
-            }
+        outputFunctions.boolean.forEach((val, key) => {
+          rearrangedOutputFunctions.push({
+            boolean: val,
+            sheffer: outputFunctions.sheffer.get(key)
           });
         });
 
-        return [updatedTableData, temp];
+        transitionFunctions.boolean.forEach((val, key) => {
+          rearrangedTransitionFunctions.push({
+            boolean: val,
+            sheffer: transitionFunctions.sheffer.get(key)
+          });
+        });
+
+        return [updatedTableData, rearrangedOutputFunctions, rearrangedTransitionFunctions];
       })
       .take(1)
-      .subscribe(([tableData, outputBooleanFunctions]: any[]) => {
+      .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
         JSZipUtils.getBinaryContent('/assets/doc-templates/table.docx', (error, content) => {
           if (error) {
             throw error;
           }
 
+          const angularParser = (tag: string) => {
+            return {
+                get: (scope, context) => {
+                  if (tag.includes('$index')) {
+                    const indexes: number[] = context.scopePathItem;
+                    const val: number =  indexes[indexes.length - 1];
+
+                    return expressions.compile(tag.replace('$index', val.toString(10)))();
+                  }
+
+                  if (tag === 'isExpression') {
+                    return scope instanceof Expression;
+                  }
+
+                  if (tag === 'isConstantOperand') {
+                    return scope instanceof ConstantOperand;
+                  }
+
+                  if (tag === 'isNotLastItem') {
+                    const parent = context.scopeList[context.scopeList.length - 2];
+                    const iterablePath: string[] = context.scopePath[context.scopePath.length - 1].split('.');
+
+                    let iterable = parent;
+
+                    iterablePath.forEach((prop: string) => iterable = iterable[prop]);
+
+                    return iterable.indexOf(scope) !== iterable.length - 1;
+                  }
+
+                  if (tag === 'expressionSign') {
+                    return this._getParentExpressionSign(context);
+                  }
+
+                  const result = tag === '.'
+                    ? function(s) { return s; }
+                    : function(s) { return expressions.compile(tag.replace(/(’|“|”)/g, "'"))(s); };
+
+                  return result(scope);
+                }
+            };
+          };
+
           const zip = new JSZip(content);
-          const doc = new Docxtemplater().loadZip(zip);
-          debugger;
+          const doc = new Docxtemplater().loadZip(zip).setOptions({ parser: angularParser, paragraphLoop: true });
+          // debugger;
           doc.setData({
             tableData,
             isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
-            outputBooleanFunctions
+            outputFunctions,
+            transitionFunctions
           });
 
 
@@ -186,5 +234,18 @@ export class AppComponent implements OnInit {
           FileSaver.saveAs(out,"output.docx");
         });
       });
+  }
+
+  private _getParentExpressionSign(context): string {
+    const iterableIndex: number = context.scopePath.length - 2;
+    const iterablePath: string[] = context.scopePath[iterableIndex].split('.');
+    const parent = context.scopeList[iterableIndex];
+
+    iterablePath.pop();
+    let iterable = parent;
+
+    iterablePath.forEach((path: string) => iterable = iterable[path]);
+    // debugger;
+    return iterable && iterable.sign;
   }
 }

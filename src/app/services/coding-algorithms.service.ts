@@ -44,17 +44,17 @@ export class CodingAlgorithmsService {
 
   private _vertexCodes$$: ReplaySubject<App.TVertexData> = new ReplaySubject<App.TVertexData>(1);
 
-  public get outputBooleanFunctions$(): Observable<Map<number, App.Expression>> {
-    return this._outputBooleanFunctions$$.asObservable();
+  public get outputFunctions$(): Observable<App.IFunctions> {
+    return this._outputFunctions$$.asObservable();
   }
 
-  private _outputBooleanFunctions$$: ReplaySubject<App.TFunctionMap> = new ReplaySubject<App.TFunctionMap>(1);
+  private _outputFunctions$$: ReplaySubject<App.IFunctions> = new ReplaySubject<App.IFunctions>(1);
 
-  public get transitionBooleanFunctions$(): Observable<App.TFunctionMap> {
-    return this._transitionBooleanFunctions$$.asObservable();
+  public get transitionFunctions$(): Observable<App.IFunctions> {
+    return this._transitionFunctions$$.asObservable();
   }
 
-  private _transitionBooleanFunctions$$: ReplaySubject<App.TFunctionMap> = new ReplaySubject<App.TFunctionMap>(1);
+  private _transitionFunctions$$: ReplaySubject<App.IFunctions> = new ReplaySubject<App.IFunctions>(1);
 
   public get capacity$(): Observable<number> {
     return this._capacity$$.asObservable();
@@ -92,10 +92,24 @@ export class CodingAlgorithmsService {
     const vertexCodeMap = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
     const capacity = algorithmCoder.getCapacity(tableConfig.numberOfStates);
 
+    const outputBooleanFunctions = fsmCoder.getOutputBooleanFunctions(tableData);
+    const outputShefferFunctions = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
+
+    const transitionBooleanFunctions = fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity);
+    const transitionShefferFunctions = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
+
     this._capacity$$.next(capacity);
     this._vertexCodes$$.next(vertexCodeMap);
-    this._outputBooleanFunctions$$.next(fsmCoder.getOutputBooleanFunctions(tableData));
-    this._transitionBooleanFunctions$$.next(fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity));
+
+    this._outputFunctions$$.next({
+      boolean: outputBooleanFunctions,
+      sheffer: outputShefferFunctions
+    });
+
+    this._transitionFunctions$$.next({
+      boolean: transitionBooleanFunctions,
+      sheffer: transitionShefferFunctions
+    });
 
     return Observable.of(null)
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
@@ -109,6 +123,16 @@ export class CodingAlgorithmsService {
           || (!tableRow.unconditionalX && !tableRow.x.size);
       })
       .map((tableRow: App.TableRow) => tableRow.id);
+  }
+
+  private _convertBooleanFunctionsToSheffer(booleanFunctions: App.TFunctionMap): App.TFunctionMap {
+    const shefferFunctions: App.TFunctionMap = new Map<number, App.Expression>();
+
+    booleanFunctions.forEach((val, key) => {
+      shefferFunctions.set(key, this.convertToShefferBasis(val));
+    });
+
+    return shefferFunctions;
   }
 
   // DNF -> Sheffer Basis

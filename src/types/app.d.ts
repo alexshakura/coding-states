@@ -56,4 +56,9 @@ declare namespace App {
 
   export type TVertexData = Map<number, number>;
   export type TFunctionMap = Map<number, App.Expression>;
+
+  export interface IFunctions {
+    boolean: TFunctionMap;
+    sheffer: TFunctionMap;
+  }
 }
