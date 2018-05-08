@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { Subject } from 'rxjs/Subject';
 import { MatTableDataSource } from '@angular/material';

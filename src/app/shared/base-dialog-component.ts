@@ -1,6 +1,6 @@
-import { BaseComponent } from "./base-component";
-import { Observable } from "rxjs/Observable";
-import { Subject } from "rxjs/Subject";
+import { BaseComponent } from './base-component';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 
 export class BaseDialogComponent<S, E> extends BaseComponent {

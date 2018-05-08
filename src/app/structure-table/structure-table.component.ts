@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, OnInit, ViewChild, Input, OnDestroy } from '@angular/core';
-import { MatTableDataSource, MatPaginator, MatSort } from '@angular/material';
+import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
 import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 

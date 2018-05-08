@@ -1,4 +1,4 @@
-import { ConstantOperand } from "./constant-operand";
+import { ConstantOperand } from './constant-operand';
 
 export class OneOperand extends ConstantOperand {
   public readonly value: number = 1;

@@ -1,4 +1,4 @@
-import { Operand } from "./operand";
+import { Operand } from './operand';
 
 export abstract class Expression implements App.IExpression {
   public readonly abstract sign: string;

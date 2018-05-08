@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewEncapsulation, state, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 
-import { Subject } from 'rxjs/Subject';
 import { BaseComponent } from '../shared/base-component';
 
 

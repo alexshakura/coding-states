@@ -1,10 +1,9 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { FormControl, Validators, FormBuilder, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
 import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
 import { BaseDialogComponent } from '../shared/base-dialog-component';
 
 const fieldValidators: ValidatorFn[] = [

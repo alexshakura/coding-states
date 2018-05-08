@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
@@ -14,7 +14,6 @@ import { SnackBarService } from './services/snack-bar.service';
 import { Expression } from './shared/expression/expression';
 
 import * as expressions from 'angular-expressions';
-import { Operand } from './shared/expression/operand';
 import { ConstantOperand } from './shared/expression/constant-operand';
 
 
@@ -56,7 +55,7 @@ export class AppComponent implements OnInit {
   }
 
   public openTableConfigDialog(): void {
-    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent ,{
+    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent , {
       data: {
         tableConfig: this.tableConfig,
         isInitialized: this.isInitialized
@@ -186,7 +185,7 @@ export class AppComponent implements OnInit {
 
                   const result = tag === '.'
                     ? function(s) { return s; }
-                    : function(s) { return expressions.compile(tag.replace(/(’|“|”)/g, "'"))(s); };
+                    : function(s) { return expressions.compile(tag.replace(/(’|“|”)/g, '\''))(s); };
 
                   return result(scope);
                 }
