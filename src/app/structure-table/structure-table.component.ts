@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatSort, MatTableDataSource } from '@angular/material';
-import { TableDataService } from '../services/table-data.service';
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 import { BaseComponent } from '../shared/base-component';
+import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { TableDataService } from '../services/table-data.service';
 
 
 @Component({
@@ -12,6 +13,7 @@ import { BaseComponent } from '../shared/base-component';
   host: { class: 'component-wrapper' }
 })
 export class StructureTableComponent extends BaseComponent implements OnInit, AfterViewInit {
+
   @Input('tableConfig') public set defineTableData(tableConfig: App.ITableConfig) {
     if (!this._tableConfig || this._tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
       this.dataSource.data = this._tableDataService.generateRaw(tableConfig.length);
@@ -67,10 +69,13 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   @ViewChild('myPaginator')
   public myPaginator: MatPaginator;
 
+  public readonly MENU_ITEM_HEIGHT: string = '48px';
+
 
   public constructor(
+    private _codingAlgorithmsService: CodingAlgorithmsService,
+    private _overlayContainer: OverlayContainer,
     private _tableDataService: TableDataService,
-    private _codingAlgorithmsService: CodingAlgorithmsService
   ) {
     super();
   }
@@ -139,6 +144,36 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
 
   public isMuraFsm(): boolean {
     return this._tableConfig.fsmType === TableDataService.MURA_FSM_TYPE;
+  }
+
+  public onMenuOpen(menuPanelClass: string): void {
+    setTimeout(() => {
+      const overlayContainer: HTMLDivElement = this._overlayContainer.getContainerElement() as HTMLDivElement;
+
+      const menuPanel: HTMLDivElement = overlayContainer.querySelector(`.${menuPanelClass}`);
+      const pane: HTMLDivElement = menuPanel.parentElement as HTMLDivElement;
+
+      const paneTop: string = pane.style.top || pane.style.bottom;
+
+      // Had to dynamically set max-height so menu will fit to screen size
+      menuPanel.style.maxHeight = `calc(100vh - ${paneTop} - ${this.MENU_ITEM_HEIGHT}`;
+    });
+  }
+
+  public getStateMenuPanelClass(rowId: number, isSrc: boolean): string {
+    const preffix: string = isSrc
+      ? 'src'
+      : 'dest';
+
+    return `${preffix}-state-panel-${rowId}`;
+  }
+
+  public getConditionalMenuPanelClass(rowId: number): string {
+    return `condition-panel-${rowId}`;
+  }
+
+  public getOutputMenuPanelClass(rowId: number): string {
+    return `output-panel-${rowId}`;
   }
 
   public emitTableUpdate(): void {

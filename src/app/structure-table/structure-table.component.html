@@ -46,6 +46,7 @@
               class="layout-inline__item">
           <button mat-icon-button
                   [matMenuTriggerFor]="statesMenu"
+                  (menuOpened)="onMenuOpen(getStateMenuPanelClass(row.id, true))"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
                   app-theme="primary">
@@ -53,7 +54,8 @@
           </button>
 
           <mat-menu #statesMenu="matMenu"
-                    [overlapTrigger]="false">
+                    [overlapTrigger]="false"
+                    [class]="getStateMenuPanelClass(row.id, true)">
             <button *ngFor="let state of states"
                     (click)="row.srcState = state; emitTableUpdate()"
                     mat-menu-item>
@@ -96,6 +98,7 @@
               class="layout-inline__item">
           <button mat-icon-button
                  [matMenuTriggerFor]="statesMenu"
+                 (menuOpened)="onMenuOpen(getStateMenuPanelClass(row.id, false))"
                  matTooltip="Добавить"
                  matTooltipPosition="above"
                  app-theme="primary">
@@ -103,7 +106,8 @@
           </button>
 
           <mat-menu #statesMenu="matMenu"
-                    [overlapTrigger]="false">
+                    [overlapTrigger]="false"
+                    [class]="getStateMenuPanelClass(row.id, false)">
             <button *ngFor="let state of states"
                     (click)="row.distState = state; emitTableUpdate()"
                     mat-menu-item>
@@ -151,6 +155,7 @@
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="xSignalsMenu"
+                  (menuOpened)="onMenuOpen(getConditionalMenuPanelClass(row.id))"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
                   app-theme="primary">
@@ -158,7 +163,8 @@
           </button>
 
           <mat-menu #xSignalsMenu="matMenu"
-                    [overlapTrigger]="false">
+                    [overlapTrigger]="false"
+                    [class]="getConditionalMenuPanelClass(row.id)">
             <div (click)="$event.stopPropagation();"
                   class="mat-menu-item">
               <mat-checkbox [ngModel]="row.unconditionalX"
@@ -223,6 +229,7 @@
           <div *ngIf="editMode">
             <button mat-icon-button
                     [matMenuTriggerFor]="ySignalsMenu"
+                    (menuOpened)="onMenuOpen(getOutputMenuPanelClass(row.id))"
                     matTooltip="Добавить"
                     matTooltipPosition="above"
                     app-theme="primary">
@@ -230,7 +237,8 @@
             </button>
 
             <mat-menu #ySignalsMenu="matMenu"
-                      [overlapTrigger]="false">
+                      [overlapTrigger]="false"
+                      [class]="getOutputMenuPanelClass(row.id)">
               <div *ngFor="let outputSignal of outputSignals"
                     (click)="$event.stopPropagation();"
                     class="mat-menu-item">
