@@ -14,6 +14,7 @@ import { Expression } from './shared/expression/expression';
 import { SnackBarService } from './services/snack-bar.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { TableDataService } from './services/table-data.service';
+import { ElectronService } from './services/electron.service';
 
 
 @Component({
@@ -44,6 +45,7 @@ export class AppComponent implements OnInit {
   public constructor(
     private _dialog: MatDialog,
     private _docxGeneratorService: DocxGeneratorService,
+    private _electronService: ElectronService,
     private _tableDataService: TableDataService,
     private _codingAlgorithmsService: CodingAlgorithmsService,
     private _snackBarService: SnackBarService
@@ -104,12 +106,18 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    this.isGeneratingDoc = true;
+    // this.isGeneratingDoc = true;
+
+    let path: string = '/assets/doc-templates/table_min.docx';
+
+    if (this._electronService.isElectron()) {
+      path = 'assets/doc-templates/table_min.docx';
+    }
 
     this._docxGeneratorService.getData$()
       .take(1)
       .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
-        JSZipUtils.getBinaryContent('/assets/doc-templates/table_min.docx', (error, content: ArrayBuffer) => {
+        JSZipUtils.getBinaryContent(path, (error, content: ArrayBuffer) => {
           if (error) {
             throw error;
           }
