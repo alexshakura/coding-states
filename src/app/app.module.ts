@@ -24,6 +24,7 @@ import { StructureTableComponent } from './structure-table/structure-table.compo
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { TransitionFunctionsTableComponent } from './transition-functions-table/transition-functions-table.component';
 import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
+import { WindowService } from './services/window.service';
 
 
 @NgModule({
@@ -54,6 +55,7 @@ import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-tab
     ElectronService,
     SnackBarService,
     TableDataService,
+    WindowService
   ],
   bootstrap: [AppComponent]
 })

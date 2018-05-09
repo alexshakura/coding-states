@@ -10,11 +10,15 @@ import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding
 import { CodingAlgorithmsService } from './services/coding-algorithms.service';
 import { ConstantOperand } from './shared/expression/constant-operand';
 import { DocxGeneratorService } from './services/docx-generator.service';
+import { ElectronService } from './services/electron.service';
 import { Expression } from './shared/expression/expression';
 import { SnackBarService } from './services/snack-bar.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { TableDataService } from './services/table-data.service';
-import { ElectronService } from './services/electron.service';
+import { WindowService } from './services/window.service';
+import { environment } from '../environments/environment';
+
+const path = require('path');
 
 
 @Component({
@@ -48,7 +52,8 @@ export class AppComponent implements OnInit {
     private _electronService: ElectronService,
     private _tableDataService: TableDataService,
     private _codingAlgorithmsService: CodingAlgorithmsService,
-    private _snackBarService: SnackBarService
+    private _snackBarService: SnackBarService,
+    private _windowService: WindowService
   ) { }
 
   public ngOnInit(): void {
@@ -106,19 +111,22 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    // this.isGeneratingDoc = true;
+    this.isGeneratingDoc = true;
 
-    let path: string = '/assets/doc-templates/table_min.docx';
+    let pathToTemplate: string = '/assets/doc-templates/table_min.docx';
 
-    if (this._electronService.isElectron()) {
-      path = 'assets/doc-templates/table_min.docx';
+    if (this._electronService.isElectron() && environment.production) {
+      pathToTemplate = path.join(this._windowService.window['process'].resourcesPath, pathToTemplate);
     }
 
     this._docxGeneratorService.getData$()
       .take(1)
       .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
-        JSZipUtils.getBinaryContent(path, (error, content: ArrayBuffer) => {
+        JSZipUtils.getBinaryContent(pathToTemplate, (error, content: ArrayBuffer) => {
           if (error) {
+            this.isGeneratingDoc  = false;
+            this._snackBarService.showError();
+
             throw error;
           }
 
