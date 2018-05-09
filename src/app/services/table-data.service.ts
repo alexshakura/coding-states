@@ -51,13 +51,10 @@ export class TableDataService {
   public rearrangeTableData(tableData: App.ITableRow[], newLength: number): App.ITableRow[] {
     const newTableData: App.ITableRow[] = tableData.slice();
 
-
     if (tableData.length > newLength) {
-      newTableData.splice(-1, tableData.length - newLength);
+      newTableData.splice(newLength);
     } else {
-      newTableData.push(
-        ...this.generateRaw(newLength - tableData.length, tableData.length)
-      );
+      newTableData.push(...this.generateRaw(newLength - tableData.length, tableData.length));
     }
 
     return newTableData;
