@@ -146,13 +146,31 @@ export class AppComponent implements OnInit {
           try {
             docxTemplate.render();
 
-            const generatedFile: Blob = docxTemplate
-              .getZip()
-              .generate({ type: 'blob', mimeType: DocxGeneratorService.MIME_TYPE });
+            const generatedZipFile = docxTemplate.getZip();
+            let generatedFile;
 
-            FileSaver.saveAs(generatedFile, 'coding_results.docx');
+            if (this._electronService.isElectron()) {
+              generatedFile = generatedZipFile.generate({ type: 'nodebuffer' });
 
-            this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+              const savePath: string = this._electronService.dialog.showSaveDialog({
+                defaultPath: 'coding_results',
+                filters: [{ name: 'Microsoft office document', extensions: ['docx'] }]
+              });
+
+              if (savePath) {
+                this._electronService.fs.writeFileSync(savePath, generatedFile);
+                this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+              }
+            } else {
+              generatedFile = generatedZipFile.generate({
+                type: 'blob',
+                mimeType: DocxGeneratorService.MIME_TYPE
+              });
+
+              FileSaver.saveAs(generatedFile, 'coding_results');
+
+              this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+            }
           } catch {
             this._snackBarService.showMessage(this.GENERATE_DOC_ERROR);
           } finally {

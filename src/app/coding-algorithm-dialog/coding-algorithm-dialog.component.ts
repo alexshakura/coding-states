@@ -19,8 +19,8 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
   public readonly STATE_N_D_ALGORITHM: string = CodingAlgorithmsService.STATE_N_D_ALGORITHM;
 
   public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм кодирования';
-  public readonly INVALID_ROWS_ERROR: string = 'Заполните следующие ряды: ';
-  public readonly INVALID_ROW_ERROR: string = 'Заполните следующий ряд: ';
+  public readonly INVALID_ROWS_ERROR: string = 'Заполните следующие строки: ';
+  public readonly INVALID_ROW_ERROR: string = 'Заполните следующую строку: ';
   public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
   public codingAlgorithm: string;
