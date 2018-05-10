@@ -60,6 +60,43 @@ export class TableDataService {
     return newTableData;
   }
 
+  public reconnectTableData(tableData: App.ITableRow[]): App.ITableRow[] {
+    return tableData.map((tableRow: App.ITableRow) => {
+      const updatedConditionals: App.ISignalOperand[] = [];
+      let newSrcState: App.ISignalOperand = null;
+      let newDistState: App.ISignalOperand = null;
+
+      if (tableRow.x.size > 0) {
+        tableRow.x.forEach((conditionalSignal: App.ISignalOperand) => {
+          const updatedSignal: App.ISignalOperand = this._conditionalSignals.find((newConditional: App.ISignalOperand) => {
+            return newConditional.id === conditionalSignal.id && conditionalSignal.inverted === newConditional.inverted;
+          });
+
+          updatedConditionals.push(updatedSignal);
+        });
+      }
+
+      if (tableRow.srcState) {
+        newSrcState = this._findState(tableRow.srcState.id);
+      }
+
+      if (tableRow.distState) {
+        newDistState = this._findState(tableRow.distState.id);
+      }
+
+      return {
+        ...tableRow,
+        srcState: newSrcState,
+        distState: newDistState,
+        x: new Set(updatedConditionals)
+      };
+    });
+  }
+
+  private _findState(stateId: number): App.ISignalOperand {
+    return this._states.find((state: App.ISignalOperand) => state.id === stateId);
+  }
+
   public generateStates(numberOfStates: number): App.ISignalOperand[] {
     if (this._states.length !== numberOfStates) {
       this._states = new Array(numberOfStates)
@@ -71,7 +108,7 @@ export class TableDataService {
   }
 
   public generateConditionalSignals(numberOfConditionalSignals: number): App.ISignalOperand[] {
-    if (this._conditionalSignals.length !== numberOfConditionalSignals) {
+    if (this._conditionalSignals.length !== numberOfConditionalSignals * 2) {
       this._conditionalSignals = [];
 
       for (let i: number = 0; i < numberOfConditionalSignals; i++) {
@@ -86,18 +123,13 @@ export class TableDataService {
   }
 
   public generateOutputSignals(numberOfOutputSignals: number): number[] {
-    return this._generateProgressionArray(this._outputSignals, numberOfOutputSignals);
-  }
-
-  private _generateProgressionArray(currentArray: number[], newLength: number): number[] {
-    if (currentArray.length !== newLength) {
-      currentArray = new Array(newLength)
+    if (this._outputSignals.length !== numberOfOutputSignals) {
+      this._outputSignals = new Array(numberOfOutputSignals)
         .fill(1)
         .map((val: number, index: number) => index + 1);
     }
 
-
-    return currentArray;
+    return this._outputSignals;
   }
 
   public shouldResetTableData(newTableConfig: App.ITableConfig, previousTableConfig: App.ITableConfig): boolean {

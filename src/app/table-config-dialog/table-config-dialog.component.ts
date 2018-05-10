@@ -1,10 +1,12 @@
-import { Component, Inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+
+import { Observable } from 'rxjs/Observable';
+
+import { BaseDialogComponent } from '../shared/base-dialog-component';
 import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
-import { Observable } from 'rxjs/Observable';
-import { BaseDialogComponent } from '../shared/base-dialog-component';
 
 const fieldValidators: ValidatorFn[] = [
   Validators.required,
@@ -27,6 +29,8 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[App.ITableC
   public readonly MILI_FSM_TYPE: string = TableDataService.MILI_FSM_TYPE;
   public readonly MURA_FSM_TYPE: string = TableDataService.MURA_FSM_TYPE;
 
+  public readonly FSM_TYPE_CONTROL_KEY: string = 'fsmType';
+
   public isProcessing: boolean = false;
 
   public tableConfigForm: FormGroup = this._formBuilder.group({
@@ -34,7 +38,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[App.ITableC
     numberOfStates: [this.data.tableConfig.numberOfStates, fieldValidators],
     numberOfX: [this.data.tableConfig.numberOfX, fieldValidators],
     numberOfY: [this.data.tableConfig.numberOfY, fieldValidators],
-    fsmType: TableDataService.MILI_FSM_TYPE
+    [this.FSM_TYPE_CONTROL_KEY]: this.data.tableConfig.fsmType || TableDataService.MILI_FSM_TYPE
   });
 
   public constructor(
@@ -74,12 +78,14 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[App.ITableC
       .takeUntil(this._destroy$$)
       .subscribe((updatedConfig: App.ITableConfig) => {
         for (const key in updatedConfig) {
-          updatedConfig[key] = Number(updatedConfig[key]);
+          if (key !== this.FSM_TYPE_CONTROL_KEY) {
+            updatedConfig[key] = Number(updatedConfig[key]);
+          }
         }
 
-        const successMessage: string = !this.isTableExist()
-          ? this.CREATE_SUCCESS_MESSAGE
-          : this.EDIT_SUCCESS_MESSAGE;
+        const successMessage: string = this.isTableExist()
+          ? this.EDIT_SUCCESS_MESSAGE
+          : this.CREATE_SUCCESS_MESSAGE;
 
         this._success$$.next([updatedConfig, successMessage]);
       });
