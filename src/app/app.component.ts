@@ -159,6 +159,10 @@ export class AppComponent implements OnInit {
               });
 
               if (savePath) {
+                if (this._electronService.fs.existsSync(savePath)) {
+                  this._electronService.fs.unlinkSync(savePath);
+                }
+
                 this._electronService.fs.writeFileSync(savePath, generatedFile);
                 this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
               }
