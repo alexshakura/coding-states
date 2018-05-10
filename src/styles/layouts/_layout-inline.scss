@@ -111,6 +111,10 @@ $lms-inline-item-widths: (
     align-items: flex-start !important;
   }
 
+  &--multi-line {
+    flex-wrap: wrap;
+  }
+
   &--stretch {
     height: 100%;
   }

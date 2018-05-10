@@ -140,10 +140,12 @@
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--0px">
         <div class="layout-inline__item layout-inline__item--60per">
-          <div *ngIf="row.x.size > 0 && !row.unconditionalX">
-            <ng-container *ngFor="let conditionalSignal of getSignalsIterator(row.x)">
+          <div *ngIf="row.x.size > 0 && !row.unconditionalX"
+               class="layout-inline layout-inline--0px layout-inline--multi-line">
+            <div *ngFor="let conditionalSignal of getSignalsIterator(row.x)"
+                 class="layout-inline__item">
               <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
-            </ng-container>
+            </div>
           </div>
 
           <div *ngIf="row.unconditionalX">1</div>
@@ -218,10 +220,12 @@
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--0px">
         <div class="layout-inline__item layout-inline__item--60per">
-          <div *ngIf="row.y.size > 0; else emptyValue">
-            <ng-container *ngFor="let outputSignal of getSignalsIterator(row.y); last as isLast">
-              y <sub>{{ outputSignal}}</sub><ng-container *ngIf="row.y.size > 1 && !isLast">,</ng-container>
-            </ng-container>
+          <div *ngIf="row.y.size > 0; else emptyValue"
+               class="layout-inline layout-inline--0px layout-inline--multi-line">
+            <div *ngFor="let outputSignal of getSignalsIterator(row.y); last as isLast"
+                          class="layout-inline__item">
+              y<sub>{{ outputSignal}}</sub><ng-container *ngIf="row.y.size > 1 && !isLast">,</ng-container>
+            </div>
           </div>
         </div>
 

@@ -66,7 +66,8 @@ export class AppComponent implements OnInit {
       data: {
         tableConfig: this.tableConfig,
         isInitialized: this.isInitialized
-      }
+      },
+      disableClose: !this.isInitialized
     });
 
     this.isInitialized = true;
