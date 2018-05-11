@@ -38,13 +38,7 @@ export class AppComponent implements OnInit {
 
   public isGeneratingDoc: boolean = false;
 
-  public tableConfig: App.ITableConfig = {
-    length: 16,
-    numberOfStates: 8,
-    numberOfX: 4,
-    numberOfY: 4,
-    fsmType: 'mili'
-  };
+  public tableConfig: App.ITableConfig = {} as App.ITableConfig;
 
   public constructor(
     private _dialog: MatDialog,
@@ -57,8 +51,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    // setTimeout(() => this.openTableConfigDialog());
-    this.isLoading = false;
+    setTimeout(() => this.openTableConfigDialog());
   }
 
   public openTableConfigDialog(): void {
@@ -77,6 +70,8 @@ export class AppComponent implements OnInit {
       .subscribe(([tableConfig, successMessage]: [App.ITableConfig, string]) => {
         this.tableConfig = tableConfig;
         this._snackBarService.showMessage(successMessage);
+
+        this.isLoading = false;
         this.isTableCoded = false;
 
         dialogRef.close();

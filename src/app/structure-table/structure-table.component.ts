@@ -83,9 +83,6 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   }
 
   public ngOnInit(): void {
-    this.dataSource.data = this._tableDataService.getMockDataForUnitaryD();
-    this.emitTableUpdate();
-
     this._codingAlgorithmsService.vertexCodes$
       .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
