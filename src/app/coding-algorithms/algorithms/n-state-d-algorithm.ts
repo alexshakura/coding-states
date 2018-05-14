@@ -13,8 +13,4 @@ export class NStateAlgorithm implements ICodingAlgorithm {
 
     return vertexCodesMap;
   }
-
-  public getCapacity(numOfStates: number): number {
-    return Math.ceil(Math.log2(numOfStates));
-  }
 }

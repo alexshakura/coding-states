@@ -13,8 +13,4 @@ export class UnitaryDAlgorithm implements ICodingAlgorithm {
 
     return vertexCodeMap;
   }
-
-  public getCapacity(numOfStates: number): number {
-    return numOfStates;
-  }
 }

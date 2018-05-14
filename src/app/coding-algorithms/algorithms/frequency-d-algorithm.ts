@@ -7,7 +7,7 @@ type TVertexFrequencyValue = { id: number, frequency: number };
 export class FrequencyDAlgorithm implements ICodingAlgorithm {
 
   public getVertexCodeMap(tableData: ITableRow[], numOfStates: number): TVertexData {
-    const capacity: number = this.getCapacity(numOfStates);
+    const capacity: number = this._getCapacity(numOfStates);
 
     const sortedByFrequencyVertexes: { id: number, frequency: number }[] = this._getSortedByFrequencyVertexes(tableData);
     const vertexCodesMap: TVertexData = new Map();
@@ -94,7 +94,7 @@ export class FrequencyDAlgorithm implements ICodingAlgorithm {
       .length - 1;
   }
 
-  public getCapacity(numOfStates: number): number {
+  private _getCapacity(numOfStates: number): number {
     return Math.ceil(Math.log2(numOfStates));
   }
 }

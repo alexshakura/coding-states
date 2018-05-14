@@ -90,7 +90,7 @@ export class CodingAlgorithmsService {
     const fsmCoder: BaseFsmCoder = this._fsmMap[tableConfig.fsmType];
 
     const vertexCodeMap: TVertexData = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
-    const capacity: number = algorithmCoder.getCapacity(tableConfig.numberOfStates);
+    const capacity: number = this._getCapacity(vertexCodeMap);
 
     const outputBooleanFunctions: TFunctionMap = fsmCoder.getOutputBooleanFunctions(tableData);
     const outputShefferFunctions: TFunctionMap = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
@@ -171,5 +171,10 @@ export class CodingAlgorithmsService {
     });
 
     return shefferExpression;
+  }
+
+  private _getCapacity(vertexCodeMap: TVertexData): number {
+    const maxValue: number = Math.max(...Array.from(vertexCodeMap.values()));
+    return maxValue.toString(2).length;
   }
 }
