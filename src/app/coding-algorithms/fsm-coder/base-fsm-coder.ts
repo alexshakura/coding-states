@@ -1,28 +1,32 @@
 import { ConjunctiveExpression } from '../../shared/expression/conjunctive-expression';
 import { DisjunctiveExpression } from '../../shared/expression/disjunctive-expression';
+import { ITableRow } from '../../../types/table-row';
+import { TVertexData, TFunctionMap } from '../../../types/helper-types';
+import { Expression } from '../../shared/expression/expression';
+import { SignalOperand } from '../../shared/expression/signal-operand';
 
 
 export abstract class BaseFsmCoder {
 
-  public getTransitionBooleanFunctions(tableData: App.ITableRow[], vertexCodesMap: App.TVertexData, capacity: number): App.TFunctionMap {
+  public getTransitionBooleanFunctions(tableData: ITableRow[], vertexCodesMap: TVertexData, capacity: number): TFunctionMap {
     const transitionCheckList: number[] = [];
 
     for (let i: number = 0; i < capacity; i++) {
       transitionCheckList.push(1 << i);
     }
 
-    const transitionBooleanFunctions: Map<number, App.IExpression> = new Map();
+    const transitionBooleanFunctions: Map<number, Expression> = new Map();
 
-    tableData.forEach((tableRow: App.ITableRow) => {
+    tableData.forEach((tableRow: ITableRow) => {
       const fCode: number = vertexCodesMap.get(tableRow.distState.id);
 
-      const stateOperand: App.ISignalOperand = tableRow.srcState;
-      let conditionalExpression: App.IExpression;
+      const stateOperand: SignalOperand = tableRow.srcState;
+      let conditionalExpression: Expression;
 
       if (!tableRow.unconditionalX) {
         conditionalExpression = new ConjunctiveExpression([stateOperand]);
 
-        tableRow.x.forEach((conditionalSignal: App.ISignalOperand) => {
+        tableRow.x.forEach((conditionalSignal: SignalOperand) => {
           conditionalExpression.addOperand(conditionalSignal);
         });
       }
@@ -36,7 +40,7 @@ export abstract class BaseFsmCoder {
             transitionBooleanFunctions.set(functionIndex, new DisjunctiveExpression([]));
           }
 
-          const transitionBooleanFunction: App.IExpression = transitionBooleanFunctions.get(functionIndex);
+          const transitionBooleanFunction: Expression = transitionBooleanFunctions.get(functionIndex);
 
           if (conditionalExpression) {
             transitionBooleanFunction.addOperand(conditionalExpression);
@@ -49,6 +53,6 @@ export abstract class BaseFsmCoder {
     return transitionBooleanFunctions;
   }
 
-  public abstract getOutputBooleanFunctions(tableData: App.ITableRow[]): App.TFunctionMap;
+  public abstract getOutputBooleanFunctions(tableData: ITableRow[]): TFunctionMap;
 
 }

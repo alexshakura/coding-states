@@ -1,7 +1,11 @@
-export class NStateAlgorithm implements App.ICodingAlgorithm {
+import { ICodingAlgorithm } from "../../../types/coding-algorithm";
+import { ITableRow } from "../../../types/table-row";
+import { TVertexData } from "../../../types/helper-types";
 
-  public getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData {
-    const vertexCodesMap: App.TVertexData = new Map();
+export class NStateAlgorithm implements ICodingAlgorithm {
+
+  public getVertexCodeMap(tableData: ITableRow[], numOfStates: number): TVertexData {
+    const vertexCodesMap: TVertexData = new Map();
 
     for (let i: number = 0; i < numOfStates; i++) {
       vertexCodesMap.set(i + 1, i);

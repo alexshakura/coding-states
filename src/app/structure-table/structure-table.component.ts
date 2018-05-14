@@ -5,6 +5,9 @@ import { OverlayContainer } from '@angular/cdk/overlay';
 import { BaseComponent } from '../shared/base-component';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { TableDataService } from '../services/table-data.service';
+import { ITableRow } from '../../types/table-row';
+import { SignalOperand } from '../shared/expression/signal-operand';
+import { TVertexData } from '../../types/helper-types';
 
 
 @Component({
@@ -14,7 +17,7 @@ import { TableDataService } from '../services/table-data.service';
 })
 export class StructureTableComponent extends BaseComponent implements OnInit, AfterViewInit {
 
-  @Input('tableConfig') public set defineTableData(tableConfig: App.ITableConfig) {
+  @Input('tableConfig') public set defineTableData(tableConfig: ITableConfig) {
     if (!this._tableConfig || this._tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
       this.dataSource.data = this._tableDataService.generateRaw(tableConfig.length);
     } else {
@@ -32,7 +35,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.emitTableUpdate();
   }
 
-  private _tableConfig: App.ITableConfig;
+  private _tableConfig: ITableConfig;
 
   @Input() public set disabled(isDisabled: boolean) {
     this.editMode = !isDisabled;
@@ -47,15 +50,15 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
 
   public editMode: boolean = true;
 
-  public states: App.ISignalOperand[] = [];
-  public conditionalSignals: App.ISignalOperand[] = [];
+  public states: SignalOperand[] = [];
+  public conditionalSignals: SignalOperand[] = [];
   public outputSignals: number[] = [];
 
   public capacity: number;
 
   @ViewChild(MatSort) public readonly sort: MatSort;
 
-  public dataSource: MatTableDataSource<App.ITableRow> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<ITableRow> = new MatTableDataSource();
 
   public readonly displayedColumns: string[] = [
     'num',
@@ -86,8 +89,8 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this._codingAlgorithmsService.vertexCodes$
       .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
-      .subscribe(([vertexCodes, capacity]: [App.TVertexData, number]) => {
-        this.dataSource.data.forEach((tableRow: App.ITableRow) => {
+      .subscribe(([vertexCodes, capacity]: [TVertexData, number]) => {
+        this.dataSource.data.forEach((tableRow: ITableRow) => {
           tableRow.codeSrcState = vertexCodes.get(tableRow.srcState.id);
           tableRow.codeDistState = vertexCodes.get(tableRow.distState.id);
           tableRow.f = tableRow.codeDistState;
@@ -102,12 +105,12 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.dataSource.sort = this.sort;
   }
 
-  public getSignalsIterator(signalContainer: Set<number | App.ISignalOperand>): (number | App.ISignalOperand)[] {
+  public getSignalsIterator(signalContainer: Set<number | SignalOperand>): (number | SignalOperand)[] {
     return Array.from(signalContainer);
   }
 
   public isConditionalSignalDisabled(
-    tableRow: { unconditionalX: boolean, x: Set<App.ISignalOperand> },
+    tableRow: { unconditionalX: boolean, x: Set<SignalOperand> },
     currentIndex: number,
     isInverted: boolean
   ): boolean {
@@ -125,7 +128,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.emitTableUpdate();
   }
 
-  public selectSignal(value: number, signalContainer: Set<number | App.ISignalOperand>): void {
+  public selectSignal(value: number, signalContainer: Set<number | SignalOperand>): void {
     signalContainer.has(value)
       ? signalContainer.delete(value)
       : signalContainer.add(value);

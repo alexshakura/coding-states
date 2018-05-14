@@ -1,12 +1,16 @@
+import { ICodingAlgorithm } from "../../../types/coding-algorithm";
+import { ITableRow } from "../../../types/table-row";
+import { TVertexData } from "../../../types/helper-types";
+
 type TVertexFrequencyValue = { id: number, frequency: number };
 
-export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
+export class FrequencyDAlgorithm implements ICodingAlgorithm {
 
-  public getVertexCodeMap(tableData: App.ITableRow[], numOfStates: number): App.TVertexData {
+  public getVertexCodeMap(tableData: ITableRow[], numOfStates: number): TVertexData {
     const capacity: number = this.getCapacity(numOfStates);
 
     const sortedByFrequencyVertexes: { id: number, frequency: number }[] = this._getSortedByFrequencyVertexes(tableData);
-    const vertexCodesMap: App.TVertexData = new Map();
+    const vertexCodesMap: TVertexData = new Map();
 
     const codeMap: Map<number, number[]> = this._getCodeMap(capacity);
 
@@ -37,10 +41,10 @@ export class FrequencyDAlgorithm implements App.ICodingAlgorithm {
     return new Map(sortedByIndexVertexes);
   }
 
-  private _getSortedByFrequencyVertexes(tableData: App.ITableRow[]): TVertexFrequencyValue[] {
+  private _getSortedByFrequencyVertexes(tableData: ITableRow[]): TVertexFrequencyValue[] {
     const vertexFrequencyMap: Map<number, TVertexFrequencyValue> = new Map();
 
-    tableData.forEach((tableRow: App.ITableRow) => {
+    tableData.forEach((tableRow: ITableRow) => {
       const distStateId: number = tableRow.distState.id;
 
       if (!vertexFrequencyMap.has(distStateId)) {

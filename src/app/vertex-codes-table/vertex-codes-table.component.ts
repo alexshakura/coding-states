@@ -4,6 +4,7 @@ import { TableDataService } from '../services/table-data.service';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 
 import { BaseComponent } from '../shared/base-component';
+import { TVertexData } from '../../types/helper-types';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class VertexCodesTableComponent extends BaseComponent implements OnInit {
     this._codingAlgorithmsService.vertexCodes$
       .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
-      .subscribe(([vertexCodes, capacity]: [App.TVertexData, number]) => {
+      .subscribe(([vertexCodes, capacity]: [TVertexData, number]) => {
         const newData = [];
 
         vertexCodes.forEach((value, key) => newData.push({ id: key, code: value }));

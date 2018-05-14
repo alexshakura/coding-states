@@ -15,6 +15,10 @@ import { ShefferExpression } from '../shared/expression/sheffer-expression';
 import { SignalOperand } from '../shared/expression/signal-operand';
 import { TableDataService } from './table-data.service';
 import { UnitaryDAlgorithm } from '../coding-algorithms/algorithms/unitary-d-algorithm';
+import { ITableRow } from '../../types/table-row';
+import { TVertexData, TFunctionMap } from '../../types/helper-types';
+import { ICodingAlgorithm } from '../../types/coding-algorithm';
+import { IFunctions } from '../../types/functions';
 
 
 @Injectable()
@@ -34,23 +38,23 @@ export class CodingAlgorithmsService {
 
   private _triggerMode$$: ReplaySubject<string> = new ReplaySubject<string>(1);
 
-  public get vertexCodes$(): Observable<App.TVertexData> {
+  public get vertexCodes$(): Observable<TVertexData> {
     return this._vertexCodes$$.asObservable();
   }
 
-  private _vertexCodes$$: ReplaySubject<App.TVertexData> = new ReplaySubject<App.TVertexData>(1);
+  private _vertexCodes$$: ReplaySubject<TVertexData> = new ReplaySubject<TVertexData>(1);
 
-  public get outputFunctions$(): Observable<App.IFunctions> {
+  public get outputFunctions$(): Observable<IFunctions> {
     return this._outputFunctions$$.asObservable();
   }
 
-  private _outputFunctions$$: ReplaySubject<App.IFunctions> = new ReplaySubject<App.IFunctions>(1);
+  private _outputFunctions$$: ReplaySubject<IFunctions> = new ReplaySubject<IFunctions>(1);
 
-  public get transitionFunctions$(): Observable<App.IFunctions> {
+  public get transitionFunctions$(): Observable<IFunctions> {
     return this._transitionFunctions$$.asObservable();
   }
 
-  private _transitionFunctions$$: ReplaySubject<App.IFunctions> = new ReplaySubject<App.IFunctions>(1);
+  private _transitionFunctions$$: ReplaySubject<IFunctions> = new ReplaySubject<IFunctions>(1);
 
   public get capacity$(): Observable<number> {
     return this._capacity$$.asObservable();
@@ -58,7 +62,7 @@ export class CodingAlgorithmsService {
 
   private _capacity$$: ReplaySubject<number> = new ReplaySubject<number>(1);
 
-  private _algorithmMap: { [propName: string]: App.ICodingAlgorithm } = {
+  private _algorithmMap: { [propName: string]: ICodingAlgorithm } = {
     [CodingAlgorithmsService.UNITARY_D_ALGORITHM]: new UnitaryDAlgorithm(),
     [CodingAlgorithmsService.FREQUENCY_D_ALGORITHM]: new FrequencyDAlgorithm(),
     [CodingAlgorithmsService.STATE_N_D_ALGORITHM]: new NStateAlgorithm()
@@ -69,7 +73,7 @@ export class CodingAlgorithmsService {
     [TableDataService.MURA_FSM_TYPE]: new MuraCoder()
   };
 
-  public code(algorithm: string, tableData: App.ITableRow[], tableConfig: Readonly<App.ITableConfig>): Observable<void> {
+  public code(algorithm: string, tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): Observable<void> {
     const invalidRows: number[] = this.checkTableData(tableData);
 
     if (invalidRows.length) {
@@ -82,17 +86,17 @@ export class CodingAlgorithmsService {
         .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
 
-    const algorithmCoder: App.ICodingAlgorithm = this._algorithmMap[algorithm];
+    const algorithmCoder: ICodingAlgorithm = this._algorithmMap[algorithm];
     const fsmCoder: BaseFsmCoder = this._fsmMap[tableConfig.fsmType];
 
-    const vertexCodeMap: App.TVertexData = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
+    const vertexCodeMap: TVertexData = algorithmCoder.getVertexCodeMap(tableData, tableConfig.numberOfStates);
     const capacity: number = algorithmCoder.getCapacity(tableConfig.numberOfStates);
 
-    const outputBooleanFunctions: App.TFunctionMap = fsmCoder.getOutputBooleanFunctions(tableData);
-    const outputShefferFunctions: App.TFunctionMap = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
+    const outputBooleanFunctions: TFunctionMap = fsmCoder.getOutputBooleanFunctions(tableData);
+    const outputShefferFunctions: TFunctionMap = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
 
-    const transitionBooleanFunctions: App.TFunctionMap = fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity);
-    const transitionShefferFunctions: App.TFunctionMap = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
+    const transitionBooleanFunctions: TFunctionMap = fsmCoder.getTransitionBooleanFunctions(tableData, vertexCodeMap, capacity);
+    const transitionShefferFunctions: TFunctionMap = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
 
     this._capacity$$.next(capacity);
     this._vertexCodes$$.next(vertexCodeMap);
@@ -111,20 +115,20 @@ export class CodingAlgorithmsService {
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
   }
 
-  public checkTableData(tableData: App.ITableRow[]): number[] {
+  public checkTableData(tableData: ITableRow[]): number[] {
     return tableData
-      .filter((tableRow: App.ITableRow) => {
+      .filter((tableRow: ITableRow) => {
         return !tableRow.distState
           || !tableRow.srcState
           || (!tableRow.unconditionalX && !tableRow.x.size);
       })
-      .map((tableRow: App.ITableRow) => tableRow.id);
+      .map((tableRow: ITableRow) => tableRow.id);
   }
 
-  private _convertBooleanFunctionsToSheffer(booleanFunctions: App.TFunctionMap): App.TFunctionMap {
-    const shefferFunctions: App.TFunctionMap = new Map<number, App.IExpression>();
+  private _convertBooleanFunctionsToSheffer(booleanFunctions: TFunctionMap): TFunctionMap {
+    const shefferFunctions: TFunctionMap = new Map<number, Expression>();
 
-    booleanFunctions.forEach((val: App.IExpression, key: number) => {
+    booleanFunctions.forEach((val: Expression, key: number) => {
       shefferFunctions.set(key, this.convertToShefferBasis(val));
     });
 
@@ -132,20 +136,20 @@ export class CodingAlgorithmsService {
   }
 
   // DNF -> Sheffer Basis
-  public convertToShefferBasis(expression: App.IExpression): ShefferExpression {
+  public convertToShefferBasis(expression: Expression): ShefferExpression {
     const shefferExpression: ShefferExpression = new ShefferExpression([]);
 
     if (expression.operands.length === 1) {
       if (expression.operands[0] instanceof Operand) {
-        shefferExpression.addOperand((expression.operands[0] as App.IOperand).copy());
+        shefferExpression.addOperand((expression.operands[0] as Operand).copy());
       }
 
       if (expression.operands[0] instanceof Expression) {
         shefferExpression.addOperand(
-          new ShefferExpression((expression.operands[0] as App.IExpression).operands)
+          new ShefferExpression((expression.operands[0] as Expression).operands)
         );
 
-        if ((expression.operands[0] as App.IExpression).operands.length > 1) {
+        if ((expression.operands[0] as Expression).operands.length > 1) {
           shefferExpression.addOperand(new OneOperand());
         }
       }
@@ -153,13 +157,13 @@ export class CodingAlgorithmsService {
       return shefferExpression;
     }
 
-    expression.operands.forEach((operand: App.IExpression | App.IOperand) => {
+    expression.operands.forEach((operand: Expression | Operand) => {
       if (operand instanceof Expression) {
         shefferExpression.addOperand(new ShefferExpression(operand.operands));
       }
 
       if (operand instanceof SignalOperand) {
-        const newOperand: SignalOperand = operand.copy() as App.ISignalOperand;
+        const newOperand: SignalOperand = operand.copy() as SignalOperand;
         newOperand.inverted = !newOperand.inverted;
 
         shefferExpression.addOperand(newOperand);

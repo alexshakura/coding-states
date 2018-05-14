@@ -1,9 +1,7 @@
 import { Operand } from './operand';
 
-export abstract class ConstantOperand extends Operand implements App.IConstantOperand {
-  public readonly abstract value: number;
-
-  public equalTo(operand: App.IOperand): boolean {
+export abstract class ConstantOperand extends Operand {
+  public equalTo(operand: Operand): boolean {
     return operand instanceof ConstantOperand
       && this.sign === operand.sign;
   }

@@ -38,7 +38,7 @@ export class AppComponent implements OnInit {
 
   public isGeneratingDoc: boolean = false;
 
-  public tableConfig: App.ITableConfig = {} as App.ITableConfig;
+  public tableConfig: ITableConfig = {} as ITableConfig;
 
   public constructor(
     private _dialog: MatDialog,
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
 
     dialogRef.componentInstance.success$
       .takeUntil(dialogRef.afterClosed())
-      .subscribe(([tableConfig, successMessage]: [App.ITableConfig, string]) => {
+      .subscribe(([tableConfig, successMessage]: [ITableConfig, string]) => {
         this.tableConfig = tableConfig;
         this._snackBarService.showMessage(successMessage);
 

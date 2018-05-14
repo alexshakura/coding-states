@@ -1,24 +1,28 @@
 import { BaseFsmCoder } from './base-fsm-coder';
 import { ConjunctiveExpression } from '../../shared/expression/conjunctive-expression';
 import { DisjunctiveExpression } from '../../shared/expression/disjunctive-expression';
+import { ITableRow } from '../../../types/table-row';
+import { TFunctionMap } from '../../../types/helper-types';
+import { SignalOperand } from '../../shared/expression/signal-operand';
+import { Expression } from '../../shared/expression/expression';
 
 
 export class MiliCoder extends BaseFsmCoder {
 
-  public getOutputBooleanFunctions(tableData: App.ITableRow[]): App.TFunctionMap {
-    const outputBooleanFunctions: App.TFunctionMap = new Map();
+  public getOutputBooleanFunctions(tableData: ITableRow[]): TFunctionMap {
+    const outputBooleanFunctions: TFunctionMap = new Map();
 
     tableData
-      .filter((tableRow: App.ITableRow) => tableRow.y.size > 0)
-      .forEach((tableRow: App.ITableRow) => {
-        const stateOperand: App.ISignalOperand = tableRow.srcState;
+      .filter((tableRow: ITableRow) => tableRow.y.size > 0)
+      .forEach((tableRow: ITableRow) => {
+        const stateOperand: SignalOperand = tableRow.srcState;
 
-        let conditionalExpression: App.IExpression;
+        let conditionalExpression: Expression;
 
         if (!tableRow.unconditionalX) {
           conditionalExpression = new ConjunctiveExpression([stateOperand]);
 
-          tableRow.x.forEach((conditionalSignal: App.ISignalOperand) => {
+          tableRow.x.forEach((conditionalSignal: SignalOperand) => {
             conditionalExpression.addOperand(conditionalSignal);
           });
         }
@@ -28,7 +32,7 @@ export class MiliCoder extends BaseFsmCoder {
             outputBooleanFunctions.set(y, new DisjunctiveExpression([]));
           }
 
-          const outputBooleanFunction: App.IExpression = outputBooleanFunctions.get(y);
+          const outputBooleanFunction: Expression = outputBooleanFunctions.get(y);
 
           if (conditionalExpression) {
             outputBooleanFunction.addOperand(conditionalExpression);

@@ -5,6 +5,8 @@ import { ReplaySubject } from 'rxjs/ReplaySubject';
 
 import { StateOperand } from '../shared/expression/state-operand';
 import { ConditionSignalOperand } from '../shared/expression/condition-signal-operand';
+import { ITableRow } from '../../types/table-row';
+import { SignalOperand } from '../shared/expression/signal-operand';
 
 
 @Injectable()
@@ -13,23 +15,23 @@ export class TableDataService {
   public static readonly MILI_FSM_TYPE: string = 'mili';
   public static readonly MURA_FSM_TYPE: string = 'mura';
 
-  public get tableData$(): Observable<App.ITableRow[]> {
+  public get tableData$(): Observable<ITableRow[]> {
     return this._tableData$$.asObservable();
   }
 
-  private _tableData$$: ReplaySubject<App.ITableRow[]> = new ReplaySubject(1);
+  private _tableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject(1);
 
-  private _conditionalSignals: App.ISignalOperand[] = [];
+  private _conditionalSignals: SignalOperand[] = [];
   private _outputSignals: number[] = [];
 
-  private _states: App.ISignalOperand[] = [];
+  private _states: SignalOperand[] = [];
 
-  public emitUpdatedTableData(updatedTableData: App.ITableRow[]): void {
+  public emitUpdatedTableData(updatedTableData: ITableRow[]): void {
     this._tableData$$.next(updatedTableData);
   }
 
-  public generateRaw(newLength: number, startId: number = 0): App.ITableRow[] {
-    const tableRow: App.ITableRow[] = [];
+  public generateRaw(newLength: number, startId: number = 0): ITableRow[] {
+    const tableRow: ITableRow[] = [];
 
     for (let i: number = 0; i < newLength; i++) {
       tableRow.push({
@@ -48,8 +50,8 @@ export class TableDataService {
     return tableRow;
   }
 
-  public rearrangeTableData(tableData: App.ITableRow[], newLength: number): App.ITableRow[] {
-    const newTableData: App.ITableRow[] = tableData.slice();
+  public rearrangeTableData(tableData: ITableRow[], newLength: number): ITableRow[] {
+    const newTableData: ITableRow[] = tableData.slice();
 
     if (tableData.length > newLength) {
       newTableData.splice(newLength);
@@ -60,15 +62,15 @@ export class TableDataService {
     return newTableData;
   }
 
-  public reconnectTableData(tableData: App.ITableRow[]): App.ITableRow[] {
-    return tableData.map((tableRow: App.ITableRow) => {
-      const updatedConditionals: App.ISignalOperand[] = [];
-      let newSrcState: App.ISignalOperand = null;
-      let newDistState: App.ISignalOperand = null;
+  public reconnectTableData(tableData: ITableRow[]): ITableRow[] {
+    return tableData.map((tableRow: ITableRow) => {
+      const updatedConditionals: SignalOperand[] = [];
+      let newSrcState: SignalOperand = null;
+      let newDistState: SignalOperand = null;
 
       if (tableRow.x.size > 0) {
-        tableRow.x.forEach((conditionalSignal: App.ISignalOperand) => {
-          const updatedSignal: App.ISignalOperand = this._conditionalSignals.find((newConditional: App.ISignalOperand) => {
+        tableRow.x.forEach((conditionalSignal: SignalOperand) => {
+          const updatedSignal: SignalOperand = this._conditionalSignals.find((newConditional: SignalOperand) => {
             return newConditional.id === conditionalSignal.id && conditionalSignal.inverted === newConditional.inverted;
           });
 
@@ -93,11 +95,11 @@ export class TableDataService {
     });
   }
 
-  private _findState(stateId: number): App.ISignalOperand {
-    return this._states.find((state: App.ISignalOperand) => state.id === stateId);
+  private _findState(stateId: number): SignalOperand {
+    return this._states.find((state: SignalOperand) => state.id === stateId);
   }
 
-  public generateStates(numberOfStates: number): App.ISignalOperand[] {
+  public generateStates(numberOfStates: number): SignalOperand[] {
     if (this._states.length !== numberOfStates) {
       this._states = new Array(numberOfStates)
           .fill(1)
@@ -107,7 +109,7 @@ export class TableDataService {
     return this._states;
   }
 
-  public generateConditionalSignals(numberOfConditionalSignals: number): App.ISignalOperand[] {
+  public generateConditionalSignals(numberOfConditionalSignals: number): SignalOperand[] {
     if (this._conditionalSignals.length !== numberOfConditionalSignals * 2) {
       this._conditionalSignals = [];
 
@@ -132,7 +134,7 @@ export class TableDataService {
     return this._outputSignals;
   }
 
-  public shouldResetTableData(newTableConfig: App.ITableConfig, previousTableConfig: App.ITableConfig): boolean {
+  public shouldResetTableData(newTableConfig: ITableConfig, previousTableConfig: ITableConfig): boolean {
     return previousTableConfig &&
       ( previousTableConfig.numberOfStates > newTableConfig.numberOfStates
         || previousTableConfig.numberOfX > newTableConfig.numberOfX
@@ -148,10 +150,7 @@ export class TableDataService {
       : formattedCodingState;
   }
 
-  public getMockDataForUnitaryD(): App.ITableRow[] {
-    this.generateStates(7);
-    this.generateConditionalSignals(3);
-
+  public getMockDataForUnitaryD(): ITableRow[] {
     return [
       {
         id: 1,

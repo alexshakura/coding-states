@@ -2,6 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { Subject } from 'rxjs/Subject';
 import { MatTableDataSource } from '@angular/material';
+import { Expression } from '../shared/expression/expression';
+import { IFunctions } from '../../types/functions';
+
 
 @Component({
   selector: 'app-transition-functions-table',
@@ -16,10 +19,10 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
-  public dataSource: MatTableDataSource<{ id: number, function: App.IExpression }> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<{ id: number, function: Expression }> = new MatTableDataSource();
 
-  private _booleanFunctions: { id: number, function: App.IExpression }[] = [];
-  private _shefferFunctions: { id: number, function: App.IExpression }[] = [];
+  private _booleanFunctions: { id: number, function: Expression }[] = [];
+  private _shefferFunctions: { id: number, function: Expression }[] = [];
 
   private _destroy$$: Subject<void> = new Subject<void>();
 
@@ -36,7 +39,7 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
 
     this._codingAlgorithmsService.transitionFunctions$
       .takeUntil(this._destroy$$)
-      .subscribe((transitionBooleanFunctions: App.IFunctions) => {
+      .subscribe((transitionBooleanFunctions: IFunctions) => {
         this._booleanFunctions = [];
         this._shefferFunctions = [];
 

@@ -4,6 +4,8 @@ import { MatTableDataSource } from '@angular/material';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { DisjunctiveExpression } from '../shared/expression/disjunctive-expression';
 import { BaseComponent } from '../shared/base-component';
+import { Expression } from '../shared/expression/expression';
+import { IFunctions } from '../../types/functions';
 
 
 @Component({
@@ -15,12 +17,12 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
-  public dataSource: MatTableDataSource<{ id: number, function: App.IExpression }> = new MatTableDataSource();
+  public dataSource: MatTableDataSource<{ id: number, function: Expression }> = new MatTableDataSource();
 
   public isBooleanBasisMode: boolean;
 
-  private _booleanFunctions: { id: number, function: App.IExpression }[] = [];
-  private _shefferFunctions: { id: number, function: App.IExpression }[] = [];
+  private _booleanFunctions: { id: number, function: Expression }[] = [];
+  private _shefferFunctions: { id: number, function: Expression }[] = [];
 
 
   public constructor(
@@ -32,15 +34,15 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
   public ngOnInit(): void {
     this._codingAlgorithmsService.outputFunctions$
       .takeUntil(this._destroy$$)
-      .subscribe((outputFunctions: App.IFunctions) => {
+      .subscribe((outputFunctions: IFunctions) => {
         this._booleanFunctions = [];
         this._shefferFunctions = [];
 
-        outputFunctions.boolean.forEach((value: App.IExpression, key: number) => {
+        outputFunctions.boolean.forEach((value: Expression, key: number) => {
           this._booleanFunctions.push({ id: key, function: value });
         });
 
-        outputFunctions.sheffer.forEach((value: App.IExpression, key: number) => {
+        outputFunctions.sheffer.forEach((value: Expression, key: number) => {
           this._shefferFunctions.push({ id: key, function: value });
         });
 
@@ -60,7 +62,7 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
       : [...this._shefferFunctions];
   }
 
-  public isDisjunctiveExpression(expression: App.IExpression): expression is DisjunctiveExpression {
+  public isDisjunctiveExpression(expression: Expression): expression is DisjunctiveExpression {
     return expression instanceof DisjunctiveExpression;
   }
 }

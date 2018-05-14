@@ -7,6 +7,8 @@ import { CodingAlgorithmsService } from './coding-algorithms.service';
 import { ConstantOperand } from '../shared/expression/constant-operand';
 import { Expression } from '../shared/expression/expression';
 import { TableDataService } from './table-data.service';
+import { ITableRow } from '../../types/table-row';
+import { IFunctions } from '../../types/functions';
 
 
 @Injectable()
@@ -27,8 +29,8 @@ export class DocxGeneratorService {
         this._codingAlgorithmsService.outputFunctions$,
         this._codingAlgorithmsService.transitionFunctions$
       )
-      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [App.ITableRow[], number, App.IFunctions, App.IFunctions]) => {
-        const updatedTableData = tableData.map((tableRow: App.ITableRow) => {
+      .map(([tableData, capacity, outputFunctions, transitionFunctions]: [ITableRow[], number, IFunctions, IFunctions]) => {
+        const updatedTableData = tableData.map((tableRow: ITableRow) => {
           return {
             ...tableRow,
             codeSrcState: this._tableDataService.formatStateCode(tableRow.codeSrcState, capacity),
@@ -39,17 +41,17 @@ export class DocxGeneratorService {
           };
         });
 
-        const rearrangedOutputFunctions: { boolean: App.IExpression, sheffer: App.IExpression }[] = [];
-        const rearrangedTransitionFunctions: { boolean: App.IExpression, sheffer: App.IExpression }[] = [];
+        const rearrangedOutputFunctions: { boolean: Expression, sheffer: Expression }[] = [];
+        const rearrangedTransitionFunctions: { boolean: Expression, sheffer: Expression }[] = [];
 
-        outputFunctions.boolean.forEach((val: App.IExpression, key: number) => {
+        outputFunctions.boolean.forEach((val: Expression, key: number) => {
           rearrangedOutputFunctions.push({
             boolean: val,
             sheffer: outputFunctions.sheffer.get(key)
           });
         });
 
-        transitionFunctions.boolean.forEach((val: App.IExpression, key: number) => {
+        transitionFunctions.boolean.forEach((val: Expression, key: number) => {
           rearrangedTransitionFunctions.push({
             boolean: val,
             sheffer: transitionFunctions.sheffer.get(key)

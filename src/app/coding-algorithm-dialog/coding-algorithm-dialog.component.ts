@@ -5,6 +5,7 @@ import { BaseDialogComponent } from '../shared/base-dialog-component';
 import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
 import { SnackBarService } from '../services/snack-bar.service';
 import { TableDataService } from '../services/table-data.service';
+import { ITableRow } from '../../types/table-row';
 
 
 @Component({
@@ -28,7 +29,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
   public isProcessing: boolean = false;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { tableConfig: App.ITableConfig },
+    @Inject(MAT_DIALOG_DATA) public data: { tableConfig: ITableConfig },
     private _codingAlgorithmsService: CodingAlgorithmsService,
     private _dialogRef: MatDialogRef<CodingAlgorithmDialogComponent>,
     private _snackBarService: SnackBarService,
@@ -46,7 +47,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
     this.isProcessing = true;
 
     this._tableDataService.tableData$
-      .switchMap((tableData: App.ITableRow[]) => {
+      .switchMap((tableData: ITableRow[]) => {
         return this._codingAlgorithmsService.code(this.codingAlgorithm, tableData, this.data.tableConfig);
       })
       .take(1)
