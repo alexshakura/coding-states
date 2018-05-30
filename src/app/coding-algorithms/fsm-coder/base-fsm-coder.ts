@@ -50,7 +50,20 @@ export abstract class BaseFsmCoder {
         });
     });
 
-    return transitionBooleanFunctions;
+    const sortedTransitionBooleanFunctions: [number, Expression][] = Array.from(transitionBooleanFunctions.entries())
+      .sort((a: [number, Expression], b: [number, Expression]) => {
+        if (a[0] > b[0]) {
+          return 1;
+        }
+
+        if (a[0] < b[0]) {
+          -1;
+        }
+
+        return 0;
+      });
+
+    return new Map(sortedTransitionBooleanFunctions);
   }
 
   public abstract getOutputBooleanFunctions(tableData: ITableRow[]): TFunctionMap;

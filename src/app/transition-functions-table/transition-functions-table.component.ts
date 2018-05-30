@@ -15,7 +15,7 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
 
   public triggerMode: string;
 
-  public isBooleanBasisMode: boolean;
+  public isBooleanBasisMode: boolean = true;
 
   public readonly displayedColumns: string[] = ['id', 'function'];
 
@@ -51,7 +51,7 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
           this._shefferFunctions.push({ id: key, function: value });
         });
 
-        this.toggleBasisMode(true);
+        this._setBasisMode(true);
       });
   }
 
@@ -69,6 +69,10 @@ export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
       return;
     }
 
+    this._setBasisMode(isBooleanBasisMode);
+  }
+
+  private _setBasisMode(isBooleanBasisMode: boolean): void {
     this.isBooleanBasisMode = isBooleanBasisMode;
 
     this.dataSource.data = this.isBooleanBasisMode

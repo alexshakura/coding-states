@@ -13,7 +13,7 @@ import { ITableRow } from '../../types/table-row';
   templateUrl: './coding-algorithm-dialog.component.html',
   host: { class: 'component-wrapper' }
 })
-export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, string> {
+export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string, string], string> {
 
   public readonly UNITARY_D_ALGORITHM: string = CodingAlgorithmsService.UNITARY_D_ALGORITHM;
   public readonly FREQUENCY_D_ALGORITHM: string = CodingAlgorithmsService.FREQUENCY_D_ALGORITHM;
@@ -54,7 +54,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<string, 
       .takeUntil(this._destroy$$)
       .subscribe(
         () => {
-          this._success$$.next(this.SUCCESS_MESSAGE);
+          this._success$$.next([this.codingAlgorithm, this.SUCCESS_MESSAGE]);
         },
         (invalidRows: number[] | null) => {
           this.isProcessing = false;

@@ -19,7 +19,7 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
 
   public dataSource: MatTableDataSource<{ id: number, function: Expression }> = new MatTableDataSource();
 
-  public isBooleanBasisMode: boolean;
+  public isBooleanBasisMode: boolean = true;
 
   private _booleanFunctions: { id: number, function: Expression }[] = [];
   private _shefferFunctions: { id: number, function: Expression }[] = [];
@@ -46,7 +46,7 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
           this._shefferFunctions.push({ id: key, function: value });
         });
 
-        this.toggleBasisMode(true);
+        this._setBasisMode(true);
       });
   }
 
@@ -55,6 +55,10 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
       return;
     }
 
+    this._setBasisMode(isBooleanBasisMode);
+  }
+
+  private _setBasisMode(isBooleanBasisMode: boolean): void {
     this.isBooleanBasisMode = isBooleanBasisMode;
 
     this.dataSource.data = this.isBooleanBasisMode

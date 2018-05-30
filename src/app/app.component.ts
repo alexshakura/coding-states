@@ -38,7 +38,16 @@ export class AppComponent implements OnInit {
 
   public isGeneratingDoc: boolean = false;
 
-  public tableConfig: ITableConfig = {} as ITableConfig;
+  public tableConfig: ITableConfig = {
+    numberOfStates: 7,
+    length: 15,
+    numberOfX: 3,
+    numberOfY: 6,
+    fsmType: 'mili'
+  } as ITableConfig;
+
+  public chosenCodingAlgorithm: string;
+
 
   public constructor(
     private _dialog: MatDialog,
@@ -51,7 +60,8 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    setTimeout(() => this.openTableConfigDialog());
+    // setTimeout(() => this.openTableConfigDialog());
+    this.isLoading = false;
   }
 
   public openTableConfigDialog(): void {
@@ -87,8 +97,10 @@ export class AppComponent implements OnInit {
 
     dialogRef.componentInstance.success$
       .takeUntil(dialogRef.afterClosed())
-      .subscribe((successMessage: string) => {
+      .subscribe(([codingAlgorithm, successMessage]: string[]) => {
         this._snackBarService.showMessage(successMessage);
+
+        this.chosenCodingAlgorithm = codingAlgorithm;
         this.isTableCoded = true;
 
         dialogRef.close();
@@ -136,7 +148,10 @@ export class AppComponent implements OnInit {
             tableData,
             isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
             outputFunctions,
-            transitionFunctions
+            transitionFunctions,
+            isUnitaryAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.UNITARY_D_ALGORITHM,
+            isFrequencyAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.FREQUENCY_D_ALGORITHM,
+            isNStateAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.STATE_N_D_ALGORITHM
           });
 
           try {
