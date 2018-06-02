@@ -45,7 +45,8 @@
   </mat-toolbar>
 
   <mat-card-content>
-    <mat-tab-group>
+    <mat-tab-group [selectedIndex]="selectedTabIndex"
+                   (selectedTabChange)="selectedTabIndex = $event.index">
       <mat-tab label="Структурная таблица переходов">
         <app-structure-table *ngIf="!isLoading"
                              [tableConfig]="tableConfig"

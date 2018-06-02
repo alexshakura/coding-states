@@ -38,6 +38,8 @@ export class AppComponent implements OnInit {
 
   public isGeneratingDoc: boolean = false;
 
+  public selectedTabIndex: number = 0;
+
   public tableConfig: ITableConfig = {
     numberOfStates: 7,
     length: 15,
@@ -83,6 +85,7 @@ export class AppComponent implements OnInit {
 
         this.isLoading = false;
         this.isTableCoded = false;
+        this.selectedTabIndex = 0;
 
         dialogRef.close();
       });
@@ -129,69 +132,74 @@ export class AppComponent implements OnInit {
 
     this._docxGeneratorService.getData$()
       .take(1)
-      .subscribe(([tableData, outputFunctions, transitionFunctions]: any[]) => {
-        JSZipUtils.getBinaryContent(pathToTemplate, (error, content: ArrayBuffer) => {
-          if (error) {
-            this.isGeneratingDoc  = false;
-            this._snackBarService.showError();
+      .subscribe(
+        ([tableData, outputFunctions, transitionFunctions]: any[]) => {
+          JSZipUtils.getBinaryContent(pathToTemplate, (error, content: ArrayBuffer) => {
+            if (error) {
+              this.isGeneratingDoc  = false;
+              this._snackBarService.showError();
 
-            throw error;
-          }
+              throw error;
+            }
 
-          const zip = new JSZip(content);
+            const zip = new JSZip(content);
 
-          const docxTemplate = new Docxtemplater()
-            .loadZip(zip)
-            .setOptions({ parser: this._docxGeneratorService.getParser(), paragraphLoop: true });
+            const docxTemplate = new Docxtemplater()
+              .loadZip(zip)
+              .setOptions({ parser: this._docxGeneratorService.getParser(), paragraphLoop: true });
 
-          docxTemplate.setData({
-            tableData,
-            isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
-            outputFunctions,
-            transitionFunctions,
-            isUnitaryAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.UNITARY_D_ALGORITHM,
-            isFrequencyAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.FREQUENCY_D_ALGORITHM,
-            isNStateAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.STATE_N_D_ALGORITHM
-          });
+            docxTemplate.setData({
+              tableData,
+              isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
+              outputFunctions,
+              transitionFunctions,
+              isUnitaryAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.UNITARY_D_ALGORITHM,
+              isFrequencyAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.FREQUENCY_D_ALGORITHM,
+              isNStateAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.STATE_N_D_ALGORITHM
+            });
 
-          try {
-            docxTemplate.render();
+            try {
+              docxTemplate.render();
 
-            const generatedZipFile = docxTemplate.getZip();
-            let generatedFile;
+              const generatedZipFile = docxTemplate.getZip();
+              let generatedFile;
 
-            if (this._electronService.isElectron()) {
-              generatedFile = generatedZipFile.generate({ type: 'nodebuffer' });
+              if (this._electronService.isElectron()) {
+                generatedFile = generatedZipFile.generate({ type: 'nodebuffer' });
 
-              const savePath: string = this._electronService.dialog.showSaveDialog({
-                defaultPath: 'coding_results',
-                filters: [{ name: 'Microsoft office document', extensions: ['docx'] }]
-              });
+                const savePath: string = this._electronService.dialog.showSaveDialog({
+                  defaultPath: 'coding_results',
+                  filters: [{ name: 'Microsoft office document', extensions: ['docx'] }]
+                });
 
-              if (savePath) {
-                if (this._electronService.fs.existsSync(savePath)) {
-                  this._electronService.fs.unlinkSync(savePath);
+                if (savePath) {
+                  if (this._electronService.fs.existsSync(savePath)) {
+                    this._electronService.fs.unlinkSync(savePath);
+                  }
+
+                  this._electronService.fs.writeFileSync(savePath, generatedFile);
+                  this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
                 }
+              } else {
+                generatedFile = generatedZipFile.generate({
+                  type: 'blob',
+                  mimeType: DocxGeneratorService.MIME_TYPE
+                });
 
-                this._electronService.fs.writeFileSync(savePath, generatedFile);
+                FileSaver.saveAs(generatedFile, 'coding_results');
+
                 this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
               }
-            } else {
-              generatedFile = generatedZipFile.generate({
-                type: 'blob',
-                mimeType: DocxGeneratorService.MIME_TYPE
-              });
-
-              FileSaver.saveAs(generatedFile, 'coding_results');
-
-              this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+            } catch {
+              this._snackBarService.showMessage(this.GENERATE_DOC_ERROR);
+            } finally {
+              this.isGeneratingDoc = false;
             }
-          } catch {
-            this._snackBarService.showMessage(this.GENERATE_DOC_ERROR);
-          } finally {
-            this.isGeneratingDoc = false;
-          }
+          });
+        },
+        () => {
+          this.isGeneratingDoc  = false;
+          this._snackBarService.showError();
         });
-      });
   }
 }
