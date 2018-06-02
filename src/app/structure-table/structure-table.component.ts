@@ -28,7 +28,6 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.conditionalSignals = this._tableDataService.generateConditionalSignals(tableConfig.numberOfX);
     this.outputSignals = this._tableDataService.generateOutputSignals(tableConfig.numberOfY);
 
-    this.dataSource.data = this._tableDataService.getMockDataForUnitaryD();
     this.dataSource.data = this._tableDataService.reconnectTableData(this.dataSource.data);
 
     this._tableConfig = tableConfig;

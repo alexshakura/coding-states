@@ -40,13 +40,7 @@ export class AppComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig = {
-    numberOfStates: 7,
-    length: 15,
-    numberOfX: 3,
-    numberOfY: 6,
-    fsmType: 'mili'
-  } as ITableConfig;
+  public tableConfig: ITableConfig = { } as ITableConfig;
 
   public chosenCodingAlgorithm: string;
 
@@ -62,8 +56,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    // setTimeout(() => this.openTableConfigDialog());
-    this.isLoading = false;
+    setTimeout(() => this.openTableConfigDialog());
   }
 
   public openTableConfigDialog(): void {
