@@ -347,4 +347,54 @@ export class TableDataService {
       },
     ];
   }
+
+  public getMockDataForWrongGraph(): ITableRow[] {
+    return [
+      {
+        id: 1,
+        srcState: this._states[0],
+        codeSrcState: null,
+        distState: this._states[1],
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([this._conditionalSignals[0]]),
+        y: new Set([1, 2]),
+        f: null
+      },
+      {
+        id: 2,
+        srcState: this._states[0],
+        codeSrcState: null,
+        distState: this._states[2],
+        codeDistState: null,
+        unconditionalX: false,
+        x: new Set([this._conditionalSignals[1]]),
+        y: new Set([2]),
+        f: null
+      },
+      {
+        id: 3,
+        srcState: this._states[1],
+        codeSrcState: null,
+        distState: this._states[1],
+        codeDistState: null,
+        unconditionalX: true,
+        x: new Set(),
+        y: new Set([3]),
+        f: null
+      },
+      {
+        id: 4,
+        srcState: this._states[2],
+        codeSrcState: null,
+        distState: this._states[1],
+        codeDistState: null,
+        unconditionalX: true,
+        x: new Set(),
+        y: new Set([2, 3]),
+        f: null
+      },
+    ];
+  }
+
 }

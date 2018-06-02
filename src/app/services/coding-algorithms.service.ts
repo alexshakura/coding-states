@@ -28,9 +28,14 @@ export class CodingAlgorithmsService {
   public static readonly FREQUENCY_D_ALGORITHM: string = 'frequency';
   public static readonly STATE_N_D_ALGORITHM: string = 'by_num_state';
 
-  public static readonly DEFAULT_TIMEOUT: number = 1000;
+  private static readonly DEFAULT_TIMEOUT: number = 1000;
 
   public static readonly D_TRIGGER_MODE: string = 'D';
+
+  public readonly INVALID_ROWS_ERROR: string = 'INVALID_ROWS';
+  public readonly INVALID_ROW_ERROR: string = 'INVALID_ROW';
+  public readonly INVALID_INPUT_ERROR: string = 'INVALID_INPUT';
+  public readonly INVALID_GRAPH_ERROR: string = 'INVALID_GRAPH';
 
   public get triggerMode$(): Observable<string> {
     return this._triggerMode$$.asObservable();
@@ -77,12 +82,21 @@ export class CodingAlgorithmsService {
     const invalidRows: number[] = this.checkTableData(tableData);
 
     if (invalidRows.length) {
-      return Observable.throw(invalidRows)
+      const errorObj = invalidRows.length > 1
+        ? { [this.INVALID_ROWS_ERROR]: invalidRows }
+        : { [this.INVALID_ROW_ERROR]: invalidRows } ;
+
+      return Observable.throw(errorObj)
         .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
 
     if (!this._algorithmMap[algorithm] || !this._fsmMap[tableConfig.fsmType]) {
-      return Observable.throw(null)
+      return Observable.throw({ [this.INVALID_INPUT_ERROR]: true })
+        .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
+    }
+
+    if (!this.isGraphValid(tableData, tableConfig.numberOfStates)) {
+      return Observable.throw({ [this.INVALID_GRAPH_ERROR]: true })
         .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
     }
 
@@ -113,6 +127,13 @@ export class CodingAlgorithmsService {
 
     return Observable.of(null)
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);
+  }
+
+  public isGraphValid(tableData: ITableRow[], numberOfStates: number): boolean {
+    const srcStateSet: Set<number> = new Set(tableData.map((tableRow: ITableRow) => tableRow.srcState.id));
+    const distStateSet: Set<number> = new Set(tableData.map((tableRow: ITableRow) => tableRow.distState.id));
+
+    return srcStateSet.size === numberOfStates && distStateSet.size === numberOfStates;
   }
 
   public checkTableData(tableData: ITableRow[]): number[] {

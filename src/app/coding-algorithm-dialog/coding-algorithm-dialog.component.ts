@@ -19,9 +19,15 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string,
   public readonly FREQUENCY_D_ALGORITHM: string = CodingAlgorithmsService.FREQUENCY_D_ALGORITHM;
   public readonly STATE_N_D_ALGORITHM: string = CodingAlgorithmsService.STATE_N_D_ALGORITHM;
 
+  public errorMap: { [propName: string]: string } = {
+    [this._codingAlgorithmsService.INVALID_INPUT_ERROR]: 'Проверьте веденные данные',
+    [this._codingAlgorithmsService.INVALID_GRAPH_ERROR]: 'Указанный граф не корректен',
+    [this._codingAlgorithmsService.INVALID_ROWS_ERROR]: 'Заполните следующие строки: ',
+    [this._codingAlgorithmsService.INVALID_ROW_ERROR]: 'Заполните следующую строку: '
+  };
+
+
   public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм кодирования';
-  public readonly INVALID_ROWS_ERROR: string = 'Заполните следующие строки: ';
-  public readonly INVALID_ROW_ERROR: string = 'Заполните следующую строку: ';
   public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
   public codingAlgorithm: string;
@@ -56,22 +62,20 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string,
         () => {
           this._success$$.next([this.codingAlgorithm, this.SUCCESS_MESSAGE]);
         },
-        (invalidRows: number[] | null) => {
+        (errorMap: {[propName: string]: any}) => {
           this.isProcessing = false;
 
-          let errorMessage: string;
+          const errorMessage: string = Object.keys(errorMap)[0];
+          let message: string = this.errorMap[errorMessage];
 
-          if (invalidRows) {
-            const rowsSlice: number[] = invalidRows.slice(0, 3);
+          if (errorMessage === this._codingAlgorithmsService.INVALID_ROWS_ERROR
+                || errorMessage === this._codingAlgorithmsService.INVALID_ROW_ERROR) {
+            const invalidRows: number[] = errorMap[errorMessage].slice(0, 3);
 
-            errorMessage = rowsSlice.length > 1
-              ? this.INVALID_ROWS_ERROR
-              : this.INVALID_ROW_ERROR;
-
-            errorMessage += rowsSlice.join(', ');
+            message += invalidRows.join(', ');
           }
 
-          this._error$$.next(errorMessage);
+          this._error$$.next(message);
         });
   }
 
