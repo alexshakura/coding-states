@@ -87,16 +87,11 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   }
 
   public ngOnInit(): void {
-    this._codingAlgorithmsService.vertexCodes$
+    this._codingAlgorithmsService.codedTableData$
       .combineLatest(this._codingAlgorithmsService.capacity$)
       .takeUntil(this._destroy$$)
-      .subscribe(([vertexCodes, capacity]: [TVertexData, number]) => {
-        this.dataSource.data.forEach((tableRow: ITableRow) => {
-          tableRow.codeSrcState = vertexCodes.get(tableRow.srcState.id);
-          tableRow.codeDistState = vertexCodes.get(tableRow.distState.id);
-          tableRow.f = tableRow.codeDistState;
-        });
-
+      .subscribe(([codedTableData, capacity]: [ITableRow[], number]) => {
+        this.dataSource.data = codedTableData.map((tableRow: ITableRow) => ({ ...tableRow }));
         this.capacity = capacity;
       });
 

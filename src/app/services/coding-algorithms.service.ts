@@ -67,6 +67,12 @@ export class CodingAlgorithmsService {
 
   private _capacity$$: ReplaySubject<number> = new ReplaySubject<number>(1);
 
+  public get codedTableData$(): Observable<ITableRow[]> {
+    return this._codedTableData$$.asObservable();
+  }
+
+  private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
+
   private _algorithmMap: { [propName: string]: ICodingAlgorithm } = {
     [CodingAlgorithmsService.UNITARY_D_ALGORITHM]: new UnitaryDAlgorithm(),
     [CodingAlgorithmsService.FREQUENCY_D_ALGORITHM]: new FrequencyDAlgorithm(),
@@ -124,6 +130,14 @@ export class CodingAlgorithmsService {
       boolean: transitionBooleanFunctions,
       sheffer: transitionShefferFunctions
     });
+
+    tableData.forEach((tableRow: ITableRow) => {
+      tableRow.codeSrcState = vertexCodeMap.get(tableRow.srcState.id);
+      tableRow.codeDistState = vertexCodeMap.get(tableRow.distState.id);
+      tableRow.f = tableRow.codeDistState;
+    });
+
+    this._codedTableData$$.next(tableData);
 
     return Observable.of(null)
       .delay(CodingAlgorithmsService.DEFAULT_TIMEOUT);

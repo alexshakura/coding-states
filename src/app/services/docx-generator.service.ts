@@ -23,7 +23,7 @@ export class DocxGeneratorService {
   ) { }
 
   public getData$(): Observable<any[]> {
-    return this._tableDataService.tableData$
+    return this._codingAlgorithmsService.codedTableData$
       .combineLatest(
         this._codingAlgorithmsService.capacity$,
         this._codingAlgorithmsService.outputFunctions$,
