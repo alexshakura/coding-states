@@ -27,7 +27,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string,
   };
 
 
-  public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм кодирования';
+  public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм или способ кодирования';
   public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
   public codingAlgorithm: string;

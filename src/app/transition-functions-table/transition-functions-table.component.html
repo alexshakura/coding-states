@@ -3,11 +3,11 @@
     <div class="layout-split__item card-header__title">
       Функции переходов
     </div>
-    <div class="layout-split__item">
+    <div class="layout-split__item"
+         matTooltip="Выбрать представление"
+         matTooltipPosition="above">
       <button mat-icon-button
               [matMenuTriggerFor]="basisModeMenu"
-              matTooltip="Выбрать представление"
-              matTooltipPosition="above"
               app-theme="primary">
         <div class="icon icon--settings icon--20px"></div>
       </button>
