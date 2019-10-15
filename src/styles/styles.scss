@@ -1,27 +1,15 @@
-/* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/deeppurple-amber.css';
-@import '../../node_modules/mdi/css/materialdesignicons.css';
+@import '~mdi/css/materialdesignicons.css';
 @import '~roboto-fontface/css/roboto/roboto-fontface.css';
 
 @import './variables';
-
-body {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  font-size: 14px;
-  line-height: 20px;
-  color: $app-color-dark;
-  background-color: rgba($app-color-dark, 0.05);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+@import './setup';
 
 @import 'states/color';
 @import 'states/inverted';
 @import 'states/interactive';
 
 @import 'utils/card';
-@import 'utils/dialog';
 @import 'utils/layout-center';
 @import 'utils/layout-inline';
 @import 'utils/layout-list';
@@ -46,7 +34,6 @@ body {
 @import 'mat-library/cdk-overlay';
 @import 'mat-library/mat-button';
 @import 'mat-library/mat-card';
-@import 'mat-library/mat-dialog-container';
 @import 'mat-library/mat-error';
 @import 'mat-library/mat-form-field';
 @import 'mat-library/mat-icon-button';

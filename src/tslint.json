@@ -1,0 +1,38 @@
+{
+  "extends": "../tslint.json",
+  "linterOptions": {
+    "exclude": [
+      "**/*.constants.ts"
+    ]
+  },
+  "rules": {
+    "template-banana-in-box": true,
+    "template-no-negated-async": true,
+    "directive-selector": [
+      true,
+      "attribute",
+      "app"
+    ],
+    "component-selector": [
+      true,
+      "element",
+      "app",
+      "kebab-case"
+    ],
+    "no-life-cycle-call": true,
+    "prefer-output-readonly": true,
+    "use-component-selector": true,
+    "no-queries-metadata-property": true,
+    "no-inputs-metadata-property": true,
+    "no-outputs-metadata-property": true,
+    "use-host-property-decorator": false,
+    "no-output-native": true,
+    "no-input-rename": true,
+    "no-output-rename": true,
+    "use-life-cycle-interface": true,
+    "contextual-life-cycle": true,
+    "use-pipe-transform-interface": true,
+    "component-class-suffix": true,
+    "directive-class-suffix": true
+  }
+}

@@ -28,10 +28,8 @@ import { CustomMatPaginatorIntlRu } from './custom-paginator';
 import { DynamicContentTooltipComponent } from './components/dynamic-content-tooltip/dynamic-content-tooltip.component';
 import { DynamicTooltipDirective } from './directives/dynamic-tooltip.directive';
 import { PaginatorComponent } from './components/paginator/paginator.component';
-import { DialogOverlayComponent } from './components/dialog-overlay/dialog-overlay.component';
 import { SnackBarContentComponent } from './components/snack-bar-content/snack-bar-content.component';
 import { DiscreteExpressionComponent } from './components/discrete-expression/discrete-expression.component';
-
 
 @NgModule({
   imports: [
@@ -61,11 +59,9 @@ import { DiscreteExpressionComponent } from './components/discrete-expression/di
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
     PaginatorComponent,
-    DialogOverlayComponent,
-    SnackBarContentComponent
+    SnackBarContentComponent,
   ],
   exports: [
-    DialogOverlayComponent,
     DiscreteExpressionComponent,
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
@@ -91,11 +87,11 @@ import { DiscreteExpressionComponent } from './components/discrete-expression/di
     SnackBarContentComponent,
   ],
   providers: [
-    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu }
+    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu },
   ],
   entryComponents: [
     DynamicContentTooltipComponent,
     SnackBarContentComponent,
-  ]
+  ],
 })
 export class SharedModule { }

@@ -23,9 +23,8 @@ import {
 import { ComponentPortal, TemplatePortal  } from '@angular/cdk/portal';
 import { CdkScrollable, ScrollDispatcher } from '@angular/cdk/scrolling';
 
-import { merge } from 'rxjs/observable/merge';
-import { take } from 'rxjs/operators/take';
-import { Subject } from 'rxjs/Subject';
+import { merge, Subject } from 'rxjs';
+import { take, takeUntil } from 'rxjs/operators';
 
 import { DynamicContentTooltipComponent } from '../components/dynamic-content-tooltip/dynamic-content-tooltip.component';
 
@@ -44,9 +43,8 @@ type TTooltipPosition =
   | 'bottomRight'
   | 'bottomLeft';
 
-
 @Directive({
-  selector: '[appDynamicTooltip]'
+  selector: '[appDynamicTooltip]',
 })
 export class DynamicTooltipDirective implements OnDestroy, OnInit {
   public readonly TOOLTIP_PANEL_CLASS: string = 'mat-tooltip-panel';
@@ -69,7 +67,7 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
     bottom: { originX: 'center', originY: 'bottom' },
     bottomRight: { originX: 'end', originY: 'bottom' },
     left: { originX: 'start', originY: 'center' },
-    right: { originX: 'end', originY: 'center' }
+    right: { originX: 'end', originY: 'center' },
   };
 
   private _tooltipStartPointMap: { [key in TTooltipPosition]: OverlayConnectionPosition} = {
@@ -80,7 +78,7 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
     bottom: { overlayX: 'center', overlayY: 'bottom' },
     bottomRight: { overlayX: 'end', overlayY: 'bottom' },
     left: { overlayX: 'start', overlayY: 'center' },
-    right: { overlayX: 'end', overlayY: 'center' }
+    right: { overlayX: 'end', overlayY: 'center' },
   };
 
   private _destroy$$: Subject<void> = new Subject<void>();
@@ -123,7 +121,7 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
     }
 
     this._updateTooltipContent();
-    this._tooltipInstance.show();
+    (this._tooltipInstance as DynamicContentTooltipComponent).show();
   }
 
   public hide(): void {
@@ -131,7 +129,6 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
       this._tooltipInstance.hide();
     }
   }
-
 
   private _createTooltip(): void {
     const overlayRef: OverlayRef = this._createOverlay();
@@ -141,8 +138,13 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
     this._tooltipInstance = overlayRef.attach(tooltipPortal).instance;
     this._tooltipInstance.contentPortal = new TemplatePortal(this.tooltipContent, this._viewContainerRef);
 
-    merge(this._tooltipInstance.afterHidden(), overlayRef.detachments())
-      .takeUntil(this._destroy$$)
+    merge(
+      this._tooltipInstance.afterHidden(),
+      overlayRef.detachments()
+    )
+      .pipe(
+        takeUntil(this._destroy$$)
+      )
       .subscribe(() => {
         if (this._tooltipInstance) {
           this._disposeTooltip();
@@ -153,10 +155,10 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
   private _createOverlay(): OverlayRef {
     const origin: OriginConnectionPosition = this.elementPosition
       ? this._elementStartPointMap[this.elementPosition]
-      : this._elementStartPointMap['bottom'];
+      : this._elementStartPointMap.bottom;
     const overlay: OverlayConnectionPosition = this.tooltipPosition
       ? this._tooltipStartPointMap[this.tooltipPosition]
-      : this._tooltipStartPointMap['top'];
+      : this._tooltipStartPointMap.top;
 
     const invertedOrigin: TInvertedPossition = this._invertPosition(origin.originX, origin.originY);
 
@@ -183,7 +185,9 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
     strategy.withScrollableContainers(scrollableAncestors);
 
     strategy.onPositionChange
-      .takeUntil(this._destroy$$)
+      .pipe(
+        takeUntil(this._destroy$$)
+      )
       .subscribe((change: ConnectedOverlayPositionChange) => {
         if (this._tooltipInstance) {
           if (change.scrollableViewProperties.isOverlayClipped && this._tooltipInstance.isVisible()) {
@@ -196,7 +200,7 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
       direction: 'ltr',
       positionStrategy: strategy,
       panelClass: this.TOOLTIP_PANEL_CLASS,
-      scrollStrategy: this._overlay.scrollStrategies.reposition({ scrollThrottle: this.SCROLL_THROTTLE_MS })
+      scrollStrategy: this._overlay.scrollStrategies.reposition({ scrollThrottle: this.SCROLL_THROTTLE_MS }),
     });
 
     this._overlayRef = this._overlay.create(config);
@@ -221,7 +225,7 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
       this._ngZone.onMicrotaskEmpty.asObservable()
         .pipe(take(1))
         .subscribe(() => {
-          if (this._tooltipInstance) {
+          if (this._tooltipInstance && this._overlayRef) {
             this._overlayRef.updatePosition();
         }
       });
@@ -229,7 +233,6 @@ export class DynamicTooltipDirective implements OnDestroy, OnInit {
   }
 
   private _invertPosition(x: HorizontalConnectionPos, y: VerticalConnectionPos): TInvertedPossition {
-
     if (y === 'top') {
       y = 'bottom';
     } else if (y === 'bottom') {

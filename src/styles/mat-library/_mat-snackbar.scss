@@ -1,24 +1,9 @@
 .mat-snack-bar-container {
-  &.mat-snack-bar-center {
-    margin-bottom: 24px !important;
-    box-shadow: 0 0 2px 0 rgba(black, .12),
-              0 2px 2px 0 rgba(black, .24);
-  }
-
   &--message {
     background-color: $app-color-primary;
-
-    .mat-simple-snackbar-action {
-      text-transform: uppercase;
-    }
   }
 
   &--error {
     background-color: $app-color-danger;
-
-    .mat-simple-snackbar-action {
-      text-transform: uppercase;
-      color: white;
-    }
   }
 }

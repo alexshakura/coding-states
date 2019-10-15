@@ -1,12 +1,11 @@
-import { Component, Inject } from '@angular/core';
-import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
-import { MatSnackBar } from '@angular/material';
-
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'lms-snack-bar-content',
+  selector: 'app-snack-bar-content',
   templateUrl: './snack-bar-content.component.html',
   host: { class: 'component-wrapper' },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnackBarContentComponent {
 

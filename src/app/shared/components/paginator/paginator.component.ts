@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { MatPaginator, MatPaginatorIntl } from '@angular/material';
+import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 
 
 @Component({

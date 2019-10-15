@@ -1,15 +1,25 @@
 {
   "productName": "coding-states",
   "directories": {
-    "output": "app-builds"
+    "output": "release/"
   },
   "icon": "dist/icon.png",
   "artifactName": "${productName}.${ext}",
-  "extraResources": [
-    {
-      "from": "dist/assets/doc-templates/table_min.docx",
-      "to": "assets/doc-templates/table_min.docx"
-    }
+  "files": [
+      "**/*",
+      "!**/*.ts",
+      "!*.code-workspace",
+      "!LICENSE.md",
+      "!package.json",
+      "!package-lock.json",
+      "!src/",
+      "!e2e/",
+      "!hooks/",
+      "!angular.json",
+      "!_config.yml",
+      "!karma.conf.js",
+      "!tsconfig.json",
+      "!tslint.json"
   ],
   "win": {
     "target": [

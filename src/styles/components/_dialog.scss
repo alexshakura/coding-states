@@ -8,9 +8,6 @@
  *        &--wide
  *      &__actions
  *
- *    .dialog-body-section
- *      &--bordered
- *      &--narrow
  *
  *    .dialog-header
  *      &__title
@@ -61,8 +58,7 @@ $dialog-image-themes: (
 
 .dialog {
   display: block;
-  @extend %dialog;
-  margin: 100px 0;
+  color: $app-color-dark;
 
   &__body {
     display: block;
@@ -75,20 +71,7 @@ $dialog-image-themes: (
   }
 
   &__actions {
-    padding: 12px 24px;
-  }
-}
-
-
-.dialog-body-section {
-  padding: 21px 24px;
-
-  &--bordered {
-    border-bottom: 1px solid rgba($app-color-dark, 0.2);
-  }
-
-  &--narrow {
-    padding: 16px 24px;
+    padding-top: 12px;
   }
 }
 
@@ -110,21 +93,5 @@ $dialog-image-themes: (
     color: rgba($app-color-dark, 0.5);
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-}
-
-.dialog-overlay {
-  @extend %layout-center;
-  width: 100vw;
-  height: 100vh;
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    max-height: 100%;
-    overflow: auto;
   }
 }
