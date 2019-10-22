@@ -27,7 +27,7 @@
  */
 
 
-$lms-colors: (
+$app-colors: (
   primary: $app-color-primary,
   warning: $app-color-warning,
   danger: $app-color-danger,
@@ -48,7 +48,7 @@ $lms-colors: (
   color: rgba($app-color-dark, 0.3);
 }
 
-@each $name, $color in $lms-colors {
+@each $name, $color in $app-colors {
   .is--#{$name} {
     color: $color;
 

@@ -44,10 +44,10 @@
  *
  */
 
-$lms-inline-default-margin: 16px;
+$app-inline-default-margin: 16px;
 
 
-$lms-inline-item-widths: (
+$app-inline-item-widths: (
   64px: 64px,
   100px: 100px,
   250px: 250px,
@@ -68,7 +68,7 @@ $lms-inline-item-widths: (
     flex-shrink: 0;
 
     &:not(:first-child) {
-      padding-left: $lms-inline-default-margin;
+      padding-left: $app-inline-default-margin;
     }
 
     &--expand {
@@ -88,7 +88,7 @@ $lms-inline-item-widths: (
       transition: flex 0.3s linear;
     }
 
-    @each $size-name, $size-width in $lms-inline-item-widths {
+    @each $size-name, $size-width in $app-inline-item-widths {
       &--#{$size-name} {
         width: $size-width;
       }
@@ -119,7 +119,7 @@ $lms-inline-item-widths: (
     height: 100%;
   }
 
-  @each $margin in $lms-layout-spacing-options {
+  @each $margin in $app-layout-spacing-options {
     &--#{$margin} > &__item:not(:first-child) {
       padding-left: $margin;
     }

@@ -1,3 +1,10 @@
+.mat-menu-panel {
+  $item-height: 48px;
+  $padding: 8px;
+
+  max-height: calc(#{$item-height * 5} + #{$padding} + #{$item-height / 2}) !important;
+}
+
 .mat-menu-item {
   font-size: 14px;
 }

@@ -30,20 +30,20 @@
  @import "~mdi/scss/path";
 
 
- $lms-icon-default-size: 24px;
- $lms-icon-sizes: 14px 18px 20px 24px 48px;
+ $app-icon-default-size: 24px;
+ $app-icon-sizes: 14px 18px 20px 24px 48px;
 
- $lms-icon-default-box-size: 24px;
- $lms-icon-box-sizes: 14px 18px 20px 32px 48px;
+ $app-icon-default-box-size: 24px;
+ $app-icon-box-sizes: 14px 18px 20px 32px 48px;
 
 
  .icon {
    @extend %layout-center;
    font-weight: normal;
-   font-size: $lms-icon-default-size;
-   line-height: $lms-icon-default-size;
-   width: $lms-icon-default-box-size;
-   height: $lms-icon-default-box-size;
+   font-size: $app-icon-default-size;
+   line-height: $app-icon-default-size;
+   width: $app-icon-default-box-size;
+   height: $app-icon-default-box-size;
 
    &:before {
      display: block;
@@ -53,14 +53,14 @@
      line-height: inherit;
    }
 
-   @each $size in $lms-icon-sizes {
+   @each $size in $app-icon-sizes {
      &--#{$size} {
        font-size: $size;
        line-height: $size;
      }
    }
 
-   @each $size in $lms-icon-box-sizes {
+   @each $size in $app-icon-box-sizes {
      &--box-#{$size} {
        width: $size;
        height: $size;

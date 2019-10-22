@@ -4,13 +4,12 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { of } from 'rxjs';
 
-import { BaseDialogComponent } from '../../shared/base-dialog-component';
-import { SnackBarService } from '../services/snack-bar.service';
+import { BaseDialogComponent } from '@app/shared/base-dialog-component';
+import { SnackBarService } from '@app/root/services/snack-bar.service';
 import { delay, takeUntil } from 'rxjs/operators';
 import { FsmType } from '@app/enums';
 import { ITableConfig } from '@app/types';
 import { NUMBER_FORM_FIELD_VALIDATORS, SUBMISSION_DELAY } from './table-config-dialog.constants';
-
 
 @Component({
   selector: 'app-table-config-dialog',
@@ -49,8 +48,11 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
 
   public hasNotice(fieldKey: keyof ITableConfig): boolean {
     const control: AbstractControl = this.form.controls[fieldKey];
+    const configValue = this.tableConfig[fieldKey];
 
-    return control.valid && control.value < this.tableConfig[fieldKey];
+    return control.valid
+      && configValue !== undefined
+      && control.value < configValue;
   }
 
   public save(): void {

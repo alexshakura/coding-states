@@ -46,7 +46,6 @@
               class="layout-inline__item">
           <button mat-icon-button
                   [matMenuTriggerFor]="statesMenu"
-                  (menuOpened)="onMenuOpen(getStateMenuPanelClass(row.id, true))"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
                   app-theme="primary">
@@ -54,8 +53,7 @@
           </button>
 
           <mat-menu #statesMenu="matMenu"
-                    [overlapTrigger]="false"
-                    [class]="getStateMenuPanelClass(row.id, true)">
+                    [overlapTrigger]="false">
             <button *ngFor="let state of states"
                     (click)="row.srcState = state; emitTableUpdate()"
                     mat-menu-item>
@@ -75,7 +73,7 @@
       </div>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div *ngIf="isStateCodeExist(row.codeSrcState); else emptyValue">
+      <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.codeSrcState) }}
       </div>
     </mat-cell>
@@ -98,7 +96,6 @@
               class="layout-inline__item">
           <button mat-icon-button
                  [matMenuTriggerFor]="statesMenu"
-                 (menuOpened)="onMenuOpen(getStateMenuPanelClass(row.id, false))"
                  matTooltip="Добавить"
                  matTooltipPosition="above"
                  app-theme="primary">
@@ -106,8 +103,7 @@
           </button>
 
           <mat-menu #statesMenu="matMenu"
-                    [overlapTrigger]="false"
-                    [class]="getStateMenuPanelClass(row.id, false)">
+                    [overlapTrigger]="false">
             <button *ngFor="let state of states"
                     (click)="row.distState = state; emitTableUpdate()"
                     mat-menu-item>
@@ -127,7 +123,7 @@
       </div>
     </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div *ngIf="isStateCodeExist(row.codeDistState); else emptyValue">
+      <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.codeDistState) }}
       </div>
     </mat-cell>
@@ -157,7 +153,6 @@
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="xSignalsMenu"
-                  (menuOpened)="onMenuOpen(getConditionalMenuPanelClass(row.id))"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
                   app-theme="primary">
@@ -165,8 +160,7 @@
           </button>
 
           <mat-menu #xSignalsMenu="matMenu"
-                    [overlapTrigger]="false"
-                    [class]="getConditionalMenuPanelClass(row.id)">
+                    [overlapTrigger]="false">
             <div (click)="$event.stopPropagation();"
                   class="mat-menu-item">
               <mat-checkbox [ngModel]="row.unconditionalX"
@@ -217,6 +211,7 @@
         </div>
       </ng-template>
     </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--0px">
         <div class="layout-inline__item layout-inline__item--60per">
@@ -233,7 +228,6 @@
           <div *ngIf="editMode">
             <button mat-icon-button
                     [matMenuTriggerFor]="ySignalsMenu"
-                    (menuOpened)="onMenuOpen(getOutputMenuPanelClass(row.id))"
                     matTooltip="Добавить"
                     matTooltipPosition="above"
                     app-theme="primary">
@@ -241,8 +235,7 @@
             </button>
 
             <mat-menu #ySignalsMenu="matMenu"
-                      [overlapTrigger]="false"
-                      [class]="getOutputMenuPanelClass(row.id)">
+                      [overlapTrigger]="false">
               <div *ngFor="let outputSignal of outputSignals"
                     (click)="$event.stopPropagation();"
                     class="mat-menu-item">
@@ -263,7 +256,7 @@
   <ng-container matColumnDef="f">
     <mat-header-cell *matHeaderCellDef>F<sub>h</sub></mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <div *ngIf="isStateCodeExist(row.f); else emptyValue">
+      <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.f) }}
       </div>
     </mat-cell>

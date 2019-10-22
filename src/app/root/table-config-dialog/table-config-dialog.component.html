@@ -1,6 +1,6 @@
 <div class="dialog">
   <div class="dialog__body">
-    <div class="layout-list">
+    <div class="layout-list layout-list--12px">
       <div class="layout-list__item">
         <div class="dialog-header">
           <div class="dialog-header__title">
@@ -14,7 +14,8 @@
 
       <form id="tableParamsForm"
             [formGroup]="form"
-            (ngSubmit)="save()">
+            (ngSubmit)="save()"
+            class="layout-list layout-list--12px">
         <div class="layout-list__item">
           <div class="layout-list layout-list--10px">
             <div class="layout-list__item">
@@ -61,19 +62,19 @@
                     matInput
                     formControlName="length">
 
-            <mat-error *ngIf="tableConfigForm.hasError('required', ['length'])">
+            <mat-error *ngIf="form.hasError('required', ['length'])">
               Поле не может быть пустым
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('min', ['length'])">
+            <mat-error *ngIf="form.hasError('min', ['length'])">
               Длина должна быть больше нуля
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('max', ['length'])">
+            <mat-error *ngIf="form.hasError('max', ['length'])">
               Длина слишком большая
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('pattern', ['length'])">
+            <mat-error *ngIf="form.hasError('pattern', ['length'])">
               Длина должна быть числом
             </mat-error>
           </mat-form-field>
@@ -93,19 +94,19 @@
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>
 
-            <mat-error *ngIf="tableConfigForm.hasError('required', ['numberOfStates'])">
+            <mat-error *ngIf="form.hasError('required', ['numberOfStates'])">
               Поле не может быть пустым
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('min', ['numberOfStates'])">
+            <mat-error *ngIf="form.hasError('min', ['numberOfStates'])">
               Число состояний должно быть больше нуля
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('max', ['numberOfStates'])">
+            <mat-error *ngIf="form.hasError('max', ['numberOfStates'])">
               Число состояний слишком большое
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('pattern', ['numberOfStates'])">
+            <mat-error *ngIf="form.hasError('pattern', ['numberOfStates'])">
               Число состояний должно быть числом
             </mat-error>
           </mat-form-field>
@@ -125,19 +126,19 @@
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>
 
-            <mat-error *ngIf="tableConfigForm.hasError('required', ['numberOfX'])">
+            <mat-error *ngIf="form.hasError('required', ['numberOfX'])">
               Поле не может быть пустым
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('min', ['numberOfX'])">
+            <mat-error *ngIf="form.hasError('min', ['numberOfX'])">
               Число X должно быть больше нуля
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('max', ['numberOfX'])">
+            <mat-error *ngIf="form.hasError('max', ['numberOfX'])">
               Число X слишком большое
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('pattern', ['numberOfX'])">
+            <mat-error *ngIf="form.hasError('pattern', ['numberOfX'])">
               Число X должно быть числом
             </mat-error>
           </mat-form-field>
@@ -157,19 +158,19 @@
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>
 
-            <mat-error *ngIf="tableConfigForm.hasError('required', ['numberOfY'])">
+            <mat-error *ngIf="form.hasError('required', ['numberOfY'])">
               Поле не может быть пустым
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('min', ['numberOfY'])">
+            <mat-error *ngIf="form.hasError('min', ['numberOfY'])">
               Число Y должнo быть больше нуля
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('max', ['numberOfY'])">
+            <mat-error *ngIf="form.hasError('max', ['numberOfY'])">
               Число Y слишком большое
             </mat-error>
 
-            <mat-error *ngIf="tableConfigForm.hasError('pattern', ['numberOfY'])">
+            <mat-error *ngIf="form.hasError('pattern', ['numberOfY'])">
               Число Y должно быть числом
             </mat-error>
           </mat-form-field>

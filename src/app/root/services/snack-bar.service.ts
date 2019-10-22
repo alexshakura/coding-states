@@ -6,7 +6,7 @@ import { SnackBarContentComponent } from '../../shared/components/snack-bar-cont
 @Injectable()
 export class SnackBarService {
 
-  private readonly DURATION: number = 10000;
+  private readonly DURATION: number = 3000;
 
   public constructor(
     private readonly snackBar: MatSnackBar
@@ -20,7 +20,7 @@ export class SnackBarService {
     });
   }
 
-  public showError(text: string = ''): void {
+  public showError(text?: string): void {
     this.snackBar.openFromComponent(SnackBarContentComponent, {
       panelClass: 'mat-snack-bar-container--error',
       duration: this.DURATION,

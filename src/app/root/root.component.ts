@@ -10,6 +10,7 @@ import { TableConfigDialogComponent } from './table-config-dialog/table-config-d
 import { environment } from '../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { ITableConfig } from '@app/types';
+import { FsmType } from '@app/enums';
 
 @Component({
   selector: 'app-root',
@@ -30,14 +31,20 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig = { } as ITableConfig;
+  public tableConfig: ITableConfig = {
+    length: 16,
+    numberOfStates: 7,
+    numberOfX: 3,
+    numberOfY: 6,
+    fsmType: FsmType.MILI,
+  };
 
   public chosenCodingAlgorithm: string;
 
   public constructor(
     private _dialog: MatDialog,
     private _electronService: ElectronService,
-    private _snackBarService: SnackBarService,
+    private _snackBarService: SnackBarService
   ) { }
 
   public ngOnInit(): void {

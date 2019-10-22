@@ -23,7 +23,7 @@
  */
 
 
-$lms-list-default-marign: 24px;
+$app-list-default-margin: 24px;
 
 
 .layout-list {
@@ -34,7 +34,7 @@ $lms-list-default-marign: 24px;
     flex-shrink: 0;
 
     &:not(:last-child) {
-      padding-bottom: $lms-list-default-marign;
+      padding-bottom: $app-list-default-margin;
     }
 
     &--expand {
@@ -47,7 +47,7 @@ $lms-list-default-marign: 24px;
     align-items: center;
   }
 
-  @each $spacing in $lms-layout-spacing-options {
+  @each $spacing in $app-layout-spacing-options {
     &--#{$spacing} > &__item:not(:last-child) {
       padding-bottom: $spacing;
     }

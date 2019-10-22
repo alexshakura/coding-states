@@ -10,15 +10,14 @@ import { MAT_SNACK_BAR_DATA, MatSnackBar } from '@angular/material/snack-bar';
 export class SnackBarContentComponent {
 
   public constructor(
-    private _snackBar: MatSnackBar,
-    @Inject(MAT_SNACK_BAR_DATA)
-    public data: {
+    private readonly snackBar: MatSnackBar,
+    @Inject(MAT_SNACK_BAR_DATA) public readonly data: {
       text: string,
       isError: boolean,
     }
   ) { }
 
   public close(): void {
-    this._snackBar.dismiss();
+    this.snackBar.dismiss();
   }
 }

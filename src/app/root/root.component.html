@@ -50,7 +50,8 @@
       <mat-tab label="Структурная таблица переходов">
         <app-structure-table *ngIf="!isLoading"
                              [tableConfig]="tableConfig"
-                             [disabled]="isGeneratingDoc">
+                             [disabled]="isGeneratingDoc"
+                             [isCoded]="isTableCoded">
         </app-structure-table>
       </mat-tab>
 
