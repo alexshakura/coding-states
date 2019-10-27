@@ -49,9 +49,11 @@
                    (selectedTabChange)="selectedTabIndex = $event.index">
       <mat-tab label="Структурная таблица переходов">
         <app-structure-table *ngIf="!isLoading"
-                             [tableConfig]="tableConfig"
-                             [disabled]="isGeneratingDoc"
-                             [isCoded]="isTableCoded">
+                             [config]="tableConfig"
+                             [data]="tableData"
+                             [isCoded]="isTableCoded"
+                             [editModeControl]="tableEditModeControl"
+                             (onUpdate)="tableData = $event">
         </app-structure-table>
       </mat-tab>
 

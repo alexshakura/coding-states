@@ -9,8 +9,10 @@ import { ElectronService } from './services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { environment } from '../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
-import { ITableConfig } from '@app/types';
+import { ITableConfig, ITableRow } from '@app/types';
 import { FsmType } from '@app/enums';
+import { FormControl } from '@angular/forms';
+import { TableDataService } from './services/table-data.service';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +33,7 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig = {
+  public tableConfig: ITableConfig | null = {
     length: 16,
     numberOfStates: 7,
     numberOfX: 3,
@@ -39,12 +41,17 @@ export class RootComponent implements OnInit {
     fsmType: FsmType.MILI,
   };
 
+  public tableData: ITableRow[] = [];
+
+  public readonly tableEditModeControl: FormControl = new FormControl(true);
+
   public chosenCodingAlgorithm: string;
 
   public constructor(
-    private _dialog: MatDialog,
-    private _electronService: ElectronService,
-    private _snackBarService: SnackBarService
+    private readonly dialog: MatDialog,
+    private readonly electronService: ElectronService,
+    private readonly snackBarService: SnackBarService,
+    private readonly tableDataService: TableDataService
   ) { }
 
   public ngOnInit(): void {
@@ -52,7 +59,7 @@ export class RootComponent implements OnInit {
   }
 
   public openTableConfigDialog(): void {
-    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this._dialog.open(TableConfigDialogComponent , {
+    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this.dialog.open(TableConfigDialogComponent , {
       data: { tableConfig: this.tableConfig },
       disableClose: !this.isInitialized,
     });
@@ -64,8 +71,16 @@ export class RootComponent implements OnInit {
         takeUntil(dialogRef.afterClosed())
       )
       .subscribe(([tableConfig, successMessage]: [ITableConfig, string]) => {
+        if (!this.tableConfig || this.tableDataService.shouldDeleteCurrentData(tableConfig, this.tableConfig)) {
+          this.tableData = this.tableDataService.generateEmptyData(tableConfig.length);
+        } else if (this.tableConfig.length !== tableConfig.length) {
+          this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
+        }
+
+        this.tableData = this.tableDataService.reconnectTableData(this.tableData);
+
         this.tableConfig = tableConfig;
-        this._snackBarService.showMessage(successMessage);
+        this.snackBarService.showMessage(successMessage);
 
         this.isLoading = false;
         this.isTableCoded = false;
@@ -76,9 +91,10 @@ export class RootComponent implements OnInit {
   }
 
   public openCodingAlgorithmDialog(): void {
-    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this._dialog.open(CodingAlgorithmDialogComponent, {
+    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this.dialog.open(CodingAlgorithmDialogComponent, {
       data: {
         tableConfig: this.tableConfig,
+        tableData: this.tableData,
       },
     });
 
@@ -87,7 +103,7 @@ export class RootComponent implements OnInit {
         takeUntil(dialogRef.afterClosed())
       )
       .subscribe(([codingAlgorithm, successMessage]: string[]) => {
-        this._snackBarService.showMessage(successMessage);
+        this.snackBarService.showMessage(successMessage);
 
         this.chosenCodingAlgorithm = codingAlgorithm;
         this.isTableCoded = true;
@@ -100,24 +116,25 @@ export class RootComponent implements OnInit {
         takeUntil(dialogRef.afterClosed())
       )
       .subscribe((errorMessage: string) => {
-        this._snackBarService.showError(errorMessage);
+        this.snackBarService.showError(errorMessage);
       });
   }
 
   public generateDoc(): void {
-    if (!this.isTableCoded) {
-      this._snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
-      return;
-    }
+    // if (!this.isTableCoded) {
+    //   this._snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
+    //   return;
+    // }
 
     this.isGeneratingDoc = true;
+    this.tableEditModeControl.disable();
 
     let pathToTemplate: string = '/assets/doc-templates/table_min.docx';
 
-    if (this._electronService.isElectron() && environment.production) {
+    if (this.electronService.isElectron() && environment.production) {
       const resourcesPath = window.process.resourcesPath;
 
-      pathToTemplate = this._electronService.path.join(resourcesPath, pathToTemplate);
+      pathToTemplate = this.electronService.path.join(resourcesPath, pathToTemplate);
     }
 
     // combineLatest([

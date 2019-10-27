@@ -8,8 +8,9 @@ import { BaseDialogComponent } from '@app/shared/base-dialog-component';
 import { SnackBarService } from '@app/root/services/snack-bar.service';
 import { delay, takeUntil } from 'rxjs/operators';
 import { FsmType } from '@app/enums';
-import { ITableConfig } from '@app/types';
+import { ITableConfig, TSensitiveTableConfigFields } from '@app/types';
 import { NUMBER_FORM_FIELD_VALIDATORS, SUBMISSION_DELAY } from './table-config-dialog.constants';
+import { TableDataService } from '../services/table-data.service';
 
 @Component({
   selector: 'app-table-config-dialog',
@@ -37,22 +38,26 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
   public isEditMode: boolean = !!this.data.tableConfig;
 
   public constructor(
-    @Inject(MAT_DIALOG_DATA) public data: {
+    @Inject(MAT_DIALOG_DATA) public readonly data: {
       tableConfig: ITableConfig | null,
     },
-    private snackBarService: SnackBarService,
-    private formBuilder: FormBuilder
+    private readonly snackBarService: SnackBarService,
+    private readonly tableDataService: TableDataService,
+    private readonly formBuilder: FormBuilder
   ) {
     super();
   }
 
-  public hasNotice(fieldKey: keyof ITableConfig): boolean {
+  public isDataLossNoticeShown(fieldKey: TSensitiveTableConfigFields): boolean {
     const control: AbstractControl = this.form.controls[fieldKey];
-    const configValue = this.tableConfig[fieldKey];
 
-    return control.valid
-      && configValue !== undefined
-      && control.value < configValue;
+    const isFieldViolated = this.tableDataService.isConfigSensitiveFieldViolated(
+      this.tableConfig as ITableConfig,
+      this.form.value,
+      fieldKey
+    );
+
+    return control.valid && isFieldViolated;
   }
 
   public save(): void {

@@ -139,6 +139,9 @@
       "prefix": "app",
       "styleext": "scss"
     },
+    "@schematics/angular:service": {
+      "spec": false
+    },
     "@schematics/angular:directive": {
       "prefix": "app"
     }

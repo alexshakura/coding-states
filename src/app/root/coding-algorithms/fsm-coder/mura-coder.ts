@@ -1,8 +1,8 @@
 import { BaseFsmCoder } from './base-fsm-coder';
-import { DisjunctiveExpression } from '../../../shared/expression/disjunctive-expression';
+import { DisjunctiveExpression } from '@app/shared/expression/disjunctive-expression';
 import { ITableRow, TFunctionMap } from '@app/types';
-import { Expression } from '../../../shared/expression/expression';
-import { SignalOperand } from '../../../shared/expression/signal-operand';
+import { Expression } from '@app/shared/expression/expression';
+import { SignalOperand } from '@app/shared/expression/signal-operand';
 
 export class MuraCoder extends BaseFsmCoder {
 

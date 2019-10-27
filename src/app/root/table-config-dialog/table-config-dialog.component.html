@@ -89,7 +89,7 @@
                     matInput
                     formControlName="numberOfStates">
 
-            <mat-hint *ngIf="hasNotice('numberOfStates')"
+            <mat-hint *ngIf="isDataLossNoticeShown('numberOfStates')"
                       class="is--primary">
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>
@@ -121,7 +121,7 @@
                     matInput
                     formControlName="numberOfX">
 
-            <mat-hint *ngIf="hasNotice('numberOfX')"
+            <mat-hint *ngIf="isDataLossNoticeShown('numberOfX')"
                       class="is--primary">
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>
@@ -153,7 +153,7 @@
                     matInput
                     formControlName="numberOfY">
 
-            <mat-hint *ngIf="hasNotice('numberOfY')"
+            <mat-hint *ngIf="isDataLossNoticeShown('numberOfY')"
                       class="is--primary">
               Данное значение приведет к сбросу всех данных таблицы
             </mat-hint>

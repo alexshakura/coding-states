@@ -28,7 +28,7 @@
     "max-file-line-count": [true, 500],
     "no-default-export": true,
     "prefer-const": true,
-    "array-type": [true, "array"],
+    "array-type": false,
     "no-conditional-assignment": true,
     "curly": true,
     "arrow-return-shorthand": true,

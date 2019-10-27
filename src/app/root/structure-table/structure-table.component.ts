@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 
@@ -11,6 +11,7 @@ import { MatSort } from '@angular/material/sort';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FsmType } from '@app/enums';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-structure-table',
@@ -19,44 +20,29 @@ import { FsmType } from '@app/enums';
 })
 export class StructureTableComponent extends BaseComponent implements OnInit, AfterViewInit {
 
-  @Input('tableConfig') public set defineTableData(tableConfig: ITableConfig) {
-    if (!this._tableConfig || this.tableDataService.shouldResetTableData(tableConfig, this._tableConfig)) {
-      this.dataSource.data = this.tableDataService.generateRaw(tableConfig.length);
-    } else {
-      this.dataSource.data = this.tableDataService.rearrangeTableData(this.dataSource.data, tableConfig.length);
-    }
-
-    this.states = this.tableDataService.generateStates(tableConfig.numberOfStates);
-    this.conditionalSignals = this.tableDataService.generateConditionalSignals(tableConfig.numberOfX);
-    this.outputSignals = this.tableDataService.generateOutputSignals(tableConfig.numberOfY);
-
-    this.dataSource.data = this.tableDataService.reconnectTableData(this.dataSource.data);
-
-    this._tableConfig = tableConfig;
-
-    this.emitTableUpdate();
+  @Input() public set data(value: ITableRow[]) {
+    this.dataSource.data = value;
   }
 
-  private _tableConfig: ITableConfig;
+  @Input() public set config(config: ITableConfig) {
+    this.states = this.tableDataService.generateStates(config.numberOfStates);
+    this.conditionalSignals = this.tableDataService.generateConditionalSignals(config.numberOfX);
+    this.outputSignals = this.tableDataService.generateOutputSignals(config.numberOfY);
 
-  @Input() public set disabled(isDisabled: boolean) {
-    this.editMode = !isDisabled;
-    this._disabled = isDisabled;
+    this.isMuraFsm = config.fsmType === FsmType.MURA;
   }
-
-  public get disabled(): boolean {
-    return this._disabled;
-  }
-
-  private _disabled: boolean = false;
 
   @Input() public readonly isCoded: boolean;
 
-  public editMode: boolean = true;
+  @Input() public readonly editModeControl: FormControl;
+
+  @Output() public readonly onUpdate: EventEmitter<ITableRow[]> = new EventEmitter<ITableRow[]>();
 
   public states: SignalOperand[] = [];
   public conditionalSignals: SignalOperand[] = [];
   public outputSignals: number[] = [];
+
+  public isMuraFsm: boolean;
 
   public capacity: number;
 
@@ -98,7 +84,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
         this.capacity = capacity;
       });
 
-    this.dataSource.sortingDataAccessor = (item: ITableRow, property: string) => {
+    this.dataSource.sortingDataAccessor = (item: ITableRow, property: string): number => {
       switch (property) {
         case 'srcState':
         case 'distState':
@@ -113,10 +99,6 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   public ngAfterViewInit(): void {
     this.dataSource.paginator = this.myPaginator;
     this.dataSource.sort = this.sort;
-  }
-
-  public getSignalsIterator(signalContainer: Set<number | SignalOperand>): (number | SignalOperand)[] {
-    return Array.from(signalContainer);
   }
 
   public isConditionalSignalDisabled(
@@ -150,11 +132,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     return this.tableDataService.formatStateCode(stateCode, this.capacity);
   }
 
-  public isMuraFsm(): boolean {
-    return this._tableConfig.fsmType === FsmType.MURA;
-  }
-
   public emitTableUpdate(): void {
-    this.tableDataService.emitUpdatedTableData(this.dataSource.data);
+    this.onUpdate.emit(this.dataSource.data);
   }
 }

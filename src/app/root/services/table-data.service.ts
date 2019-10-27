@@ -1,34 +1,21 @@
 import { Injectable } from '@angular/core';
-
-import { Observable, ReplaySubject } from 'rxjs';
-
-import { StateOperand } from '../../shared/expression/state-operand';
-import { ConditionSignalOperand } from '../../shared/expression/condition-signal-operand';
-import { ITableConfig, ITableRow } from '@app/types';
-import { SignalOperand } from '../../shared/expression/signal-operand';
+import { StateOperand } from '@app/shared/expression/state-operand';
+import { ConditionSignalOperand } from '@app/shared/expression/condition-signal-operand';
+import { ITableConfig, ITableRow, TSensitiveTableConfigFields } from '@app/types';
+import { SignalOperand } from '@app/shared/expression/signal-operand';
 
 @Injectable()
 export class TableDataService {
-
-  public get tableData$(): Observable<ITableRow[]> {
-    return this._tableData$$.asObservable();
-  }
-
-  private _tableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject(1);
 
   private conditionalSignals: SignalOperand[] = [];
   private outputSignals: number[] = [];
 
   private states: SignalOperand[] = [];
 
-  public emitUpdatedTableData(updatedTableData: ITableRow[]): void {
-    this._tableData$$.next(updatedTableData);
-  }
-
-  public generateRaw(newLength: number, startId: number = 0): ITableRow[] {
+  public generateEmptyData(length: number, startId: number = 0): ITableRow[] {
     const tableRow: ITableRow[] = [];
 
-    for (let i = 0; i < newLength; i++) {
+    for (let i = 0; i < length; i++) {
       tableRow.push({
         id: i + 1 + startId,
         srcState: null,
@@ -46,15 +33,9 @@ export class TableDataService {
   }
 
   public rearrangeTableData(tableData: ITableRow[], newLength: number): ITableRow[] {
-    const newTableData: ITableRow[] = tableData.slice();
-
-    if (tableData.length > newLength) {
-      newTableData.splice(newLength);
-    } else {
-      newTableData.push(...this.generateRaw(newLength - tableData.length, tableData.length));
-    }
-
-    return newTableData;
+    return tableData.length > newLength
+      ? tableData.slice(0, newLength)
+      : [...tableData, ...this.generateEmptyData(newLength - tableData.length, tableData.length)];
   }
 
   public reconnectTableData(tableData: ITableRow[]): ITableRow[] {
@@ -129,12 +110,21 @@ export class TableDataService {
     return this.outputSignals;
   }
 
-  public shouldResetTableData(newTableConfig: ITableConfig, previousTableConfig: ITableConfig): boolean {
-    return previousTableConfig &&
-      (previousTableConfig.numberOfStates > newTableConfig.numberOfStates
-        || previousTableConfig.numberOfX > newTableConfig.numberOfX
-        || previousTableConfig.numberOfY > newTableConfig.numberOfY
+  public shouldDeleteCurrentData(newConfig: ITableConfig, oldConfig: ITableConfig | null): boolean {
+    return !!oldConfig
+      && (
+        this.isConfigSensitiveFieldViolated(oldConfig, newConfig, 'numberOfStates')
+        || this.isConfigSensitiveFieldViolated(oldConfig, newConfig, 'numberOfX')
+        || this.isConfigSensitiveFieldViolated(oldConfig, newConfig, 'numberOfY')
       );
+  }
+
+  public isConfigSensitiveFieldViolated(
+    oldConfig: ITableConfig,
+    newConfig: ITableConfig,
+    field: TSensitiveTableConfigFields
+  ): boolean {
+    return oldConfig[field] > newConfig[field];
   }
 
   public formatStateCode(stateCode: number, capacity: number): string {

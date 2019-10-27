@@ -9,8 +9,7 @@
         <div class="layout-inline">
           <div class="layout-inline__item">
             <mat-slide-toggle color="accent"
-                              [(ngModel)]="editMode"
-                              [disabled]="disabled">
+                              [formControl]="editModeControl">
             </mat-slide-toggle>
           </div>
           <div class="layout-inline__item is--muted-70 is--interactive">
@@ -42,7 +41,8 @@
             a<sub>{{ row.srcState.id }}</sub>
           </ng-container>
         </div>
-        <div *ngIf="editMode"
+
+        <div *ngIf="editModeControl.value"
               class="layout-inline__item">
           <button mat-icon-button
                   [matMenuTriggerFor]="statesMenu"
@@ -92,7 +92,8 @@
             a<sub>{{ row.distState.id }}</sub>
           </ng-container>
         </div>
-        <div *ngIf="editMode"
+
+        <div *ngIf="editModeControl.value"
               class="layout-inline__item">
           <button mat-icon-button
                  [matMenuTriggerFor]="statesMenu"
@@ -138,7 +139,7 @@
         <div class="layout-inline__item layout-inline__item--60per">
           <div *ngIf="row.x.size > 0 && !row.unconditionalX"
                class="layout-inline layout-inline--0px layout-inline--multi-line">
-            <div *ngFor="let conditionalSignal of getSignalsIterator(row.x)"
+            <div *ngFor="let conditionalSignal of row.x"
                  class="layout-inline__item">
               <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
             </div>
@@ -149,7 +150,7 @@
           <div *ngIf="row.x.size == 0 && !row.unconditionalX">-</div>
         </div>
 
-        <div *ngIf="editMode"
+        <div *ngIf="editModeControl.value"
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="xSignalsMenu"
@@ -195,7 +196,7 @@
         <div class="layout-inline__item">
           Y
         </div>
-        <div *ngIf="isMuraFsm()"
+        <div *ngIf="isMuraFsm"
              class="layout-inline__item">
           <div class="icon icon--alert-circle icon--20px is--muted-70 is--interactive"
                [appDynamicTooltip]="muraHintPopover"
@@ -217,7 +218,7 @@
         <div class="layout-inline__item layout-inline__item--60per">
           <div *ngIf="row.y.size > 0; else emptyValue"
                class="layout-inline layout-inline--0px layout-inline--multi-line">
-            <div *ngFor="let outputSignal of getSignalsIterator(row.y); last as isLast"
+            <div *ngFor="let outputSignal of row.y; last as isLast"
                           class="layout-inline__item">
               y<sub>{{ outputSignal}}</sub><ng-container *ngIf="row.y.size > 1 && !isLast">,</ng-container>
             </div>
@@ -225,7 +226,7 @@
         </div>
 
         <div class="layout-inline__item layout-inline__item--40per">
-          <div *ngIf="editMode">
+          <div *ngIf="editModeControl.value">
             <button mat-icon-button
                     [matMenuTriggerFor]="ySignalsMenu"
                     matTooltip="Добавить"
