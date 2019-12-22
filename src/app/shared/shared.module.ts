@@ -24,12 +24,12 @@ import {
   MatTooltipModule,
 } from '@angular/material';
 
-import { CustomMatPaginatorIntlRu } from './custom-paginator';
-import { DynamicContentTooltipComponent } from './components/dynamic-content-tooltip/dynamic-content-tooltip.component';
-import { DynamicTooltipDirective } from './directives/dynamic-tooltip.directive';
-import { PaginatorComponent } from './components/paginator/paginator.component';
-import { SnackBarContentComponent } from './components/snack-bar-content/snack-bar-content.component';
-import { DiscreteExpressionComponent } from './components/discrete-expression/discrete-expression.component';
+import { CustomMatPaginatorIntlRu } from './_helpers/custom-paginator';
+import { DynamicContentTooltipComponent } from './_components/dynamic-content-tooltip/dynamic-content-tooltip.component';
+import { DynamicTooltipDirective } from './_directives/dynamic-tooltip.directive';
+import { PaginatorComponent } from './_components/paginator/paginator.component';
+import { SnackBarContentComponent } from './_components/snack-bar-content/snack-bar-content.component';
+import { DiscreteExpressionComponent } from './_components/discrete-expression/discrete-expression.component';
 
 @NgModule({
   imports: [

@@ -1,9 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { BaseDialogComponent } from '../../shared/base-dialog-component';
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
-import { SnackBarService } from '../services/snack-bar.service';
+import { BaseDialogComponent } from '@app/shared/_helpers/base-dialog-component';
+import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
+import { SnackBarService } from '../_services/snack-bar.service';
 import { ITableConfig, ITableRow } from '@app/types';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { CodingAlgorithmType } from '@app/enums';
@@ -28,7 +28,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string,
   public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм или способ кодирования';
   public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
-  public codingAlgorithm: CodingAlgorithmType;
+  public codingAlgorithm: CodingAlgorithmType = CodingAlgorithmType.UNITARY_D_TRIGGER;
 
   public isProcessing: boolean = false;
 
@@ -57,7 +57,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string,
           return this.codingAlgorithmsService.code(this.codingAlgorithm, tableData, this.data.tableConfig);
         }),
         take(1),
-        takeUntil(this._destroy$$)
+        takeUntil(this.destroy$$)
       )
       .subscribe(
         () => {

@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
-import { DisjunctiveExpression } from '../../shared/expression/disjunctive-expression';
-import { BaseComponent } from '../../shared/base-component';
-import { Expression } from '../../shared/expression/expression';
+import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
+import { DisjunctiveExpression, Expression } from '@app/models';
+import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { IFunctions } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
 
@@ -33,7 +32,7 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
   public ngOnInit(): void {
     this._codingAlgorithmsService.outputFunctions$
       .pipe(
-        takeUntil(this._destroy$$)
+        takeUntil(this.destroy$$)
       )
       .subscribe((outputFunctions: IFunctions) => {
         this._booleanFunctions = [];

@@ -9,7 +9,8 @@
     "paths": {
       "@app/*": ["src/app/*"],
       "@app/enums": ["src/enums"],
-      "@app/types": ["src/types"]
+      "@app/types": ["src/types"],
+      "@app/models": ["src/models"]
     },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

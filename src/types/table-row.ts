@@ -1,4 +1,4 @@
-import { SignalOperand } from '../app/shared/expression/signal-operand';
+import { SignalOperand } from '@app/models';
 
 export interface ITableRow {
   id: number;

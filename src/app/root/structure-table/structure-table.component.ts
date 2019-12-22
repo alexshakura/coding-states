@@ -1,17 +1,18 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
 
-import { BaseComponent } from '../../shared/base-component';
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
-import { TableDataService } from '../services/table-data.service';
+import { BaseComponent } from '@app/shared/_helpers/base-component';
+import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
+import { TableDataService } from '../_services/table-data.service';
 import { ITableConfig, ITableRow } from '@app/types';
-import { SignalOperand } from '../../shared/expression/signal-operand';
+import { SignalOperand } from '@app/models';
 import { MatSort } from '@angular/material/sort';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { FsmType } from '@app/enums';
 import { FormControl } from '@angular/forms';
+import { DISPLAYED_COLUMNS, ROWS_PER_PAGE } from './structure-table.constants';
+import { PaginatorComponent } from '@app/shared/_components/paginator/paginator.component';
 
 @Component({
   selector: 'app-structure-table',
@@ -46,23 +47,18 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
 
   public capacity: number;
 
-  @ViewChild(MatSort, { static: true }) public readonly sort: MatSort;
-
   public dataSource: MatTableDataSource<ITableRow> = new MatTableDataSource();
 
-  public readonly displayedColumns: string[] = [
-    'num',
-    'srcState',
-    'codeSrcState',
-    'distState',
-    'codeDistState',
-    'x',
-    'y',
-    'f',
-  ];
+  public readonly displayedColumns: string[] = DISPLAYED_COLUMNS;
 
-  @ViewChild('myPaginator', { static: true })
-  public myPaginator: MatPaginator;
+  public readonly rowsPerPage: number = ROWS_PER_PAGE;
+
+  @ViewChild(PaginatorComponent, { static: true })
+  public readonly tablePaginator: PaginatorComponent;
+
+  @ViewChild(MatSort, { static: true })
+  public readonly sort: MatSort;
+
 
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
@@ -77,7 +73,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
       this.codingAlgorithmsService.capacity$,
     ])
       .pipe(
-        takeUntil(this._destroy$$)
+        takeUntil(this.destroy$$)
       )
       .subscribe(([codedTableData, capacity]: [ITableRow[], number]) => {
         this.dataSource.data = codedTableData.map((tableRow: ITableRow) => ({ ...tableRow }));
@@ -89,28 +85,24 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
         case 'srcState':
         case 'distState':
           const state = item[property];
-          return (state && state.id) || -1;
+          return (state && state.index) || -1;
         default:
-        return -1;
+          return -1;
       }
     };
   }
 
   public ngAfterViewInit(): void {
-    this.dataSource.paginator = this.myPaginator;
+    this.dataSource.paginator = this.tablePaginator;
     this.dataSource.sort = this.sort;
   }
 
-  public isConditionalSignalDisabled(
-    tableRow: { unconditionalX: boolean, x: Set<SignalOperand> },
-    currentIndex: number,
-    isInverted: boolean
-  ): boolean {
-    const index: number = isInverted
+  public isConditionalSignalDisabled(row: ITableRow, currentIndex: number): boolean {
+    const index: number = this.conditionalSignals[currentIndex].inverted
       ? currentIndex - 1
       : currentIndex + 1;
 
-    return tableRow.unconditionalX || tableRow.x.has(this.conditionalSignals[index]);
+    return row.unconditionalX || row.x.has(this.conditionalSignals[index]);
   }
 
   public toggleUnconditionalSignal(tableRow: ITableRow): void {

@@ -34,11 +34,12 @@
                       mat-sort-header>
       <div>a<sub>m</sub></div>
     </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div class="layout-inline">
         <div class="layout-inline__item">
           <ng-container *ngIf="row.srcState; else emptyValue">
-            a<sub>{{ row.srcState.id }}</sub>
+            a<sub>{{ row.srcState.index }}</sub>
           </ng-container>
         </div>
 
@@ -57,7 +58,7 @@
             <button *ngFor="let state of states"
                     (click)="row.srcState = state; emitTableUpdate()"
                     mat-menu-item>
-              a<sub>{{ state.id }}</sub>
+              a<sub>{{ state.index }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -72,6 +73,7 @@
         K(a<sub>m</sub>)
       </div>
     </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.codeSrcState) }}
@@ -85,11 +87,12 @@
                       mat-sort-header>
       <div>a<sub>s</sub></div>
     </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div class="layout-inline">
         <div class="layout-inline__item">
           <ng-container *ngIf="row.distState; else emptyValue">
-            a<sub>{{ row.distState.id }}</sub>
+            a<sub>{{ row.distState.index }}</sub>
           </ng-container>
         </div>
 
@@ -108,7 +111,7 @@
             <button *ngFor="let state of states"
                     (click)="row.distState = state; emitTableUpdate()"
                     mat-menu-item>
-              a<sub>{{ state.id }}</sub>
+              a<sub>{{ state.index }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -123,6 +126,7 @@
         K(a <sub>s</sub> )
       </div>
     </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.codeDistState) }}
@@ -137,17 +141,17 @@
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--0px">
         <div class="layout-inline__item layout-inline__item--60per">
-          <div *ngIf="row.x.size > 0 && !row.unconditionalX"
+          <div *ngIf="row.x.size > 0"
                class="layout-inline layout-inline--0px layout-inline--multi-line">
             <div *ngFor="let conditionalSignal of row.x"
                  class="layout-inline__item">
-              <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
+              <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.index }}</sub>
             </div>
           </div>
 
           <div *ngIf="row.unconditionalX">1</div>
 
-          <div *ngIf="row.x.size == 0 && !row.unconditionalX">-</div>
+          <div *ngIf="!row.x.size && !row.unconditionalX">-</div>
         </div>
 
         <div *ngIf="editModeControl.value"
@@ -179,7 +183,7 @@
                               (ngModelChange)="selectSignal(conditionalSignal, row.x)"
                               [disabled]="isConditionalSignalDisabled(row, i, conditionalSignal.inverted)"
                               (click)="$event.stopPropagation();">
-                  <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.id }}</sub>
+                  <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.index }}</sub>
                 </mat-checkbox>
               </div>
             </ng-container>
@@ -196,10 +200,12 @@
         <div class="layout-inline__item">
           Y
         </div>
+
         <div *ngIf="isMuraFsm"
              class="layout-inline__item">
           <div class="icon icon--alert-circle icon--20px is--muted-70 is--interactive"
                [appDynamicTooltip]="muraHintPopover"
+               [matTooltip]=""
                elementPosition="topRight"
                tooltipPosition="bottomLeft">
           </div>
@@ -255,7 +261,10 @@
 
   <!-- F Column -->
   <ng-container matColumnDef="f">
-    <mat-header-cell *matHeaderCellDef>F<sub>h</sub></mat-header-cell>
+    <mat-header-cell *matHeaderCellDef>
+      <div>F<sub>h</sub></div>
+    </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
         {{ formatStateCode(row.f) }}
@@ -270,11 +279,9 @@
   </mat-row>
 </mat-table>
 
-<app-paginator #myPaginator
-               [showFirstLastButtons]="true"
+<app-paginator [showFirstLastButtons]="true"
                [hidePageSize]="true"
-               [pageSize]="10">
-              <!-- TODO: Const for pageSize -->
+               [pageSize]="rowsPerPage">
 </app-paginator>
 
 <ng-template #emptyValue>-</ng-template>

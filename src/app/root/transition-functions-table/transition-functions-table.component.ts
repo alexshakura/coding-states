@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CodingAlgorithmsService } from '../services/coding-algorithms.service';
+import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { Subject } from 'rxjs';
 import { MatTableDataSource } from '@angular/material/table';
-import { Expression } from '../../shared/expression/expression';
+import { Expression } from '@app/models';
 import { IFunctions } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
 

@@ -3,16 +3,16 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 // import * as Docxtemplater from 'docxtemplater';
 
-import { SnackBarService } from './services/snack-bar.service';
+import { SnackBarService } from './_services/snack-bar.service';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
-import { ElectronService } from './services/electron.service';
+import { ElectronService } from './_services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { environment } from '../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
 import { FsmType } from '@app/enums';
 import { FormControl } from '@angular/forms';
-import { TableDataService } from './services/table-data.service';
+import { TableDataService } from './_services/table-data.service';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +38,7 @@ export class RootComponent implements OnInit {
     numberOfStates: 7,
     numberOfX: 3,
     numberOfY: 6,
-    fsmType: FsmType.MILI,
+    fsmType: FsmType.MURA,
   };
 
   public tableData: ITableRow[] = [];
@@ -77,7 +77,7 @@ export class RootComponent implements OnInit {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
 
-        this.tableData = this.tableDataService.reconnectTableData(this.tableData);
+        this.tableData = this.tableDataService.getMockDataForUnitaryD();
 
         this.tableConfig = tableConfig;
         this.snackBarService.showMessage(successMessage);
@@ -121,10 +121,10 @@ export class RootComponent implements OnInit {
   }
 
   public generateDoc(): void {
-    // if (!this.isTableCoded) {
-    //   this._snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
-    //   return;
-    // }
+    if (!this.isTableCoded) {
+      this.snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
+      return;
+    }
 
     this.isGeneratingDoc = true;
     this.tableEditModeControl.disable();

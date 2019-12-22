@@ -1,3 +1,3 @@
-import { Expression } from '../app/shared/expression/expression';
+import { Expression } from '@app/models';
 
 export type TFunctionMap = Map<number, Expression>;
