@@ -15,27 +15,27 @@ export class DocxGeneratorService {
   public static readonly MIME_TYPE: string = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
   public constructor(
-    private _codingAlgorithmsService: CodingAlgorithmsService,
-    private _tableDataService: TableDataService
+    private readonly codingAlgorithmsService: CodingAlgorithmsService,
+    private readonly tableDataService: TableDataService
   ) { }
 
   public getData$(): Observable<any[]> {
     return combineLatest([
-        this._codingAlgorithmsService.codedTableData$,
-        this._codingAlgorithmsService.capacity$,
-        this._codingAlgorithmsService.outputFunctions$,
-        this._codingAlgorithmsService.transitionFunctions$,
+        this.codingAlgorithmsService.codedTableData$,
+        this.codingAlgorithmsService.capacity$,
+        this.codingAlgorithmsService.outputFunctions$,
+        this.codingAlgorithmsService.transitionFunctions$,
       ])
       .pipe(
         map(([tableData, capacity, outputFunctions, transitionFunctions]: [ITableRow[], number, IFunctions, IFunctions]) => {
           const updatedTableData = tableData.map((tableRow: ITableRow) => {
             return {
               ...tableRow,
-              codeSrcState: this._tableDataService.formatStateCode(tableRow.codeSrcState as number, capacity),
-              codeDistState: this._tableDataService.formatStateCode(tableRow.codeDistState as number, capacity),
-              f: this._tableDataService.formatStateCode(tableRow.f as number, capacity),
-              x: Array.from(tableRow.x),
-              y: Array.from(tableRow.y),
+              codeSrcState: this.tableDataService.formatStateCode(tableRow.srcStateCode as number, capacity),
+              codeDistState: this.tableDataService.formatStateCode(tableRow.distStateCode as number, capacity),
+              f: this.tableDataService.formatStateCode(tableRow.triggerExcitationSignals as number, capacity),
+              x: Array.from(tableRow.conditionalSignalsIds),
+              y: Array.from(tableRow.outputSignalsIds),
             };
           });
 
@@ -92,7 +92,7 @@ export class DocxGeneratorService {
             }
 
             if (tag === 'expressionSign') {
-              return this._getParentExpressionSymbol(context);
+              return this.getParentExpressionSymbol(context);
             }
 
             const defaultHandler = tag === '.'
@@ -105,7 +105,7 @@ export class DocxGeneratorService {
     };
   }
 
-  private _getParentExpressionSymbol(context: any): string {
+  private getParentExpressionSymbol(context: any): string {
     const iterableIndex: number = context.scopePath.length - 2;
     const iterablePath: string[] = context.scopePath[iterableIndex].split('.');
     const parent = context.scopeList[iterableIndex];

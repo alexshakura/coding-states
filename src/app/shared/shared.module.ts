@@ -29,7 +29,7 @@ import { DynamicContentTooltipComponent } from './_components/dynamic-content-to
 import { DynamicTooltipDirective } from './_directives/dynamic-tooltip.directive';
 import { PaginatorComponent } from './_components/paginator/paginator.component';
 import { SnackBarContentComponent } from './_components/snack-bar-content/snack-bar-content.component';
-import { DiscreteExpressionComponent } from './_components/discrete-expression/discrete-expression.component';
+import { ExpressionComponent } from './_components/expression/expression.component';
 
 @NgModule({
   imports: [
@@ -55,14 +55,14 @@ import { DiscreteExpressionComponent } from './_components/discrete-expression/d
     PortalModule,
   ],
   declarations: [
-    DiscreteExpressionComponent,
+    ExpressionComponent,
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
     PaginatorComponent,
     SnackBarContentComponent,
   ],
   exports: [
-    DiscreteExpressionComponent,
+    ExpressionComponent,
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
     MatButtonModule,

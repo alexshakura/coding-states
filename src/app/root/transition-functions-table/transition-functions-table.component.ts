@@ -1,86 +1,68 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-import { Subject } from 'rxjs';
-import { MatTableDataSource } from '@angular/material/table';
-import { Expression } from '@app/models';
-import { IFunctions } from '@app/types';
+import { IFunctions, ITransitionFunctionsDataCell } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from '@app/shared/_helpers/base-component';
+import { DISPLAYED_COLUMNS } from './transition-functions-table.constants';
 
 @Component({
   selector: 'app-transition-functions-table',
   templateUrl: './transition-functions-table.component.html',
   host: { class: 'component-wrapper' },
 })
-export class TransitionFunctionsTableComponent implements  OnDestroy, OnInit {
+export class TransitionFunctionsTableComponent extends BaseComponent implements OnDestroy, OnInit {
 
-  public triggerMode: string;
+  public readonly displayedColumns: string[] = DISPLAYED_COLUMNS;
 
-  public isBooleanBasisMode: boolean = true;
+  public dataSource: ITransitionFunctionsDataCell[];
 
-  public readonly displayedColumns: string[] = ['id', 'function'];
+  public isBooleanBasisShown: boolean = true;
 
-  public dataSource: MatTableDataSource<{ id: number, function: Expression }> = new MatTableDataSource();
-
-  private _booleanFunctions: { id: number, function: Expression }[] = [];
-  private _shefferFunctions: { id: number, function: Expression }[] = [];
-
-  private _destroy$$: Subject<void> = new Subject<void>();
+  private booleanFunctions: ITransitionFunctionsDataCell[];
+  private shefferFunctions: ITransitionFunctionsDataCell[];
 
   public constructor(
-    private _codingAlgorithmsService: CodingAlgorithmsService
-  ) { }
+    private readonly codingAlgorithmsService: CodingAlgorithmsService
+  ) {
+    super();
+  }
 
   public ngOnInit(): void {
-    this._codingAlgorithmsService.triggerMode$
+    this.codingAlgorithmsService.transitionFunctions$
       .pipe(
-        takeUntil(this._destroy$$)
+        takeUntil(this.destroy$$)
       )
-      .subscribe((triggerMode: string) => {
-        this.triggerMode = triggerMode;
-      });
-
-    this._codingAlgorithmsService.transitionFunctions$
-      .pipe(
-        takeUntil(this._destroy$$)
-      )
-      .subscribe((transitionBooleanFunctions: IFunctions) => {
-        this._booleanFunctions = [];
-        this._shefferFunctions = [];
-
-        transitionBooleanFunctions.boolean.forEach((value, key) => {
-          this._booleanFunctions.push({ id: key, function: value });
-        });
-
-        transitionBooleanFunctions.sheffer.forEach((value, key) => {
-          this._shefferFunctions.push({ id: key, function: value });
-        });
-
-        this._setBasisMode(true);
+      .subscribe((transitionFunctions) => {
+        this.fillBasisFunctions(transitionFunctions);
+        this.toggleBasis(true);
       });
   }
 
-  public ngOnDestroy(): void {
-    this._destroy$$.next();
-    this._destroy$$.complete();
+  private fillBasisFunctions(transitionFunctions: IFunctions): void {
+    this.booleanFunctions = [];
+    this.shefferFunctions = [];
+
+    transitionFunctions.boolean.forEach((expression, index) => {
+      this.booleanFunctions.push({
+        function: expression,
+        index,
+      });
+    });
+
+    transitionFunctions.sheffer.forEach((expression, index) => {
+      this.shefferFunctions.push({
+        function: expression,
+        index,
+      });
+    });
   }
 
-  public isTriggerModeD(): boolean {
-    return this.triggerMode === CodingAlgorithmsService.D_TRIGGER_MODE;
+  public toggleBasis(isBooleanBasis: boolean): void {
+    this.isBooleanBasisShown = isBooleanBasis;
+
+    this.dataSource = this.isBooleanBasisShown
+      ? this.booleanFunctions
+      : this.shefferFunctions;
   }
 
-  public toggleBasisMode(isBooleanBasisMode: boolean): void {
-    if (isBooleanBasisMode === this.isBooleanBasisMode) {
-      return;
-    }
-
-    this._setBasisMode(isBooleanBasisMode);
-  }
-
-  private _setBasisMode(isBooleanBasisMode: boolean): void {
-    this.isBooleanBasisMode = isBooleanBasisMode;
-
-    this.dataSource.data = this.isBooleanBasisMode
-      ? [...this._booleanFunctions]
-      : [...this._shefferFunctions];
-  }
 }

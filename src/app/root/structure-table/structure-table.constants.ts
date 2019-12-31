@@ -1,12 +1,12 @@
 export const ROWS_PER_PAGE: number = 10;
 
 export const DISPLAYED_COLUMNS: string[] = [
-  'num',
+  'id',
   'srcState',
-  'codeSrcState',
+  'srcStateCode',
   'distState',
-  'codeDistState',
+  'distStateCode',
   'x',
-  'f',
   'y',
+  'f',
 ];

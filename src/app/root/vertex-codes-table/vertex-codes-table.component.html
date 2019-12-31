@@ -7,18 +7,27 @@
 </div>
 
 <mat-table [dataSource]="dataSource">
-  <!-- Vertex id Column -->
-  <ng-container matColumnDef="id">
-    <mat-header-cell *matHeaderCellDef> a<sub>i</sub> </mat-header-cell>
-    <mat-cell *matCellDef="let row"
-              class="index-cell"> a<sub>{{ row.id }}</sub> =</mat-cell>
-  </ng-container>
-
-  <!-- Vertex code Column -->
   <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef></mat-header-cell>
+    <mat-header-cell *matHeaderCellDef>
+      <div>
+        a<sub>i</sub>
+      </div>
+    </mat-header-cell>
+
     <mat-cell *matCellDef="let row">
-      {{ formatStateCode(row.code) }}
+      <div class="layout-inline layout-inline--2px">
+        <div class="layout-inline__item">
+          a<sub>{{ row.state.index }}</sub>
+        </div>
+
+        <div class="layout-inline__item">
+          =
+        </div>
+
+        <div class="layout-inline__item">
+          {{ formatStateCode(row.code) }}
+        </div>
+      </div>
     </mat-cell>
   </ng-container>
 

@@ -23,9 +23,14 @@
 
 <mat-table [dataSource]="dataSource" matSort>
   <!-- Number Column -->
-  <ng-container matColumnDef="num">
-    <mat-header-cell *matHeaderCellDef> h </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{ row.id }} </mat-cell>
+  <ng-container matColumnDef="id">
+    <mat-header-cell *matHeaderCellDef>
+      h
+    </mat-header-cell>
+
+    <mat-cell *matCellDef="let row">
+      {{ row.id }}
+    </mat-cell>
   </ng-container>
 
   <!-- Src state Column -->
@@ -38,8 +43,8 @@
     <mat-cell *matCellDef="let row">
       <div class="layout-inline">
         <div class="layout-inline__item">
-          <ng-container *ngIf="row.srcState; else emptyValue">
-            a<sub>{{ row.srcState.index }}</sub>
+          <ng-container *ngIf="row.srcStateId; else emptyValue">
+            a<sub>{{ states.get(row.srcStateId).index }}</sub>
           </ng-container>
         </div>
 
@@ -55,10 +60,10 @@
 
           <mat-menu #statesMenu="matMenu"
                     [overlapTrigger]="false">
-            <button *ngFor="let state of states"
-                    (click)="row.srcState = state; emitTableUpdate()"
+            <button *ngFor="let item of states | keyvalue"
+                    (click)="selectSrcState(row, item.value)"
                     mat-menu-item>
-              a<sub>{{ state.index }}</sub>
+              a<sub>{{ item.value.index }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -66,8 +71,8 @@
     </mat-cell>
   </ng-container>
 
-  <!-- Code Src state Column -->
-  <ng-container matColumnDef="codeSrcState">
+  <!-- Src state code Column -->
+  <ng-container matColumnDef="srcStateCode">
     <mat-header-cell *matHeaderCellDef>
       <div>
         K(a<sub>m</sub>)
@@ -76,7 +81,7 @@
 
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
-        {{ formatStateCode(row.codeSrcState) }}
+        {{ formatStateCode(row.srcStateCode) }}
       </div>
     </mat-cell>
   </ng-container>
@@ -85,14 +90,16 @@
   <ng-container matColumnDef="distState">
     <mat-header-cell *matHeaderCellDef
                       mat-sort-header>
-      <div>a<sub>s</sub></div>
+      <div>
+        a<sub>s</sub>
+      </div>
     </mat-header-cell>
 
     <mat-cell *matCellDef="let row">
       <div class="layout-inline">
         <div class="layout-inline__item">
-          <ng-container *ngIf="row.distState; else emptyValue">
-            a<sub>{{ row.distState.index }}</sub>
+          <ng-container *ngIf="row.distStateId; else emptyValue">
+            a<sub>{{ states.get(row.distStateId).index }}</sub>
           </ng-container>
         </div>
 
@@ -108,10 +115,10 @@
 
           <mat-menu #statesMenu="matMenu"
                     [overlapTrigger]="false">
-            <button *ngFor="let state of states"
-                    (click)="row.distState = state; emitTableUpdate()"
+            <button *ngFor="let item of states | keyvalue"
+                    (click)="selectDistState(row, item.value)"
                     mat-menu-item>
-              a<sub>{{ state.index }}</sub>
+              a<sub>{{ item.value.index }}</sub>
             </button>
           </mat-menu>
         </div>
@@ -119,17 +126,17 @@
     </mat-cell>
   </ng-container>
 
-  <!-- Code Dist state Column -->
-  <ng-container matColumnDef="codeDistState">
+  <!-- Dist state code Column -->
+  <ng-container matColumnDef="distStateCode">
     <mat-header-cell *matHeaderCellDef>
       <div>
-        K(a <sub>s</sub> )
+        K(a<sub>s</sub>)
       </div>
     </mat-header-cell>
 
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
-        {{ formatStateCode(row.codeDistState) }}
+        {{ formatStateCode(row.distStateCode) }}
       </div>
     </mat-cell>
   </ng-container>
@@ -139,51 +146,51 @@
     <mat-header-cell *matHeaderCellDef>X</mat-header-cell>
 
     <mat-cell *matCellDef="let row">
-      <div class="layout-inline layout-inline--0px">
+      <div class="layout-inline layout-inline--0px layout-inline--widened">
         <div class="layout-inline__item layout-inline__item--60per">
-          <div *ngIf="row.x.size > 0"
+          <div *ngIf="row.conditionalSignalsIds.size > 0"
                class="layout-inline layout-inline--0px layout-inline--multi-line">
-            <div *ngFor="let conditionalSignal of row.x"
+            <div *ngFor="let conditionalSignalId of row.conditionalSignalsIds"
                  class="layout-inline__item">
-              <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.index }}</sub>
+              <span [class.with--overline]="getConditionalSignal(conditionalSignalId).inverted">x</span><sub>{{ getConditionalSignal(conditionalSignalId).index }}</sub>
             </div>
           </div>
 
-          <div *ngIf="row.unconditionalX">1</div>
+          <div *ngIf="row.unconditionalTransition">1</div>
 
-          <div *ngIf="!row.x.size && !row.unconditionalX">-</div>
+          <div *ngIf="!row.conditionalSignalsIds.size && !row.unconditionalTransition">-</div>
         </div>
 
         <div *ngIf="editModeControl.value"
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
-                  [matMenuTriggerFor]="xSignalsMenu"
+                  [matMenuTriggerFor]="conditionalSignalsMenu"
                   matTooltip="Добавить"
                   matTooltipPosition="above"
                   app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
           </button>
 
-          <mat-menu #xSignalsMenu="matMenu"
+          <mat-menu #conditionalSignalsMenu="matMenu"
                     [overlapTrigger]="false">
             <div (click)="$event.stopPropagation();"
                   class="mat-menu-item">
-              <mat-checkbox [ngModel]="row.unconditionalX"
-                            (ngModelChange)="toggleUnconditionalSignal(row)"
-                            (click)="$event.stopPropagation();">
+              <mat-checkbox [ngModel]="row.unconditionalTransition"
+                            (ngModelChange)="onUnconditionalTransitionChange(row)"
+                            (click)="$event.stopPropagation()">
                 Безусловный
               </mat-checkbox>
             </div>
 
-            <ng-container *ngIf="!row.unconditionalX">
-              <div *ngFor="let conditionalSignal of conditionalSignals; index as i"
-                    (click)="$event.stopPropagation();"
+            <ng-container *ngIf="!row.unconditionalTransition">
+              <div *ngFor="let item of conditionalSignals | keyvalue"
+                    (click)="$event.stopPropagation()"
                     class="mat-menu-item">
-                <mat-checkbox [ngModel]="row.x.has(conditionalSignal)"
-                              (ngModelChange)="selectSignal(conditionalSignal, row.x)"
-                              [disabled]="isConditionalSignalDisabled(row, i, conditionalSignal.inverted)"
-                              (click)="$event.stopPropagation();">
-                  <span [class.is--inverted]="conditionalSignal.inverted">x</span><sub>{{ conditionalSignal.index }}</sub>
+                <mat-checkbox [ngModel]="row.conditionalSignalsIds.has(item.key)"
+                              (ngModelChange)="onSignalsListChange(row.conditionalSignalsIds, item.key)"
+                              [disabled]="isConditionalsItemDisabled(row, item.value)"
+                              (click)="$event.stopPropagation()">
+                  <span [class.with--overline]="getConditionalSignal(item.key).inverted">x</span><sub>{{ getConditionalSignal(item.key).index }}</sub>
                 </mat-checkbox>
               </div>
             </ng-container>
@@ -203,9 +210,8 @@
 
         <div *ngIf="isMuraFsm"
              class="layout-inline__item">
-          <div class="icon icon--alert-circle icon--20px is--muted-70 is--interactive"
+          <div class="icon icon--alert-circle icon--16px icon--box-16px is--muted-70 is--interactive"
                [appDynamicTooltip]="muraHintPopover"
-               [matTooltip]=""
                elementPosition="topRight"
                tooltipPosition="bottomLeft">
           </div>
@@ -213,51 +219,50 @@
       </div>
 
       <ng-template #muraHintPopover>
-        <div class="popover">
+        <div class="tooltip">
           Столбец заполняется по a<sub>s</sub>
         </div>
       </ng-template>
     </mat-header-cell>
 
     <mat-cell *matCellDef="let row">
-      <div class="layout-inline layout-inline--0px">
-        <div class="layout-inline__item layout-inline__item--60per">
-          <div *ngIf="row.y.size > 0; else emptyValue"
+      <div class="layout-inline layout-inline--0px layout-inline--widened">
+        <div class="layout-inline__item layout-inline__item--60per layout-inline__item--expand">
+          <div *ngIf="row.outputSignalsIds.size > 0; else emptyValue"
                class="layout-inline layout-inline--0px layout-inline--multi-line">
-            <div *ngFor="let outputSignal of row.y; last as isLast"
+            <div *ngFor="let outputSignalId of row.outputSignalsIds; last as isLast"
                           class="layout-inline__item">
-              y<sub>{{ outputSignal}}</sub><ng-container *ngIf="row.y.size > 1 && !isLast">,</ng-container>
+              y<sub>{{ outputSignals.get(outputSignalId).index }}</sub><ng-container *ngIf="row.outputSignalsIds.size > 1 && !isLast">,</ng-container>
             </div>
           </div>
         </div>
 
-        <div class="layout-inline__item layout-inline__item--40per">
-          <div *ngIf="editModeControl.value">
-            <button mat-icon-button
-                    [matMenuTriggerFor]="ySignalsMenu"
-                    matTooltip="Добавить"
-                    matTooltipPosition="above"
-                    app-theme="primary">
-              <div class="icon icon--plus-circle icon--20px"></div>
-            </button>
+        <div *ngIf="editModeControl.value"
+             class="layout-inline__item layout-inline__item--40per">
+          <button mat-icon-button
+                  [matMenuTriggerFor]="outputSignalsMenu"
+                  matTooltip="Добавить"
+                  matTooltipPosition="above"
+                  app-theme="primary">
+            <div class="icon icon--plus-circle icon--20px"></div>
+          </button>
 
-            <mat-menu #ySignalsMenu="matMenu"
-                      [overlapTrigger]="false">
-              <div *ngFor="let outputSignal of outputSignals"
-                    (click)="$event.stopPropagation();"
-                    class="mat-menu-item">
-                <mat-checkbox [ngModel]="row.y.has(outputSignal)"
-                              (ngModelChange)="selectSignal(outputSignal, row.y)"
-                              (click)="$event.stopPropagation();">
-                  y<sub>{{ outputSignal }}</sub>
-                </mat-checkbox>
-              </div>
-            </mat-menu>
-          </div>
+          <mat-menu #outputSignalsMenu="matMenu"
+                    [overlapTrigger]="false">
+            <div *ngFor="let item of outputSignals | keyvalue"
+                  (click)="$event.stopPropagation();"
+                  class="mat-menu-item">
+              <mat-checkbox [ngModel]="row.outputSignalsIds.has(item.key)"
+                            (ngModelChange)="onSignalsListChange(row.outputSignalsIds, item.key)"
+                            (click)="$event.stopPropagation();">
+                y<sub>{{ item.value.index }}</sub>
+              </mat-checkbox>
+            </div>
+          </mat-menu>
         </div>
       </div>
     </mat-cell>
-  </ng-container>
+</ng-container>
 
   <!-- F Column -->
   <ng-container matColumnDef="f">
@@ -267,7 +272,7 @@
 
     <mat-cell *matCellDef="let row">
       <div *ngIf="isCoded; else emptyValue">
-        {{ formatStateCode(row.f) }}
+        {{ formatStateCode(row.triggerExcitationSignals) }}
       </div>
     </mat-cell>
   </ng-container>

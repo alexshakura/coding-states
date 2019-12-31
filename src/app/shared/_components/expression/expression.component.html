@@ -1,0 +1,43 @@
+<div class="layout-inline layout-inline--2px">
+  <ng-container *ngFor="let item of function.operands; last as isLast">
+    <div class="layout-inline__item">
+      <ng-container *ngIf="isOperand(item)">
+        <span [class.with--overline]="item.inverted">{{ item.symbol }}</span>
+        <sub *ngIf="isOperandIndexShown(item)">{{ item.index }}</sub>
+      </ng-container>
+
+      <ng-container *ngIf="!isOperand(item)">
+        <div class="layout-inline"
+             [class.layout-inline--0px]="isShefferBasisShown()"
+             [class.layout-inline--2px]="!isShefferBasisShown()">
+          <div *ngIf="!isShefferBasisShown()"
+                class="layout-inline__item layout-inline__item--self-baseline">
+            (
+          </div>
+
+          <ng-container *ngFor="let nestedItem of item.operands; last as isNestedLast">
+            <div class="layout-inline__item">
+              <span [class.with--overline]="nestedItem.inverted">{{ nestedItem.symbol }}</span>
+              <sub>{{ nestedItem.index }}</sub>
+            </div>
+
+            <div *ngIf="!isNestedLast"
+                  class="layout-inline__item">
+              {{ item.symbol }}
+            </div>
+          </ng-container>
+
+          <div *ngIf="!isShefferBasisShown()"
+                class="layout-inline__item layout-inline__item--self-baseline">
+            )
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div *ngIf="!isLast"
+         class="layout-inline__item layout-inline__item--self-baseline">
+      {{ function.symbol }}
+    </div>
+  </ng-container>
+</div>

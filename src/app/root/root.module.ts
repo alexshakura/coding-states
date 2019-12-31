@@ -21,6 +21,9 @@ import { TableConfigDialogComponent } from './table-config-dialog/table-config-d
 import { TransitionFunctionsTableComponent } from './transition-functions-table/transition-functions-table.component';
 import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
 import { HttpClientModule } from '@angular/common/http';
+import { SignalOperandGeneratorService } from './_services/signal-operand-generator.service';
+import { TableMockDataService } from './_services/table-mock-data.service';
+import { ExpressionConverterService } from './_services/expression-converter.service';
 
 @NgModule({
   declarations: [
@@ -48,8 +51,11 @@ import { HttpClientModule } from '@angular/common/http';
     CodingAlgorithmsService,
     DocxGeneratorService,
     ElectronService,
+    ExpressionConverterService,
     SnackBarService,
     TableDataService,
+    TableMockDataService,
+    SignalOperandGeneratorService,
   ],
   bootstrap: [RootComponent],
 })

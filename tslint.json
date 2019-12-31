@@ -66,7 +66,6 @@
         "singleline": "never"
       }
     ],
-    "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
     "no-string-literal": true,
     "no-string-throw": true,

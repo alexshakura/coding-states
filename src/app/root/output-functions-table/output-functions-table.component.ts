@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-import { DisjunctiveExpression, Expression } from '@app/models';
+import { OutputSignalOperand } from '@app/models';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
-import { IFunctions } from '@app/types';
+import { IFunctions, IOutputFunctionsDataCell } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
+import { DISPLAYED_COLUMNS } from './output-functions-table.constants';
+import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
 
 @Component({
   selector: 'app-output-functions-table',
@@ -14,59 +15,60 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class OutputFunctionsTableComponent extends BaseComponent implements OnInit {
 
-  public readonly displayedColumns: string[] = ['id', 'function'];
+  public readonly displayedColumns: string[] = DISPLAYED_COLUMNS;
 
-  public dataSource: MatTableDataSource<{ id: number, function: Expression }> = new MatTableDataSource();
+  public dataSource: IOutputFunctionsDataCell[];
 
-  public isBooleanBasisMode: boolean = true;
+  public isBooleanBasisShown: boolean = true;
 
-  private _booleanFunctions: { id: number, function: Expression }[] = [];
-  private _shefferFunctions: { id: number, function: Expression }[] = [];
+  private booleanFunctions: IOutputFunctionsDataCell[];
+  private shefferFunctions: IOutputFunctionsDataCell[];
 
   public constructor(
-    private _codingAlgorithmsService: CodingAlgorithmsService
+    private readonly codingAlgorithmsService: CodingAlgorithmsService,
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) {
     super();
   }
 
   public ngOnInit(): void {
-    this._codingAlgorithmsService.outputFunctions$
+    this.codingAlgorithmsService.outputFunctions$
       .pipe(
         takeUntil(this.destroy$$)
       )
       .subscribe((outputFunctions: IFunctions) => {
-        this._booleanFunctions = [];
-        this._shefferFunctions = [];
-
-        outputFunctions.boolean.forEach((value: Expression, key: number) => {
-          this._booleanFunctions.push({ id: key, function: value });
-        });
-
-        outputFunctions.sheffer.forEach((value: Expression, key: number) => {
-          this._shefferFunctions.push({ id: key, function: value });
-        });
-
-        this._setBasisMode(true);
+        this.fillBasisFunctions(outputFunctions);
+        this.toggleBasis(true);
       });
   }
 
-  public toggleBasisMode(isBooleanBasisMode: boolean): void {
-    if (isBooleanBasisMode === this.isBooleanBasisMode) {
-      return;
-    }
+  private fillBasisFunctions(outputFunctions: IFunctions): void {
+    const outputSignals = this.signalOperandGeneratorService.getOutputSignals();
 
-    this._setBasisMode(isBooleanBasisMode);
+    this.booleanFunctions = [];
+    this.shefferFunctions = [];
+
+    outputFunctions.boolean.forEach((expression, id) => {
+      this.booleanFunctions.push({
+        outputSignal: outputSignals.get(id) as OutputSignalOperand,
+        function: expression,
+      });
+    });
+
+    outputFunctions.sheffer.forEach((expression, id) => {
+      this.shefferFunctions.push({
+        outputSignal: outputSignals.get(id) as OutputSignalOperand,
+        function: expression,
+      });
+    });
   }
 
-  private _setBasisMode(isBooleanBasisMode: boolean): void {
-    this.isBooleanBasisMode = isBooleanBasisMode;
+  public toggleBasis(isBooleanBasis: boolean): void {
+    this.isBooleanBasisShown = isBooleanBasis;
 
-    this.dataSource.data = this.isBooleanBasisMode
-      ? [...this._booleanFunctions]
-      : [...this._shefferFunctions];
+    this.dataSource = this.isBooleanBasisShown
+      ? this.booleanFunctions
+      : this.shefferFunctions;
   }
 
-  public isDisjunctiveExpression(expression: Expression): expression is DisjunctiveExpression {
-    return expression instanceof DisjunctiveExpression;
-  }
 }

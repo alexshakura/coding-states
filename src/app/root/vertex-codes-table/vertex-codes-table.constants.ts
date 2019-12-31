@@ -1,1 +1,1 @@
-export const DISPLAYED_COLUMNS: string[] = ['id', 'code'];
+export const DISPLAYED_COLUMNS: string[] = ['code'];

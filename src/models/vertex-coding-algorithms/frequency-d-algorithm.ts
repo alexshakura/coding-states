@@ -1,103 +1,109 @@
-import { ICodingAlgorithm, ITableRow, TVertexData } from '@app/types';
-import { SignalOperand } from '@app/models';
+import { ITableRow, TVertexData } from '@app/types';
+import { VertexCodingAlgorithm } from './vertex-coding-algorithm';
 
-type TVertexFrequencyValue = { id: number, frequency: number };
+export class FrequencyDAlgorithm extends VertexCodingAlgorithm {
 
-export class FrequencyDAlgorithm implements ICodingAlgorithm {
+  public getCodesMap(): TVertexData {
+    const totalBitDepth = this.getTotalBitDepth();
 
-  public getVertexCodeMap(tableData: ITableRow[], numOfStates: number): TVertexData {
-    const capacity: number = this._getCapacity(numOfStates);
+    const codeCombinations = this.getCodeCombinations(totalBitDepth);
+    const sortedVertexIds = this.getSortedVertexIds();
 
-    const sortedByFrequencyVertexes: { id: number, frequency: number }[] = this._getSortedByFrequencyVertexes(tableData);
+    const vertexesCodes: Array<[number, number]> = sortedVertexIds.map((vertexId, index) => {
+      return [vertexId, codeCombinations[index]];
+    });
 
-    const vertexCodesMap: TVertexData = new Map();
+    return new Map(vertexesCodes);
+  }
 
-    const codeMap: Map<number, number[]> = this._getCodeMap(capacity);
+  private getCodeCombinations(totalBitDepth: number): number[] {
+    const map = this.getCodeCombinationsMap(totalBitDepth);
 
-    for (let i = 0, numOfDigits = 0; i < numOfStates; i++) {
-      const codeMapValue = codeMap.get(numOfDigits) as number[];
-      if (codeMapValue.length === 0) {
-        numOfDigits++;
-      }
-
-      if (sortedByFrequencyVertexes[i]) {
-        vertexCodesMap.set(sortedByFrequencyVertexes[i].id, codeMapValue.shift() as number);
-      }
-    }
-
-    const sortedByIndexVertexes: [number, number][] = Array
-      .from(vertexCodesMap)
-      .sort((a: number[], b: number[]) => {
-        if (a[0] > b[0]) {
+    return Array.from(map.entries())
+      .sort(([leftNumOfUnits, _leftCodeCombinations], [rightNumOfUnits, _rightCodeCombinations]) => {
+        if (leftNumOfUnits > rightNumOfUnits) {
           return 1;
         }
 
-        if (a[0] < b[0]) {
+        if (rightNumOfUnits > leftNumOfUnits) {
           return -1;
         }
 
         return 0;
-      });
-
-    return new Map(sortedByIndexVertexes);
+      })
+      .map(([_numOfUnits, codeCombinations]) => codeCombinations)
+      .reduce((acc, val) => acc.concat(val), []);
   }
 
-  private _getSortedByFrequencyVertexes(tableData: ITableRow[]): TVertexFrequencyValue[] {
-    const vertexFrequencyMap: Map<number, TVertexFrequencyValue> = new Map();
+  private getCodeCombinationsMap(totalBitDepth: number): Map<number, number[]> {
+    const PAIR_COUNT_BASE = 2;
 
-    tableData.forEach((tableRow: ITableRow) => {
-      const distStateIndex: number = (tableRow.distState as SignalOperand).index;
+    const maxValue = (PAIR_COUNT_BASE ** totalBitDepth) - 1;
+    const codeCombinationsMap: Map<number, number[]> = new Map();
 
-      if (!vertexFrequencyMap.has(distStateIndex)) {
-        vertexFrequencyMap.set(distStateIndex, { id: distStateIndex, frequency: 0 });
+    for (let i: number = 0; i <= maxValue; i++) {
+      const numOfUnits: number = this.getNumberOfUnits(i);
+
+      if (!codeCombinationsMap.has(numOfUnits)) {
+        codeCombinationsMap.set(numOfUnits, []);
       }
 
-      const value = vertexFrequencyMap.get(distStateIndex) as TVertexFrequencyValue;
-      value.frequency++;
-    });
+      const value = codeCombinationsMap.get(numOfUnits) as number[];
 
-    return Array.from(vertexFrequencyMap.values())
-      .sort((a: TVertexFrequencyValue, b: TVertexFrequencyValue) => {
-        if (a.frequency < b.frequency) {
-          return 1;
-        }
-
-        if (a.frequency > b.frequency) {
-          return -1;
-        }
-
-        return a.id > b.id
-          ? 1
-          : -1;
-      });
-  }
-
-  private _getCodeMap(capacity: number): Map<number, number[]> {
-    const codeMap: Map<number, number[]> = new Map();
-    const maxCapacityValue: number = (2 ** capacity) - 1;
-
-    for (let i: number = 0; i <= maxCapacityValue; i++) {
-      const numOfDigits: number = this._getNumOfDigits(i);
-
-      if (!codeMap.has(numOfDigits)) {
-        codeMap.set(numOfDigits, []);
-      }
-
-      const value = codeMap.get(numOfDigits) as number[];
       value.push(i);
     }
 
-    return codeMap;
+    return codeCombinationsMap;
   }
 
-  private _getNumOfDigits(num: number): number {
-    return num
+  private getNumberOfUnits(value: number): number {
+    return value
       .toString(2)
-      .split('1')
-      .length - 1;
+      .split('')
+      .map(Number)
+      .filter(Boolean)
+      .length;
   }
 
-  private _getCapacity(numOfStates: number): number {
-    return Math.ceil(Math.log2(numOfStates));
+  private getSortedVertexIds(): number[] {
+    const frequencyMap = this.getFrequencyMap(this.tableData);
+
+    return Array.from(frequencyMap.entries())
+      .sort(([leftStateId, leftFrequency], [rightStateId, rightFrequency]) => {
+        if (leftFrequency < rightFrequency) {
+          return 1;
+        }
+
+        if (leftFrequency > rightFrequency) {
+          return -1;
+        }
+
+        return leftStateId > rightStateId
+          ? 1
+          : -1;
+      })
+      .map(([stateId, _frequency]) => stateId);
+  }
+
+  private getFrequencyMap(tableData: ITableRow[]): Map<number, number> {
+    const map: Map<number, number> = new Map();
+
+    tableData.forEach((row) => {
+      const stateId = row.distStateId as number;
+
+      if (!map.has(stateId)) {
+        map.set(stateId, 0);
+      }
+
+      const frequency = map.get(stateId) as number;
+
+      map.set(stateId, frequency + 1);
+    });
+
+    return map;
+  }
+
+  private getTotalBitDepth(): number {
+    return Math.ceil(Math.log2(this.orderedStates.length));
   }
 }

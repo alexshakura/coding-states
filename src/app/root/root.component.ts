@@ -10,9 +10,9 @@ import { TableConfigDialogComponent } from './table-config-dialog/table-config-d
 import { environment } from '../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
-import { FsmType } from '@app/enums';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
+import { TableMockDataService } from './_services/table-mock-data.service';
 
 @Component({
   selector: 'app-root',
@@ -33,13 +33,7 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig | null = {
-    length: 16,
-    numberOfStates: 7,
-    numberOfX: 3,
-    numberOfY: 6,
-    fsmType: FsmType.MURA,
-  };
+  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForUnitaryD();
 
   public tableData: ITableRow[] = [];
 
@@ -51,7 +45,8 @@ export class RootComponent implements OnInit {
     private readonly dialog: MatDialog,
     private readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
-    private readonly tableDataService: TableDataService
+    private readonly tableDataService: TableDataService,
+    private readonly tableMockDataService: TableMockDataService
   ) { }
 
   public ngOnInit(): void {
@@ -72,12 +67,12 @@ export class RootComponent implements OnInit {
       )
       .subscribe(([tableConfig, successMessage]: [ITableConfig, string]) => {
         if (!this.tableConfig || this.tableDataService.shouldDeleteCurrentData(tableConfig, this.tableConfig)) {
-          this.tableData = this.tableDataService.generateEmptyData(tableConfig.length);
+          this.tableData = this.tableDataService.generateEmptyRows(tableConfig.length);
         } else if (this.tableConfig.length !== tableConfig.length) {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
 
-        this.tableData = this.tableDataService.getMockDataForUnitaryD();
+        this.tableData = this.tableMockDataService.getMockDataForUnitaryD();
 
         this.tableConfig = tableConfig;
         this.snackBarService.showMessage(successMessage);

@@ -1,16 +1,17 @@
 import { SignalOperand } from './signal-operand';
+import { getUniqueId } from './get-unique-id';
 
 export class StateOperand extends SignalOperand {
 
   public readonly symbol: string = 'a';
 
   public static create(index: number, inverted: boolean): StateOperand {
-    const id = inverted
-      ? index + 2
-      : index + 1;
+    if (!index) {
+      throw new Error('A не может иметь индекс 0');
+    }
 
     return new StateOperand(
-      id,
+      getUniqueId(index, inverted),
       index,
       inverted
     );

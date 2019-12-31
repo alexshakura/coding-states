@@ -1,4 +1,4 @@
-import { Operand } from '../operands/operand';
+import { Operand } from '../operands';
 
 export abstract class Expression {
 
@@ -7,6 +7,10 @@ export abstract class Expression {
   public constructor(public readonly operands: (Operand | Expression)[]) { }
 
   public addOperand(newOperand: (Operand | Expression)): void {
+    if (newOperand instanceof Operand && this.hasOperand(newOperand)) {
+      return;
+    }
+
     this.operands.push(newOperand);
   }
 

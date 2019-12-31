@@ -6,11 +6,12 @@ import { of } from 'rxjs';
 
 import { BaseDialogComponent } from '@app/shared/_helpers/base-dialog-component';
 import { SnackBarService } from '@app/root/_services/snack-bar.service';
-import { delay, takeUntil } from 'rxjs/operators';
+import { delay, takeUntil, tap } from 'rxjs/operators';
 import { FsmType } from '@app/enums';
 import { ITableConfig, TSensitiveTableConfigFields } from '@app/types';
 import { NUMBER_FORM_FIELD_VALIDATORS, SUBMISSION_DELAY } from './table-config-dialog.constants';
 import { TableDataService } from '../_services/table-data.service';
+import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
 
 @Component({
   selector: 'app-table-config-dialog',
@@ -43,6 +44,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
     },
     private readonly snackBarService: SnackBarService,
     private readonly tableDataService: TableDataService,
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
     private readonly formBuilder: FormBuilder
   ) {
     super();
@@ -73,6 +75,11 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
 
     of(formValue)
       .pipe(
+        tap((updatedConfig: ITableConfig) => {
+          this.signalOperandGeneratorService.generateStates(updatedConfig.numberOfStates);
+          this.signalOperandGeneratorService.generateConditionalSignals(updatedConfig.numberOfX);
+          this.signalOperandGeneratorService.generateOutputSignals(updatedConfig.numberOfY);
+        }),
         delay(SUBMISSION_DELAY),
         takeUntil(this.destroy$$)
       )

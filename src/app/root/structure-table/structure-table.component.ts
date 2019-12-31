@@ -5,7 +5,7 @@ import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { TableDataService } from '../_services/table-data.service';
 import { ITableConfig, ITableRow } from '@app/types';
-import { SignalOperand } from '@app/models';
+import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '@app/models';
 import { MatSort } from '@angular/material/sort';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -13,6 +13,7 @@ import { FsmType } from '@app/enums';
 import { FormControl } from '@angular/forms';
 import { DISPLAYED_COLUMNS, ROWS_PER_PAGE } from './structure-table.constants';
 import { PaginatorComponent } from '@app/shared/_components/paginator/paginator.component';
+import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
 
 @Component({
   selector: 'app-structure-table',
@@ -26,9 +27,9 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   }
 
   @Input() public set config(config: ITableConfig) {
-    this.states = this.tableDataService.generateStates(config.numberOfStates);
-    this.conditionalSignals = this.tableDataService.generateConditionalSignals(config.numberOfX);
-    this.outputSignals = this.tableDataService.generateOutputSignals(config.numberOfY);
+    this.states = this.signalOperandGeneratorService.getStates();
+    this.conditionalSignals = this.signalOperandGeneratorService.getConditionalSignals();
+    this.outputSignals = this.signalOperandGeneratorService.getOutputSignals();
 
     this.isMuraFsm = config.fsmType === FsmType.MURA;
   }
@@ -39,9 +40,9 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
 
   @Output() public readonly onUpdate: EventEmitter<ITableRow[]> = new EventEmitter<ITableRow[]>();
 
-  public states: SignalOperand[] = [];
-  public conditionalSignals: SignalOperand[] = [];
-  public outputSignals: number[] = [];
+  public states: Map<number, StateOperand>;
+  public conditionalSignals: Map<number, ConditionSignalOperand>;
+  public outputSignals: Map<number, OutputSignalOperand>;
 
   public isMuraFsm: boolean;
 
@@ -59,9 +60,9 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   @ViewChild(MatSort, { static: true })
   public readonly sort: MatSort;
 
-
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
     private readonly tableDataService: TableDataService
   ) {
     super();
@@ -83,9 +84,9 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.dataSource.sortingDataAccessor = (item: ITableRow, property: string): number => {
       switch (property) {
         case 'srcState':
+          return item.srcStateId || -1;
         case 'distState':
-          const state = item[property];
-          return (state && state.index) || -1;
+          return item.distStateId || -1;
         default:
           return -1;
       }
@@ -97,31 +98,47 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
     this.dataSource.sort = this.sort;
   }
 
-  public isConditionalSignalDisabled(row: ITableRow, currentIndex: number): boolean {
-    const index: number = this.conditionalSignals[currentIndex].inverted
-      ? currentIndex - 1
-      : currentIndex + 1;
-
-    return row.unconditionalX || row.x.has(this.conditionalSignals[index]);
+  public selectSrcState(row: ITableRow, value: StateOperand): void {
+    row.srcStateId = value.id;
+    this.emitTableUpdate();
   }
 
-  public toggleUnconditionalSignal(tableRow: ITableRow): void {
-    tableRow.unconditionalX = !tableRow.unconditionalX;
-    tableRow.x.clear();
+  public selectDistState(row: ITableRow, value: StateOperand): void {
+    row.distStateId = value.id;
+    this.emitTableUpdate();
+  }
+
+  public onSignalsListChange(selectedIds: Set<number>, signalId: number): void {
+    if (selectedIds.has(signalId)) {
+      selectedIds.delete(signalId);
+    } else {
+      selectedIds.add(signalId);
+    }
 
     this.emitTableUpdate();
   }
 
-  public selectSignal(value: number, signalContainer: Set<number | SignalOperand>): void {
-    signalContainer.has(value)
-      ? signalContainer.delete(value)
-      : signalContainer.add(value);
+  public onUnconditionalTransitionChange(row: ITableRow): void {
+    row.unconditionalTransition = !row.unconditionalTransition;
+    row.conditionalSignalsIds.clear();
 
     this.emitTableUpdate();
   }
 
-  public formatStateCode(stateCode: number): string {
-    return this.tableDataService.formatStateCode(stateCode, this.capacity);
+  public isConditionalsItemDisabled(row: ITableRow, item: ConditionSignalOperand): boolean {
+    const checkId = item.inverted
+      ? item.id - 1
+      : item.id + 1;
+
+    return row.conditionalSignalsIds.has(checkId);
+  }
+
+  public formatStateCode(value: number): string {
+    return this.tableDataService.formatStateCode(value, this.capacity);
+  }
+
+  public getConditionalSignal(id: number): ConditionSignalOperand {
+    return this.conditionalSignals.get(id) as ConditionSignalOperand;
   }
 
   public emitTableUpdate(): void {

@@ -4,38 +4,29 @@ import { Observable, of, ReplaySubject, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import {
-  BaseFsmCoder,
-  Expression,
   FrequencyDAlgorithm,
-  MiliCoder,
-  MuraCoder,
+  Fsm,
+  MiliFsm,
+  MuraFsm,
   NStateAlgorithm,
-  OneOperand,
-  Operand,
-  ShefferExpression,
-  SignalOperand,
-  UnitaryDAlgorithm
+  UnitaryDAlgorithm,
+  VertexCodingAlgorithm,
 } from '@app/models';
-import { ICodingAlgorithm, IFunctions, ITableConfig, ITableRow, TFunctionMap, TVertexData } from '@app/types';
+import { IFunctions, ITableConfig, ITableRow, TVertexData } from '@app/types';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
+import { ExpressionConverterService } from './expression-converter.service';
+import { ValidationError } from '@app/shared/_helpers/validation-error';
+import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 
 @Injectable()
 export class CodingAlgorithmsService {
 
   private static readonly DEFAULT_TIMEOUT: number = 1000;
 
-  public static readonly D_TRIGGER_MODE: string = 'D';
-
   public readonly INVALID_ROWS_ERROR: string = 'INVALID_ROWS';
   public readonly INVALID_ROW_ERROR: string = 'INVALID_ROW';
   public readonly INVALID_INPUT_ERROR: string = 'INVALID_INPUT';
   public readonly INVALID_GRAPH_ERROR: string = 'INVALID_GRAPH';
-
-  public get triggerMode$(): Observable<string> {
-    return this._triggerMode$$.asObservable();
-  }
-
-  private _triggerMode$$: ReplaySubject<string> = new ReplaySubject<string>(1);
 
   public get vertexCodes$(): Observable<TVertexData> {
     return this._vertexCodes$$.asObservable();
@@ -67,153 +58,144 @@ export class CodingAlgorithmsService {
 
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
-  private algorithmMap: { [propName in CodingAlgorithmType]: ICodingAlgorithm } = {
-    [CodingAlgorithmType.UNITARY_D_TRIGGER]: new UnitaryDAlgorithm(),
-    [CodingAlgorithmType.FREQUENCY_D_TRIGGER]: new FrequencyDAlgorithm(),
-    [CodingAlgorithmType.STATE_N_D_TRIGGER]: new NStateAlgorithm(),
-  };
-
-  private fsmMap: { [propName in FsmType]: BaseFsmCoder } = {
-    [FsmType.MILI]: new MiliCoder(),
-    [FsmType.MURA]: new MuraCoder(),
-  };
+  public constructor(
+    private readonly expressionConverterService: ExpressionConverterService,
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
+  ) { }
 
   public code(
-    algorithm: CodingAlgorithmType,
+    selectedAlgorithm: CodingAlgorithmType,
     tableData: ITableRow[],
     tableConfig: Readonly<ITableConfig>
   ): Observable<void> {
-    const invalidRows: number[] = this.checkTableData(tableData);
+    try {
+      this.checkData(tableData, tableConfig);
 
-    if (invalidRows.length) {
-      const errorObj = invalidRows.length > 1
-        ? { [this.INVALID_ROWS_ERROR]: invalidRows }
-        : { [this.INVALID_ROW_ERROR]: invalidRows } ;
+      const stateCodingAlgorithm = this.getVertexCodingAlgorithm(selectedAlgorithm, tableData);
+      const vertexCodeMap = stateCodingAlgorithm.getCodesMap();
 
-      return throwError(errorObj)
+      const codedTableData = this.getCodedTableData(tableData, vertexCodeMap);
+
+      const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
+
+      const capacity: number = this.getCapacity(vertexCodeMap);
+
+      const outputBooleanFunctions = fsm.getOutputBooleanFunctions();
+
+      const outputShefferFunctions = this.expressionConverterService.convertBooleanFunctionsToSheffer(
+        outputBooleanFunctions
+      );
+
+      const transitionBooleanFunctions = fsm.getExcitationBooleanFunctionsMap(capacity);
+      const transitionShefferFunctions = this.expressionConverterService.convertBooleanFunctionsToSheffer(
+        transitionBooleanFunctions
+      );
+
+      this._capacity$$.next(capacity);
+      this._vertexCodes$$.next(vertexCodeMap);
+
+      this._outputFunctions$$.next({
+        boolean: outputBooleanFunctions,
+        sheffer: outputShefferFunctions,
+      });
+
+      this._transitionFunctions$$.next({
+        boolean: transitionBooleanFunctions,
+        sheffer: transitionShefferFunctions,
+      });
+
+      this._codedTableData$$.next(codedTableData);
+
+      return of(void 0).pipe(delay(CodingAlgorithmsService.DEFAULT_TIMEOUT));
+    } catch (error) {
+      return throwError({ key: error.key, params: error.params })
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
         );
     }
+  }
 
-    if (!this.algorithmMap[algorithm] || !this.fsmMap[tableConfig.fsmType]) {
-      return throwError({ [this.INVALID_INPUT_ERROR]: true })
-        .pipe(
-          delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
-        );
+  private checkData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
+    const invalidRows: number[] = this.getInvalidTableRows(tableData);
+
+    if (invalidRows.length) {
+      const errorKey = invalidRows.length > 1
+        ? this.INVALID_ROWS_ERROR
+        : this.INVALID_ROW_ERROR;
+
+      throw new ValidationError(errorKey, { invalidRows });
     }
 
     if (!this.isGraphValid(tableData, tableConfig.numberOfStates)) {
-      return throwError({ [this.INVALID_GRAPH_ERROR]: true })
-        .pipe(
-          delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
-        );
+      throw new ValidationError(this.INVALID_GRAPH_ERROR);
     }
-
-    const verifiedTableData = tableData as Required<ITableRow[]>;
-
-    const algorithmCoder: ICodingAlgorithm = this.algorithmMap[algorithm];
-    const fsmCoder: BaseFsmCoder = this.fsmMap[tableConfig.fsmType];
-
-    const vertexCodeMap: TVertexData = algorithmCoder.getVertexCodeMap(verifiedTableData, tableConfig.numberOfStates);
-    const capacity: number = this._getCapacity(vertexCodeMap);
-
-    const outputBooleanFunctions: TFunctionMap = fsmCoder.getOutputBooleanFunctions(verifiedTableData);
-    const outputShefferFunctions: TFunctionMap = this._convertBooleanFunctionsToSheffer(outputBooleanFunctions);
-
-    const transitionBooleanFunctions: TFunctionMap = fsmCoder.getTransitionBooleanFunctions(verifiedTableData, vertexCodeMap, capacity);
-    const transitionShefferFunctions: TFunctionMap = this._convertBooleanFunctionsToSheffer(transitionBooleanFunctions);
-
-    this._capacity$$.next(capacity);
-    this._vertexCodes$$.next(vertexCodeMap);
-
-    this._outputFunctions$$.next({
-      boolean: outputBooleanFunctions,
-      sheffer: outputShefferFunctions,
-    });
-
-    this._transitionFunctions$$.next({
-      boolean: transitionBooleanFunctions,
-      sheffer: transitionShefferFunctions,
-    });
-
-    verifiedTableData.forEach((tableRow: ITableRow) => {
-      tableRow.codeSrcState = vertexCodeMap.get((tableRow.srcState as SignalOperand).index) as number;
-      tableRow.codeDistState = vertexCodeMap.get((tableRow.distState as SignalOperand).index) as number;
-      tableRow.f = tableRow.codeDistState;
-    });
-
-    this._codedTableData$$.next(verifiedTableData);
-
-    return of(void 0)
-      .pipe(
-        delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
-      );
   }
 
-  public isGraphValid(tableData: ITableRow[], numberOfStates: number): boolean {
-    const srcStateSet: Set<number> = new Set(tableData.map((tableRow: ITableRow) => (tableRow.srcState as SignalOperand).index));
-    const distStateSet: Set<number> = new Set(tableData.map((tableRow: ITableRow) => (tableRow.distState as SignalOperand).index));
+  private isGraphValid(tableData: ITableRow[], numberOfStates: number): boolean {
+    const selectedSrcStateIds = tableData.map((tableRow) => tableRow.srcStateId);
+    const selectedDistStateIds = tableData.map((tableRow) => tableRow.distStateId);
 
-    return srcStateSet.size === numberOfStates && distStateSet.size === numberOfStates;
+    const uniqueSelectedSrcStateIds = new Set(selectedSrcStateIds);
+    const uniqueSelectedDistStateIds = new Set(selectedDistStateIds);
+
+    return uniqueSelectedSrcStateIds.size === numberOfStates && uniqueSelectedDistStateIds.size === numberOfStates;
   }
 
-  public checkTableData(tableData: ITableRow[]): number[] {
+  private getInvalidTableRows(tableData: ITableRow[]): number[] {
     return tableData
       .filter((tableRow: ITableRow) => {
-        return !tableRow.distState
-          || !tableRow.srcState
-          || (!tableRow.unconditionalX && !tableRow.x.size);
+        return !tableRow.distStateId
+          || !tableRow.srcStateId
+          || (!tableRow.unconditionalTransition && !tableRow.conditionalSignalsIds.size);
       })
       .map((tableRow: ITableRow) => tableRow.id);
   }
 
-  private _convertBooleanFunctionsToSheffer(booleanFunctions: TFunctionMap): TFunctionMap {
-    const shefferFunctions: TFunctionMap = new Map<number, Expression>();
+  private getVertexCodingAlgorithm(
+    selectedAlgorithm: CodingAlgorithmType,
+    tableData: ITableRow[]
+  ): VertexCodingAlgorithm {
+    const algorithmsMap = {
+      [CodingAlgorithmType.UNITARY_D_TRIGGER]: UnitaryDAlgorithm,
+      [CodingAlgorithmType.FREQUENCY_D_TRIGGER]: FrequencyDAlgorithm,
+      [CodingAlgorithmType.STATE_N_D_TRIGGER]: NStateAlgorithm,
+    };
 
-    booleanFunctions.forEach((val: Expression, key: number) => {
-      shefferFunctions.set(key, this.convertToShefferBasis(val));
-    });
+    const algorithm = algorithmsMap[selectedAlgorithm];
 
-    return shefferFunctions;
+    return new algorithm(tableData, this.signalOperandGeneratorService.getStates());
   }
 
-  // DNF -> Sheffer Basis
-  public convertToShefferBasis(expression: Expression): ShefferExpression {
-    const shefferExpression: ShefferExpression = new ShefferExpression([]);
+  private getFsm(fsmType: FsmType, codedTableData: ITableRow[]): Fsm {
+    const fsmMap = {
+      [FsmType.MILI]: MiliFsm,
+      [FsmType.MURA]: MuraFsm,
+    };
 
-    if (expression.operands.length === 1) {
-      const expressionOperand = expression.operands[0];
+    const fsm = fsmMap[fsmType];
 
-      if (expressionOperand instanceof Operand) {
-        shefferExpression.addOperand(expressionOperand);
-      }
-
-      if (expressionOperand instanceof Expression) {
-        shefferExpression.addOperand(new ShefferExpression(expressionOperand.operands));
-
-        if (expressionOperand.operands.length > 1) {
-          shefferExpression.addOperand(new OneOperand());
-        }
-      }
-
-      return shefferExpression;
-    }
-
-    expression.operands.forEach((operand: Expression | Operand) => {
-      if (operand instanceof Expression) {
-        shefferExpression.addOperand(new ShefferExpression(operand.operands));
-      }
-
-      if (operand instanceof SignalOperand) {
-        shefferExpression.addOperand(operand.invert());
-      }
-    });
-
-    return shefferExpression;
+    return new fsm(
+      codedTableData,
+      this.signalOperandGeneratorService.getStates(),
+      this.signalOperandGeneratorService.getConditionalSignals()
+    );
   }
 
-  private _getCapacity(vertexCodeMap: TVertexData): number {
+  private getCodedTableData(tableData: ITableRow[], vertexCodeMap: Map<number, number>): ITableRow[] {
+    return tableData.map(tableRow => {
+      const distStateCode = vertexCodeMap.get(tableRow.distStateId as number) as number;
+      const srcStateCode = vertexCodeMap.get(tableRow.srcStateId as number) as number;
+
+      return {
+        ...tableRow,
+        distStateCode,
+        srcStateCode,
+        triggerExcitationSignals: distStateCode,
+      };
+    });
+  }
+
+  private getCapacity(vertexCodeMap: TVertexData): number {
     const maxValue: number = Math.max(...Array.from(vertexCodeMap.values()));
     return maxValue.toString(2).length;
   }

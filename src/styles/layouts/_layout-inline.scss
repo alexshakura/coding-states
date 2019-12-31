@@ -88,6 +88,10 @@ $app-inline-item-widths: (
       transition: flex 0.3s linear;
     }
 
+    &--self-baseline {
+      align-self: baseline;
+    }
+
     @each $size-name, $size-width in $app-inline-item-widths {
       &--#{$size-name} {
         width: $size-width;
@@ -119,6 +123,10 @@ $app-inline-item-widths: (
     height: 100%;
   }
 
+  &--widened {
+    width: 100%;
+  }
+
   @each $margin in $app-layout-spacing-options {
     &--#{$margin} > &__item:not(:first-child) {
       padding-left: $margin;
@@ -126,36 +134,8 @@ $app-inline-item-widths: (
   }
 }
 
-
-.layout-inline-row-actions {
-  @extend .layout-inline;
-  @extend .layout-inline--10px;
-  @extend .layout-inline--stretch;
-}
-
-
-.layout-inline-group-actions {
-  @extend .layout-inline;
-  @extend .layout-inline--align-right;
-  @extend .layout-inline--6px;
-  flex-wrap: wrap; // quick fix
-}
-
-
-.layout-inline-learning-info {
-  @extend .layout-inline;
-  @extend .layout-inline--0px;
-  @extend .layout-inline--valign-stretch;
-}
-
 .layout-inline-checkbox {
   @extend .layout-inline;
   @extend .layout-inline--12px;
-  @extend .layout-inline--valign-baseline;
-}
-
-.layout-inline-form-field {
-  @extend .layout-inline;
-  @extend .layout-inline--24px;
   @extend .layout-inline--valign-baseline;
 }

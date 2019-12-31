@@ -3,6 +3,7 @@
     <div class="layout-split__item card-header__title">
       Функции переходов
     </div>
+
     <div class="layout-split__item"
          matTooltip="Выбрать представление"
          matTooltipPosition="above">
@@ -18,35 +19,38 @@
 <mat-menu #basisModeMenu="matMenu"
           [overlapTrigger]="false">
   <button class="mat-menu-item"
-          (click)="toggleBasisMode(true)">
+          (click)="toggleBasis(true)">
     Базис Буля
   </button>
   <button class="mat-menu-item"
-          (click)="toggleBasisMode(false)">
+          (click)="toggleBasis(false)">
     Базис Шеффера
   </button>
 </mat-menu>
 
 <mat-table [dataSource]="dataSource">
-  <!-- Output id Column -->
-  <ng-container matColumnDef="id">
+  <ng-container matColumnDef="function">
     <mat-header-cell *matHeaderCellDef>
-      <div *ngIf="isTriggerModeD()">
+      <div>
         D<sub>i</sub>
       </div>
     </mat-header-cell>
-    <mat-cell *matCellDef="let row"
-              class="index-cell"> D<sub>{{ row.id }}</sub> =</mat-cell>
-  </ng-container>
 
-  <!-- Output Function Column -->
-  <ng-container matColumnDef="function">
-    <mat-header-cell *matHeaderCellDef>
-    </mat-header-cell>
     <mat-cell *matCellDef="let row">
-      <app-discrete-expression [isBooleanBasisMode]="isBooleanBasisMode"
-                                [function]="row.function">
-      </app-discrete-expression>
+      <div class="layout-inline layout-inline--2px">
+        <div class="layout-inline__item">
+          D<sub>{{ row.index }}</sub>
+        </div>
+
+        <div class="layout-inline__item">
+          =
+        </div>
+
+        <div class="layout-inline__item">
+          <app-expression [function]="row.function">
+          </app-expression>
+        </div>
+      </div>
     </mat-cell>
   </ng-container>
 

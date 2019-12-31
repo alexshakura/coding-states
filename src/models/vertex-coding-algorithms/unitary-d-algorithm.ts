@@ -1,12 +1,15 @@
-import { ICodingAlgorithm, ITableRow, TVertexData } from '@app/types';
+import { TVertexData } from '@app/types';
+import { VertexCodingAlgorithm } from './vertex-coding-algorithm';
 
-export class UnitaryDAlgorithm implements ICodingAlgorithm {
+export class UnitaryDAlgorithm extends VertexCodingAlgorithm {
 
-  public getVertexCodeMap(_tableData: ITableRow[], numOfStates: number): TVertexData {
+  public getCodesMap(): TVertexData {
     const vertexCodeMap: TVertexData = new Map();
 
-    for (let i: number = 0; i < numOfStates; i++) {
-      vertexCodeMap.set(i, 1 << i);
+    for (let i: number = 0; i < this.orderedStates.length; i++) {
+      const state = this.orderedStates[i];
+
+      vertexCodeMap.set(state.id, 1 << i);
     }
 
     return vertexCodeMap;
