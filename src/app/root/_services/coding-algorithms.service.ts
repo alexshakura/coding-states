@@ -4,17 +4,18 @@ import { Observable, of, ReplaySubject, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import {
+  DnfEquation,
   FrequencyDAlgorithm,
   Fsm,
   MiliFsm,
   MuraFsm,
   NStateAlgorithm,
+  ShefferEquation,
   UnitaryDAlgorithm,
   VertexCodingAlgorithm,
 } from '@app/models';
 import { IFunctions, ITableConfig, ITableRow, TVertexData } from '@app/types';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
-import { ExpressionConverterService } from './expression-converter.service';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 
@@ -59,7 +60,6 @@ export class CodingAlgorithmsService {
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
   public constructor(
-    private readonly expressionConverterService: ExpressionConverterService,
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) { }
 
@@ -80,34 +80,27 @@ export class CodingAlgorithmsService {
 
       const capacity: number = this.getCapacity(vertexCodeMap);
 
-      const outputBooleanFunctions = fsm.getOutputBooleanFunctions();
-
-      const outputShefferFunctions = this.expressionConverterService.convertBooleanFunctionsToSheffer(
-        outputBooleanFunctions
-      );
-
-      const transitionBooleanFunctions = fsm.getExcitationBooleanFunctionsMap(capacity);
-      const transitionShefferFunctions = this.expressionConverterService.convertBooleanFunctionsToSheffer(
-        transitionBooleanFunctions
-      );
+      const outputBooleanFunctionsMap = fsm.getOutputBooleanFunctions();
+      const excitationBooleanFunctionsMap = fsm.getExcitationBooleanFunctionsMap(capacity);
 
       this._capacity$$.next(capacity);
       this._vertexCodes$$.next(vertexCodeMap);
 
       this._outputFunctions$$.next({
-        boolean: outputBooleanFunctions,
-        sheffer: outputShefferFunctions,
+        boolean: outputBooleanFunctionsMap,
+        sheffer: this.getOutputShefferFunctionsMap(outputBooleanFunctionsMap),
       });
 
       this._transitionFunctions$$.next({
-        boolean: transitionBooleanFunctions,
-        sheffer: transitionShefferFunctions,
+        boolean: excitationBooleanFunctionsMap,
+        sheffer: this.getExcitationShefferFunctions(excitationBooleanFunctionsMap),
       });
 
       this._codedTableData$$.next(codedTableData);
 
       return of(void 0).pipe(delay(CodingAlgorithmsService.DEFAULT_TIMEOUT));
     } catch (error) {
+      debugger;
       return throwError({ key: error.key, params: error.params })
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
@@ -198,5 +191,25 @@ export class CodingAlgorithmsService {
   private getCapacity(vertexCodeMap: TVertexData): number {
     const maxValue: number = Math.max(...Array.from(vertexCodeMap.values()));
     return maxValue.toString(2).length;
+  }
+
+  private getOutputShefferFunctionsMap(dnfFunctionsMap: Map<number, DnfEquation>): Map<number, ShefferEquation> {
+    const map: Map<number, ShefferEquation> = new Map();
+
+    dnfFunctionsMap.forEach((dnfEquation, id) => {
+      map.set(id, dnfEquation.toSheffer());
+    });
+
+    return map;
+  }
+
+  private getExcitationShefferFunctions(dnfFunctionsMap: Map<number, DnfEquation>): Map<number, ShefferEquation> {
+    const map: Map<number, ShefferEquation> = new Map();
+
+    dnfFunctionsMap.forEach((dnfEquation, index) => {
+      map.set(index, dnfEquation.toSheffer());
+    });
+
+    return map;
   }
 }

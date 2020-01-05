@@ -15,6 +15,4 @@ export abstract class SignalOperand extends Operand {
       && operand.id === this.id
       && operand.symbol === this.symbol;
   }
-
-  public abstract invert(): SignalOperand;
 }

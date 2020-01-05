@@ -137,7 +137,8 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "scss"
+      "styleext": "scss",
+      "spec": false
     },
     "@schematics/angular:service": {
       "spec": false

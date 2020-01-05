@@ -1,6 +1,6 @@
-import { TFunctionMap } from './function-map';
+import { DnfEquation, ShefferEquation } from '@app/models';
 
 export interface IFunctions {
-  boolean: TFunctionMap;
-  sheffer: TFunctionMap;
+  boolean: Map<number, DnfEquation>;
+  sheffer: Map<number, ShefferEquation>;
 }

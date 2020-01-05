@@ -1,0 +1,18 @@
+<div class="layout-inline layout-inline--2px">
+  <ng-container *ngFor="let term of function.terms; last as isLastTerm">
+    <div class="layout-inline__item">
+      <div class="layout-inline layout-inline--0px">
+        <div *ngFor="let operand of term.operands; last as isLastOperand"
+              class="layout-inline__item">
+          <span [class.with--overline]="operand.inverted">{{ operand.symbol }}</span>
+          <sub>{{ operand.index }}</sub>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!isLastTerm"
+         class="layout-inline__item layout-inline__item--self-baseline">
+      ∨
+    </div>
+  </ng-container>
+</div>

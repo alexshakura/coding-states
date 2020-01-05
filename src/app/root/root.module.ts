@@ -23,7 +23,6 @@ import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-tab
 import { HttpClientModule } from '@angular/common/http';
 import { SignalOperandGeneratorService } from './_services/signal-operand-generator.service';
 import { TableMockDataService } from './_services/table-mock-data.service';
-import { ExpressionConverterService } from './_services/expression-converter.service';
 
 @NgModule({
   declarations: [
@@ -51,7 +50,6 @@ import { ExpressionConverterService } from './_services/expression-converter.ser
     CodingAlgorithmsService,
     DocxGeneratorService,
     ElectronService,
-    ExpressionConverterService,
     SnackBarService,
     TableDataService,
     TableMockDataService,

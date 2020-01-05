@@ -4,4 +4,6 @@ export abstract class Operand {
 
   public abstract equalTo(operand: Operand): boolean;
 
+  public abstract invert(): Operand;
+
 }

@@ -20,7 +20,7 @@ export class TableMockDataService {
     };
   }
 
-  public getMockDataForUnitaryD(): ITableRow[] {
+  public getDataForUnitaryD(): ITableRow[] {
     const states = Array.from(this.signalOperandGeneratorService.getStates().values());
 
     return [
@@ -128,7 +128,6 @@ export class TableMockDataService {
         outputSignalsIds: new Set([5]),
         triggerExcitationSignals: null,
       },
-
       {
         id: 10,
         srcStateId: states[2].id,
@@ -196,6 +195,122 @@ export class TableMockDataService {
         unconditionalTransition: false,
         conditionalSignalsIds: new Set([2, 5]),
         outputSignalsIds: new Set([6]),
+        triggerExcitationSignals: null,
+      },
+    ];
+  }
+
+  public getConfigForFrequencyD(): ITableConfig {
+    return {
+      length: 9,
+      numberOfStates: 5,
+      numberOfX: 3,
+      numberOfY: 6,
+      fsmType: FsmType.MILI,
+    };
+  }
+
+  public getDataForFrequencyD(): ITableRow[] {
+    const states = Array.from(this.signalOperandGeneratorService.getStates().values());
+
+    return [
+      {
+        id: 1,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[1].id,
+        distStateCode: null,
+        unconditionalTransition: true,
+        conditionalSignalsIds: new Set(),
+        outputSignalsIds: new Set([1, 2]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 2,
+        srcStateId: states[1].id,
+        srcStateCode: null,
+        distStateId: states[2].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([1]),
+        outputSignalsIds: new Set([3]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 3,
+        srcStateId: states[1].id,
+        srcStateCode: null,
+        distStateId: states[2].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([2]),
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 4,
+        srcStateId: states[2].id,
+        srcStateCode: null,
+        distStateId: states[3].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([3]),
+        outputSignalsIds: new Set([4]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 5,
+        srcStateId: states[2].id,
+        srcStateCode: null,
+        distStateId: states[3].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([4]),
+        outputSignalsIds: new Set([5]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 6,
+        srcStateId: states[3].id,
+        srcStateCode: null,
+        distStateId: states[4].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([1]),
+        outputSignalsIds: new Set([3]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 7,
+        srcStateId: states[3].id,
+        srcStateCode: null,
+        distStateId: states[4].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([2]),
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 8,
+        srcStateId: states[4].id,
+        srcStateCode: null,
+        distStateId: states[0].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([5]),
+        outputSignalsIds: new Set([6]),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 9,
+        srcStateId: states[4].id,
+        srcStateCode: null,
+        distStateId: states[0].id,
+        distStateCode: null,
+        unconditionalTransition: false,
+        conditionalSignalsIds: new Set([6]),
+        outputSignalsIds: new Set(),
         triggerExcitationSignals: null,
       },
     ];

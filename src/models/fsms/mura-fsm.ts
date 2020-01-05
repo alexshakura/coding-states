@@ -1,12 +1,12 @@
-import { DisjunctiveExpression, Expression } from '../expressions';
-import { ITableRow, TFunctionMap } from '@app/types';
+import { ITableRow } from '@app/types';
 import { StateOperand } from '../operands';
 import { Fsm } from './fsm';
+import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export class MuraFsm extends Fsm {
 
-  public getOutputBooleanFunctions(): TFunctionMap {
-    const map: TFunctionMap = new Map();
+  public getOutputBooleanFunctions(): Map<number, DnfEquation> {
+    const map: Map<number, DnfEquation> = new Map();
 
     this.tableData
       .filter((tableRow) => tableRow.outputSignalsIds.size > 0)
@@ -26,16 +26,17 @@ export class MuraFsm extends Fsm {
   }
 
   private setTermForOutputFunction(
-    map: TFunctionMap,
+    map: Map<number, DnfEquation>,
     outputSignalId: number,
     stateOperand: StateOperand
   ): void {
     if (!map.has(outputSignalId)) {
-      map.set(outputSignalId, new DisjunctiveExpression([]));
+      map.set(outputSignalId, new DnfEquation());
     }
 
-    const outputBooleanFunction = map.get(outputSignalId) as Expression;
+    const outputBooleanFunction = map.get(outputSignalId) as DnfEquation;
+    const expression = new ConjunctionExpression(stateOperand);
 
-    outputBooleanFunction.addOperand(stateOperand);
+    outputBooleanFunction.addTerm(expression);
   }
 }

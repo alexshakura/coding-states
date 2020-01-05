@@ -1,6 +1,6 @@
-import { ConjunctiveExpression, DisjunctiveExpression, Expression } from '../expressions';
-import { ITableRow, TFunctionMap } from '@app/types';
-import { ConditionSignalOperand, Operand, StateOperand } from '../operands';
+import { ITableRow } from '@app/types';
+import { ConditionSignalOperand, StateOperand } from '../operands';
+import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export abstract class Fsm {
 
@@ -10,10 +10,10 @@ export abstract class Fsm {
     protected readonly conditionalSignalsMap: Map<number, ConditionSignalOperand>
   ) { }
 
-  public getExcitationBooleanFunctionsMap(totalBitsDepth: number): TFunctionMap {
+  public getExcitationBooleanFunctionsMap(totalBitsDepth: number): Map<number, DnfEquation> {
     const controlBitsList = this.getControlBitsList(totalBitsDepth);
 
-    const excitationFunctionsMap: Map<number, Expression> = new Map();
+    const excitationFunctionsMap: Map<number, DnfEquation> = new Map();
 
     this.tableData.forEach((tableRow) => {
       const excitationSignalsCode = tableRow.distStateCode as number;
@@ -36,14 +36,14 @@ export abstract class Fsm {
       .map((_, index) => 1 << index);
   }
 
-  private getTerm(tableRow: ITableRow): Expression | Operand {
+  private getTerm(tableRow: ITableRow): ConjunctionExpression {
     const stateOperand = this.statesMap.get(tableRow.srcStateId as number) as StateOperand;
 
     if (tableRow.unconditionalTransition) {
-      return stateOperand;
+      return new ConjunctionExpression(stateOperand);
     }
 
-    const expression = new ConjunctiveExpression([stateOperand]);
+    const expression = new ConjunctionExpression(stateOperand);
 
     tableRow.conditionalSignalsIds.forEach((conditionalSignalId) => {
       const operand = this.conditionalSignalsMap.get(conditionalSignalId) as ConditionSignalOperand;
@@ -54,19 +54,19 @@ export abstract class Fsm {
   }
 
   private addTermToFunction(
-    term: Expression | Operand,
+    term: ConjunctionExpression,
     functionIndex: number,
-    functionsMap: Map<number, Expression>
+    functionsMap: Map<number, DnfEquation>
   ): void {
     if (!functionsMap.has(functionIndex)) {
-      functionsMap.set(functionIndex, new DisjunctiveExpression([]));
+      functionsMap.set(functionIndex, new DnfEquation());
     }
 
-    const excitationFunction = functionsMap.get(functionIndex) as Expression;
+    const excitationFunction = functionsMap.get(functionIndex) as DnfEquation;
 
-    excitationFunction.addOperand(term);
+    excitationFunction.addTerm(term);
   }
 
-  public abstract getOutputBooleanFunctions(): TFunctionMap;
+  public abstract getOutputBooleanFunctions(): Map<number, DnfEquation>;
 
 }

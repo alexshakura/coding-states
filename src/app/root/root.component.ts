@@ -33,7 +33,7 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForUnitaryD();
+  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForFrequencyD();
 
   public tableData: ITableRow[] = [];
 
@@ -72,7 +72,7 @@ export class RootComponent implements OnInit {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
 
-        this.tableData = this.tableMockDataService.getMockDataForUnitaryD();
+        this.tableData = this.tableMockDataService.getDataForFrequencyD();
 
         this.tableConfig = tableConfig;
         this.snackBarService.showMessage(successMessage);

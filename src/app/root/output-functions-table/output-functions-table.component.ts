@@ -48,17 +48,17 @@ export class OutputFunctionsTableComponent extends BaseComponent implements OnIn
     this.booleanFunctions = [];
     this.shefferFunctions = [];
 
-    outputFunctions.boolean.forEach((expression, id) => {
+    outputFunctions.boolean.forEach((equation, id) => {
       this.booleanFunctions.push({
         outputSignal: outputSignals.get(id) as OutputSignalOperand,
-        function: expression,
+        function: equation,
       });
     });
 
-    outputFunctions.sheffer.forEach((expression, id) => {
+    outputFunctions.sheffer.forEach((equation, id) => {
       this.shefferFunctions.push({
         outputSignal: outputSignals.get(id) as OutputSignalOperand,
-        function: expression,
+        function: equation,
       });
     });
   }

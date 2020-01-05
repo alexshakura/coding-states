@@ -29,7 +29,8 @@ import { DynamicContentTooltipComponent } from './_components/dynamic-content-to
 import { DynamicTooltipDirective } from './_directives/dynamic-tooltip.directive';
 import { PaginatorComponent } from './_components/paginator/paginator.component';
 import { SnackBarContentComponent } from './_components/snack-bar-content/snack-bar-content.component';
-import { ExpressionComponent } from './_components/expression/expression.component';
+import { DnfEquationComponent } from './_components/dnf-equation/dnf-equation.component';
+import { ShefferEquationComponent } from './_components/sheffer-equation/sheffer-equation.component';
 
 @NgModule({
   imports: [
@@ -55,14 +56,14 @@ import { ExpressionComponent } from './_components/expression/expression.compone
     PortalModule,
   ],
   declarations: [
-    ExpressionComponent,
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
     PaginatorComponent,
     SnackBarContentComponent,
+    DnfEquationComponent,
+    ShefferEquationComponent,
   ],
   exports: [
-    ExpressionComponent,
     DynamicContentTooltipComponent,
     DynamicTooltipDirective,
     MatButtonModule,
@@ -85,6 +86,8 @@ import { ExpressionComponent } from './_components/expression/expression.compone
     MatTooltipModule,
     PaginatorComponent,
     SnackBarContentComponent,
+    DnfEquationComponent,
+    ShefferEquationComponent,
   ],
   providers: [
     { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu },

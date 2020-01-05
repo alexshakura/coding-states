@@ -1,0 +1,40 @@
+<div class="layout-inline layout-inline--2px">
+  <ng-container *ngFor="let term of function.terms; last as isLastTerm">
+    <div class="layout-inline__item">
+      <div class="layout-inline layout-inline--2px">
+        <ng-container *ngFor="let operand of term.operands; last as isLastOperand; first as isFirstOperand">
+          <div *ngIf="term.operands.length > 1 && isFirstOperand"
+               class="layout-inline__item layout-inline__item--self-baseline">
+            (
+          </div>
+
+          <div *ngIf="isLogicalOperand(operand)"
+               class="layout-inline__item">
+            1
+          </div>
+
+          <div *ngIf="!isLogicalOperand(operand)"
+               class="layout-inline__item">
+            <span [class.with--overline]="operand.inverted">{{ operand.symbol }}</span>
+            <sub>{{ operand.index }}</sub>
+          </div>
+
+          <div *ngIf="!isLastOperand"
+               class="layout-inline__item">
+            |
+          </div>
+
+          <div *ngIf="term.operands.length > 1 && isLastOperand"
+               class="layout-inline__item layout-inline__item--self-baseline">
+            )
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div *ngIf="!isLastTerm"
+         class="layout-inline__item layout-inline__item--self-baseline">
+      |
+    </div>
+  </ng-container>
+</div>

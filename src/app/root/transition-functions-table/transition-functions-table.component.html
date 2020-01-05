@@ -22,6 +22,7 @@
           (click)="toggleBasis(true)">
     Базис Буля
   </button>
+
   <button class="mat-menu-item"
           (click)="toggleBasis(false)">
     Базис Шеффера
@@ -47,8 +48,13 @@
         </div>
 
         <div class="layout-inline__item">
-          <app-expression [function]="row.function">
-          </app-expression>
+          <app-dnf-equation *ngIf="isBooleanBasisShown"
+                            [function]="row.function">
+          </app-dnf-equation>
+
+          <app-sheffer-equation *ngIf="!isBooleanBasisShown"
+                                [function]="row.function">
+          </app-sheffer-equation>
         </div>
       </div>
     </mat-cell>

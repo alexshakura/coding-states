@@ -1,12 +1,12 @@
 import { Fsm } from './fsm';
-import { ConjunctiveExpression, DisjunctiveExpression, Expression } from '../expressions';
-import { ITableRow, TFunctionMap } from '@app/types';
-import { ConditionSignalOperand, Operand, StateOperand } from '../operands';
+import { ITableRow } from '@app/types';
+import { ConditionSignalOperand, StateOperand } from '../operands';
+import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export class MiliFsm extends Fsm {
 
-  public getOutputBooleanFunctions(): TFunctionMap {
-    const map: TFunctionMap = new Map();
+  public getOutputBooleanFunctions(): Map<number, DnfEquation> {
+    const map = new Map();
 
     this.tableData
       .filter((tableRow) => tableRow.outputSignalsIds.size > 0)
@@ -21,15 +21,14 @@ export class MiliFsm extends Fsm {
     return map;
   }
 
-  private getOutputSignalTerm(tableRow: ITableRow): Expression | Operand {
+  private getOutputSignalTerm(tableRow: ITableRow): ConjunctionExpression {
     const stateOperand = this.getSourceStateOperand(tableRow);
 
-    // check case
     if (tableRow.unconditionalTransition) {
-      return stateOperand;
+      return new ConjunctionExpression(stateOperand);
     }
 
-    const term: Expression = new ConjunctiveExpression([stateOperand]);
+    const term = new ConjunctionExpression(stateOperand);
 
     tableRow.conditionalSignalsIds.forEach((conditionalSignalId) => {
       const conditionalSignal = this.conditionalSignalsMap.get(conditionalSignalId) as ConditionSignalOperand;
@@ -44,16 +43,16 @@ export class MiliFsm extends Fsm {
   }
 
   private setTermForOutputFunction(
-    map: TFunctionMap,
+    map: Map<number, DnfEquation>,
     outputSignalId: number,
-    term: Expression | Operand
+    term: ConjunctionExpression
   ): void {
     if (!map.has(outputSignalId)) {
-      map.set(outputSignalId, new DisjunctiveExpression([]));
+      map.set(outputSignalId, new DnfEquation());
     }
 
-    const outputBooleanFunction = map.get(outputSignalId) as Expression;
+    const outputBooleanFunction = map.get(outputSignalId) as DnfEquation;
 
-    outputBooleanFunction.addOperand(term);
+    outputBooleanFunction.addTerm(term);
   }
 }
