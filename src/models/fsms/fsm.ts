@@ -1,5 +1,5 @@
-import { ITableRow } from '@app/types';
-import { ConditionSignalOperand, StateOperand } from '../operands';
+import { IExcitationFunctionsDataCell, IOutputFunctionsDataCell, ITableRow } from '@app/types';
+import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '../operands';
 import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export abstract class Fsm {
@@ -7,13 +7,25 @@ export abstract class Fsm {
   public constructor(
     protected readonly tableData: ITableRow[],
     protected readonly statesMap: Map<number, StateOperand>,
-    protected readonly conditionalSignalsMap: Map<number, ConditionSignalOperand>
+    protected readonly conditionalSignalsMap: Map<number, ConditionSignalOperand>,
+    protected readonly outputSignalsMap: Map<number, OutputSignalOperand>
   ) { }
 
-  public getExcitationBooleanFunctionsMap(totalBitsDepth: number): Map<number, DnfEquation> {
+  public getExcitationFunctions(totalBitsDepth: number): IExcitationFunctionsDataCell[] {
     const controlBitsList = this.getControlBitsList(totalBitsDepth);
+    const excitationFunctionsMap = this.getExcitationDnfsMap(controlBitsList);
 
-    const excitationFunctionsMap: Map<number, DnfEquation> = new Map();
+    return this.getSortedExcitationFunctionsList(excitationFunctionsMap);
+  }
+
+  private getControlBitsList(totalBitDepth: number): number[] {
+    return new Array(totalBitDepth)
+      .fill(1)
+      .map((_, index) => 1 << index);
+  }
+
+  private getExcitationDnfsMap(controlBitsList: number[]): Map<number, DnfEquation> {
+    const map: Map<number, DnfEquation> = new Map();
 
     this.tableData.forEach((tableRow) => {
       const excitationSignalsCode = tableRow.distStateCode as number;
@@ -23,17 +35,11 @@ export abstract class Fsm {
         .filter((val: number) => val & excitationSignalsCode)
         .forEach((val: number) => {
           const functionIndex: number = controlBitsList.indexOf(val) + 1;
-          this.addTermToFunction(term, functionIndex, excitationFunctionsMap);
+          this.addTermToFunction(term, functionIndex, map);
         });
     });
 
-    return excitationFunctionsMap;
-  }
-
-  private getControlBitsList(totalBitDepth: number): number[] {
-    return new Array(totalBitDepth)
-      .fill(1)
-      .map((_, index) => 1 << index);
+    return map;
   }
 
   private getTerm(tableRow: ITableRow): ConjunctionExpression {
@@ -67,6 +73,55 @@ export abstract class Fsm {
     excitationFunction.addTerm(term);
   }
 
-  public abstract getOutputBooleanFunctions(): Map<number, DnfEquation>;
+  private getSortedExcitationFunctionsList(dnfsMap: Map<number, DnfEquation>): IExcitationFunctionsDataCell[] {
+    return Array.from(dnfsMap.entries())
+      .sort(([leftIndex, _leftEquation], [rightIndex, _rightEquation]) => {
+        if (leftIndex > rightIndex) {
+          return 1;
+        }
+
+        if (rightIndex > leftIndex) {
+          return -1;
+        }
+
+        return 0;
+      })
+      .map(([index, dnfEquation]) => {
+        return {
+          index,
+          dnfEquation,
+          shefferEquation: dnfEquation.toSheffer(),
+        };
+      });
+  }
+
+  protected getSortedOutputFunctionsList(dnfsMap: Map<number, DnfEquation>): IOutputFunctionsDataCell[] {
+    return Array.from(dnfsMap.entries())
+      .sort(([leftId, _leftEquation], [rightId, _rightEquation]) => {
+        const leftOperand = this.outputSignalsMap.get(leftId) as OutputSignalOperand;
+        const rightOperand = this.outputSignalsMap.get(rightId) as OutputSignalOperand;
+
+        if (leftOperand.index > rightOperand.index) {
+          return 1;
+        }
+
+        if (rightOperand.index > leftOperand.index) {
+          return -1;
+        }
+
+        return 0;
+      })
+      .map(([id, dnfEquation]) => {
+        const operand = this.outputSignalsMap.get(id) as OutputSignalOperand;
+
+        return {
+          index: operand.index,
+          dnfEquation,
+          shefferEquation: dnfEquation.toSheffer(),
+        };
+      });
+  }
+
+  public abstract getOutputFunctions(): IOutputFunctionsDataCell[];
 
 }

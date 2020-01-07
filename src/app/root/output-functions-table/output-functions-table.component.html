@@ -19,12 +19,12 @@
 <mat-menu #basisModeMenu="matMenu"
           [overlapTrigger]="false">
   <button class="mat-menu-item"
-          (click)="toggleBasis(true)">
+          (click)="isBooleanBasisShown = true">
     Базис Буля
   </button>
 
   <button class="mat-menu-item"
-          (click)="toggleBasis(false)">
+          (click)="isBooleanBasisShown = false">
     Базис Шеффера
   </button>
 </mat-menu>
@@ -40,7 +40,7 @@
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--2px">
         <div class="layout-inline__item">
-          y<sub>{{ row.outputSignal.index }}</sub>
+          y<sub>{{ row.index }}</sub>
         </div>
 
         <div class="layout-inline__item">
@@ -49,11 +49,11 @@
 
         <div class="layout-inline__item">
           <app-dnf-equation *ngIf="isBooleanBasisShown"
-                            [function]="row.function">
+                            [function]="row.dnfEquation">
           </app-dnf-equation>
 
           <app-sheffer-equation *ngIf="!isBooleanBasisShown"
-                                [function]="row.function">
+                                [function]="row.shefferEquation">
           </app-sheffer-equation>
         </div>
       </div>

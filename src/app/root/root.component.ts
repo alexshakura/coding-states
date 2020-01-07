@@ -7,12 +7,13 @@ import { SnackBarService } from './_services/snack-bar.service';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { ElectronService } from './_services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
-import { environment } from '../../environments/environment';
 import { takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
 import { TableMockDataService } from './_services/table-mock-data.service';
+import { DocxGeneratorService } from './_services/docx-generator.service';
+import { CodingAlgorithmType } from '@app/enums';
 
 @Component({
   selector: 'app-root',
@@ -39,14 +40,15 @@ export class RootComponent implements OnInit {
 
   public readonly tableEditModeControl: FormControl = new FormControl(true);
 
-  public chosenCodingAlgorithm: string;
+  public chosenCodingAlgorithm: CodingAlgorithmType;
 
   public constructor(
     private readonly dialog: MatDialog,
-    private readonly electronService: ElectronService,
+    public readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
     private readonly tableDataService: TableDataService,
-    private readonly tableMockDataService: TableMockDataService
+    private readonly tableMockDataService: TableMockDataService,
+    private readonly docxGeneratorService: DocxGeneratorService
   ) { }
 
   public ngOnInit(): void {
@@ -97,7 +99,7 @@ export class RootComponent implements OnInit {
       .pipe(
         takeUntil(dialogRef.afterClosed())
       )
-      .subscribe(([codingAlgorithm, successMessage]: string[]) => {
+      .subscribe(([codingAlgorithm, successMessage]) => {
         this.snackBarService.showMessage(successMessage);
 
         this.chosenCodingAlgorithm = codingAlgorithm;
@@ -124,16 +126,14 @@ export class RootComponent implements OnInit {
     this.isGeneratingDoc = true;
     this.tableEditModeControl.disable();
 
-    let pathToTemplate: string = '/assets/doc-templates/table_min.docx';
 
-    if (this.electronService.isElectron() && environment.production) {
-      const resourcesPath = window.process.resourcesPath;
-
-      pathToTemplate = this.electronService.path.join(resourcesPath, pathToTemplate);
-    }
-
+    this.docxGeneratorService.get$(this.tableConfig as ITableConfig, this.chosenCodingAlgorithm)
+      .subscribe(() => {
+        this.isGeneratingDoc = false;
+        this.tableEditModeControl.enable();
+      });
     // combineLatest([
-    //   this.httpClient.get(pathToTemplate, { responseType: 'arraybuffer' }),
+
     //   this._docxGeneratorService.getData$(),
     // ])
     //   .pipe(
@@ -189,17 +189,17 @@ export class RootComponent implements OnInit {
     //           window.location.href = url;
     //           setTimeout(() => window.URL.revokeObjectURL(url), 40);
 
-    //           this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+    //           this.snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
     //         }
     //       } catch {
-    //         this._snackBarService.showMessage(this.GENERATE_DOC_ERROR);
+    //         this.snackBarService.showMessage(this.GENERATE_DOC_ERROR);
     //       } finally {
     //         this.isGeneratingDoc = false;
     //       }
     //     },
     //     () => {
     //       this.isGeneratingDoc  = false;
-    //       this._snackBarService.showError();
+    //       this.snackBarService.showError();
     //     });
   }
 }

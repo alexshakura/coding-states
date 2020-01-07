@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-import { IFunctions, ITransitionFunctionsDataCell } from '@app/types';
+import { IExcitationFunctionsDataCell } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { DISPLAYED_COLUMNS } from './transition-functions-table.constants';
@@ -14,12 +14,9 @@ export class TransitionFunctionsTableComponent extends BaseComponent implements 
 
   public readonly displayedColumns: string[] = DISPLAYED_COLUMNS;
 
-  public dataSource: ITransitionFunctionsDataCell[];
+  public dataSource: IExcitationFunctionsDataCell[];
 
   public isBooleanBasisShown: boolean = true;
-
-  private booleanFunctions: ITransitionFunctionsDataCell[];
-  private shefferFunctions: ITransitionFunctionsDataCell[];
 
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService
@@ -33,36 +30,8 @@ export class TransitionFunctionsTableComponent extends BaseComponent implements 
         takeUntil(this.destroy$$)
       )
       .subscribe((transitionFunctions) => {
-        this.fillBasisFunctions(transitionFunctions);
-        this.toggleBasis(true);
+        this.dataSource = transitionFunctions;
       });
-  }
-
-  private fillBasisFunctions(transitionFunctions: IFunctions): void {
-    this.booleanFunctions = [];
-    this.shefferFunctions = [];
-
-    transitionFunctions.boolean.forEach((expression, index) => {
-      this.booleanFunctions.push({
-        function: expression,
-        index,
-      });
-    });
-
-    transitionFunctions.sheffer.forEach((expression, index) => {
-      this.shefferFunctions.push({
-        function: expression,
-        index,
-      });
-    });
-  }
-
-  public toggleBasis(isBooleanBasis: boolean): void {
-    this.isBooleanBasisShown = isBooleanBasis;
-
-    this.dataSource = this.isBooleanBasisShown
-      ? this.booleanFunctions
-      : this.shefferFunctions;
   }
 
 }

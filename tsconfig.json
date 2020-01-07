@@ -8,6 +8,7 @@
     "baseUrl": "./",
     "paths": {
       "@app/*": ["src/app/*"],
+      "@app/env": ["src/environments/environment"],
       "@app/enums": ["src/enums"],
       "@app/types": ["src/types"],
       "@app/models": ["src/models"]
@@ -18,11 +19,13 @@
     "strictNullChecks": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
+    "allowSyntheticDefaultImports": true,
     "module": "es2015",
     "target": "es2015",
     "types": [],
     "typeRoots": [
-      "node_modules/@types"
+      "node_modules/@types",
+      "src/app/typings"
     ],
     "lib": [
       "es2017",

@@ -1,11 +1,17 @@
-import { ITableRow } from '@app/types';
+import { IOutputFunctionsDataCell, ITableRow } from '@app/types';
 import { StateOperand } from '../operands';
 import { Fsm } from './fsm';
 import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export class MuraFsm extends Fsm {
 
-  public getOutputBooleanFunctions(): Map<number, DnfEquation> {
+  public getOutputFunctions(): IOutputFunctionsDataCell[] {
+    const dnfsMap = this.getOutputDnfsMap();
+
+    return this.getSortedOutputFunctionsList(dnfsMap);
+  }
+
+  private getOutputDnfsMap(): Map<number, DnfEquation> {
     const map: Map<number, DnfEquation> = new Map();
 
     this.tableData
@@ -39,4 +45,5 @@ export class MuraFsm extends Fsm {
 
     outputBooleanFunction.addTerm(expression);
   }
+
 }

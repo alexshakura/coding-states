@@ -14,7 +14,7 @@ import { of } from 'rxjs';
   templateUrl: './coding-algorithm-dialog.component.html',
   host: { class: 'component-wrapper' },
 })
-export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[string, string], string> {
+export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[CodingAlgorithmType, string], string> {
 
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
 

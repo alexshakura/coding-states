@@ -1,12 +1,18 @@
 import { Fsm } from './fsm';
-import { ITableRow } from '@app/types';
+import { IOutputFunctionsDataCell, ITableRow } from '@app/types';
 import { ConditionSignalOperand, StateOperand } from '../operands';
 import { ConjunctionExpression, DnfEquation } from '../equations';
 
 export class MiliFsm extends Fsm {
 
-  public getOutputBooleanFunctions(): Map<number, DnfEquation> {
-    const map = new Map();
+  public getOutputFunctions(): IOutputFunctionsDataCell[] {
+    const dnfsMap = this.getOutputDnfsMap();
+
+    return this.getSortedOutputFunctionsList(dnfsMap);
+  }
+
+  private getOutputDnfsMap(): Map<number, DnfEquation> {
+    const map: Map<number, DnfEquation> = new Map();
 
     this.tableData
       .filter((tableRow) => tableRow.outputSignalsIds.size > 0)

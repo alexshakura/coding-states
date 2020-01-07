@@ -4,17 +4,15 @@ import { Observable, of, ReplaySubject, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
 import {
-  DnfEquation,
   FrequencyDAlgorithm,
   Fsm,
   MiliFsm,
   MuraFsm,
   NStateAlgorithm,
-  ShefferEquation,
   UnitaryDAlgorithm,
   VertexCodingAlgorithm,
 } from '@app/models';
-import { IFunctions, ITableConfig, ITableRow, TVertexData } from '@app/types';
+import { IExcitationFunctionsDataCell, IOutputFunctionsDataCell, ITableConfig, ITableRow, TVertexData } from '@app/types';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
@@ -35,17 +33,17 @@ export class CodingAlgorithmsService {
 
   private _vertexCodes$$: ReplaySubject<TVertexData> = new ReplaySubject<TVertexData>(1);
 
-  public get outputFunctions$(): Observable<IFunctions> {
+  public get outputFunctions$(): Observable<IOutputFunctionsDataCell[]> {
     return this._outputFunctions$$.asObservable();
   }
 
-  private _outputFunctions$$: ReplaySubject<IFunctions> = new ReplaySubject<IFunctions>(1);
+  private _outputFunctions$$: ReplaySubject<IOutputFunctionsDataCell[]> = new ReplaySubject<IOutputFunctionsDataCell[]>(1);
 
-  public get transitionFunctions$(): Observable<IFunctions> {
+  public get transitionFunctions$(): Observable<IExcitationFunctionsDataCell[]> {
     return this._transitionFunctions$$.asObservable();
   }
 
-  private _transitionFunctions$$: ReplaySubject<IFunctions> = new ReplaySubject<IFunctions>(1);
+  private _transitionFunctions$$: ReplaySubject<IExcitationFunctionsDataCell[]> = new ReplaySubject<IExcitationFunctionsDataCell[]>(1);
 
   public get capacity$(): Observable<number> {
     return this._capacity$$.asObservable();
@@ -78,29 +76,24 @@ export class CodingAlgorithmsService {
 
       const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
 
-      const capacity: number = this.getCapacity(vertexCodeMap);
+      const capacity = this.getCapacity(vertexCodeMap);
 
-      const outputBooleanFunctionsMap = fsm.getOutputBooleanFunctions();
-      const excitationBooleanFunctionsMap = fsm.getExcitationBooleanFunctionsMap(capacity);
+      const outputFunction = fsm.getOutputFunctions();
+      const excitationFunctions = fsm.getExcitationFunctions(capacity);
 
       this._capacity$$.next(capacity);
       this._vertexCodes$$.next(vertexCodeMap);
 
-      this._outputFunctions$$.next({
-        boolean: outputBooleanFunctionsMap,
-        sheffer: this.getOutputShefferFunctionsMap(outputBooleanFunctionsMap),
-      });
-
-      this._transitionFunctions$$.next({
-        boolean: excitationBooleanFunctionsMap,
-        sheffer: this.getExcitationShefferFunctions(excitationBooleanFunctionsMap),
-      });
+      this._outputFunctions$$.next(outputFunction);
+      this._transitionFunctions$$.next(excitationFunctions);
 
       this._codedTableData$$.next(codedTableData);
 
-      return of(void 0).pipe(delay(CodingAlgorithmsService.DEFAULT_TIMEOUT));
+      return of(void 0)
+        .pipe(
+          delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
+        );
     } catch (error) {
-      debugger;
       return throwError({ key: error.key, params: error.params })
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
@@ -170,7 +163,8 @@ export class CodingAlgorithmsService {
     return new fsm(
       codedTableData,
       this.signalOperandGeneratorService.getStates(),
-      this.signalOperandGeneratorService.getConditionalSignals()
+      this.signalOperandGeneratorService.getConditionalSignals(),
+      this.signalOperandGeneratorService.getOutputSignals()
     );
   }
 
@@ -193,23 +187,4 @@ export class CodingAlgorithmsService {
     return maxValue.toString(2).length;
   }
 
-  private getOutputShefferFunctionsMap(dnfFunctionsMap: Map<number, DnfEquation>): Map<number, ShefferEquation> {
-    const map: Map<number, ShefferEquation> = new Map();
-
-    dnfFunctionsMap.forEach((dnfEquation, id) => {
-      map.set(id, dnfEquation.toSheffer());
-    });
-
-    return map;
-  }
-
-  private getExcitationShefferFunctions(dnfFunctionsMap: Map<number, DnfEquation>): Map<number, ShefferEquation> {
-    const map: Map<number, ShefferEquation> = new Map();
-
-    dnfFunctionsMap.forEach((dnfEquation, index) => {
-      map.set(index, dnfEquation.toSheffer());
-    });
-
-    return map;
-  }
 }
