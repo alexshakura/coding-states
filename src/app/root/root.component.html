@@ -9,13 +9,13 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="generateDoc()"
-                  [disabled]="isGeneratingDoc">
-            <ng-container *ngIf="!isGeneratingDoc">
+                  (click)="generateReport()"
+                  [disabled]="isGeneratingReport">
+            <ng-container *ngIf="!isGeneratingReport">
               Сохранить
             </ng-container>
 
-            <mat-spinner *ngIf="isGeneratingDoc"
+            <mat-spinner *ngIf="isGeneratingReport"
                          [diameter]="20"
                          strokeWidth="2"
                          app-theme="light">
@@ -27,7 +27,7 @@
           <button mat-raised-button
                   app-theme="warning"
                   (click)="openCodingAlgorithmDialog()"
-                  [disabled]="isGeneratingDoc">
+                  [disabled]="isGeneratingReport">
             Закодировать
           </button>
         </div>
@@ -36,7 +36,7 @@
           <button mat-raised-button
                   app-theme="warning"
                   (click)="openTableConfigDialog()"
-                  [disabled]="isGeneratingDoc">
+                  [disabled]="isGeneratingReport">
             Изменить параметры СТП
           </button>
         </div>

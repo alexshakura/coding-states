@@ -1,19 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-
-// import * as Docxtemplater from 'docxtemplater';
-
 import { SnackBarService } from './_services/snack-bar.service';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { ElectronService } from './_services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
-import { takeUntil } from 'rxjs/operators';
+import { switchMap, takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
 import { TableMockDataService } from './_services/table-mock-data.service';
-import { DocxGeneratorService } from './_services/docx-generator.service';
+import { ReportGeneratorService } from './_services/report-generator.service';
 import { CodingAlgorithmType } from '@app/enums';
+import { combineLatest, from, of } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +28,7 @@ export class RootComponent implements OnInit {
   public isTableCoded: boolean = false;
   public isInitialized: boolean = false;
 
-  public isGeneratingDoc: boolean = false;
+  public isGeneratingReport: boolean = false;
 
   public selectedTabIndex: number = 0;
 
@@ -44,11 +42,11 @@ export class RootComponent implements OnInit {
 
   public constructor(
     private readonly dialog: MatDialog,
-    public readonly electronService: ElectronService,
+    private readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
     private readonly tableDataService: TableDataService,
     private readonly tableMockDataService: TableMockDataService,
-    private readonly docxGeneratorService: DocxGeneratorService
+    private readonly reportGeneratorService: ReportGeneratorService
   ) { }
 
   public ngOnInit(): void {
@@ -67,7 +65,7 @@ export class RootComponent implements OnInit {
       .pipe(
         takeUntil(dialogRef.afterClosed())
       )
-      .subscribe(([tableConfig, successMessage]: [ITableConfig, string]) => {
+      .subscribe(([tableConfig, successMessage]) => {
         if (!this.tableConfig || this.tableDataService.shouldDeleteCurrentData(tableConfig, this.tableConfig)) {
           this.tableData = this.tableDataService.generateEmptyRows(tableConfig.length);
         } else if (this.tableConfig.length !== tableConfig.length) {
@@ -117,89 +115,53 @@ export class RootComponent implements OnInit {
       });
   }
 
-  public generateDoc(): void {
+  public generateReport(): void {
     if (!this.isTableCoded) {
       this.snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
       return;
     }
 
-    this.isGeneratingDoc = true;
+    this.isGeneratingReport = true;
     this.tableEditModeControl.disable();
 
+    this.reportGeneratorService.get$(this.tableConfig as ITableConfig, this.chosenCodingAlgorithm)
+      .pipe(
+        switchMap((file) => {
+          const saveDialogResult = this.electronService.dialog.showSaveDialog({
+            defaultPath: 'coding_results',
+            filters: [{ name: 'Microsoft office document', extensions: ['docx'] }],
+          });
 
-    this.docxGeneratorService.get$(this.tableConfig as ITableConfig, this.chosenCodingAlgorithm)
-      .subscribe(() => {
-        this.isGeneratingDoc = false;
-        this.tableEditModeControl.enable();
-      });
-    // combineLatest([
+          return combineLatest([
+            of(file),
+            from(saveDialogResult),
+          ]);
+        })
+      )
+      .subscribe(
+        ([file, saveDialogResult]) => {
+          if (saveDialogResult.canceled) {
+            return;
+          }
 
-    //   this._docxGeneratorService.getData$(),
-    // ])
-    //   .pipe(
-    //     take(1)
-    //   )
-    //   .subscribe(
-    //     ([content, [tableData, outputFunctions, transitionFunctions]]: any[]) => {
-    //       const zip = new JSZip(content);
-    //       // Docxtemplater()
-    //       const docxTemplate = new Docxtemplater()
-    //         .loadZip(zip)
-    //         .setOptions({ parser: this._docxGeneratorService.getParser(), paragraphLoop: true });
+          this.saveReport(file, saveDialogResult.filePath as string);
+          this.snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+        },
+        (message?: string) => {
+          this.snackBarService.showError(message);
+        },
+        () => {
+          this.isGeneratingReport = false;
+          this.tableEditModeControl.enable();
+        }
+      );
+  }
 
-    //       docxTemplate.setData({
-    //         tableData,
-    //         isMiliType: this.tableConfig.fsmType === TableDataService.MILI_FSM_TYPE,
-    //         outputFunctions,
-    //         transitionFunctions,
-    //         isUnitaryAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.UNITARY_D_ALGORITHM,
-    //         isFrequencyAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.FREQUENCY_D_ALGORITHM,
-    //         isNStateAlgorithm: this.chosenCodingAlgorithm === CodingAlgorithmsService.STATE_N_D_ALGORITHM,
-    //       });
+  private saveReport(file: Blob | Buffer, filePath: string): void {
+    if (this.electronService.fs.existsSync(filePath)) {
+      this.electronService.fs.unlinkSync(filePath);
+    }
 
-    //       try {
-    //         docxTemplate.render();
-
-    //         const generatedZipFile = docxTemplate.getZip();
-    //         let generatedFile;
-
-    //         if (this._electronService.isElectron()) {
-    //           generatedFile = generatedZipFile.generate({ type: 'nodebuffer' });
-
-    //           const savePath: string = this._electronService.dialog.showSaveDialog({
-    //             defaultPath: 'coding_results',
-    //             filters: [{ name: 'Microsoft office document', extensions: ['docx'] }],
-    //           });
-
-    //           if (savePath) {
-    //             if (this._electronService.fs.existsSync(savePath)) {
-    //               this._electronService.fs.unlinkSync(savePath);
-    //             }
-
-    //             this._electronService.fs.writeFileSync(savePath, generatedFile);
-    //             this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
-    //           }
-    //         } else {
-    //           generatedFile = generatedZipFile.generate({
-    //             type: 'blob',
-    //             mimeType: DocxGeneratorService.MIME_TYPE,
-    //           });
-
-    //           const url = window.URL.createObjectURL(generatedFile);
-    //           window.location.href = url;
-    //           setTimeout(() => window.URL.revokeObjectURL(url), 40);
-
-    //           this.snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
-    //         }
-    //       } catch {
-    //         this.snackBarService.showMessage(this.GENERATE_DOC_ERROR);
-    //       } finally {
-    //         this.isGeneratingDoc = false;
-    //       }
-    //     },
-    //     () => {
-    //       this.isGeneratingDoc  = false;
-    //       this.snackBarService.showError();
-    //     });
+    this.electronService.fs.writeFileSync(filePath, file);
   }
 }

@@ -25,7 +25,7 @@ export class CodingAlgorithmsService {
   public readonly INVALID_ROWS_ERROR: string = 'INVALID_ROWS';
   public readonly INVALID_ROW_ERROR: string = 'INVALID_ROW';
   public readonly INVALID_INPUT_ERROR: string = 'INVALID_INPUT';
-  public readonly INVALID_GRAPH_ERROR: string = 'INVALID_GRAPH';
+  public readonly INVALID_USED_STATES_COUNT: string = 'INVALID_USED_STATES_COUNT';
 
   public get vertexCodes$(): Observable<TVertexData> {
     return this._vertexCodes$$.asObservable();
@@ -112,12 +112,12 @@ export class CodingAlgorithmsService {
       throw new ValidationError(errorKey, { invalidRows });
     }
 
-    if (!this.isGraphValid(tableData, tableConfig.numberOfStates)) {
-      throw new ValidationError(this.INVALID_GRAPH_ERROR);
+    if (!this.isAllStatesUsed(tableData, tableConfig.numberOfStates)) {
+      throw new ValidationError(this.INVALID_USED_STATES_COUNT);
     }
   }
 
-  private isGraphValid(tableData: ITableRow[], numberOfStates: number): boolean {
+  private isAllStatesUsed(tableData: ITableRow[], numberOfStates: number): boolean {
     const selectedSrcStateIds = tableData.map((tableRow) => tableRow.srcStateId);
     const selectedDistStateIds = tableData.map((tableRow) => tableRow.distStateId);
 

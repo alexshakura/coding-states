@@ -12,6 +12,7 @@
                               [formControl]="editModeControl">
             </mat-slide-toggle>
           </div>
+
           <div class="layout-inline__item is--muted-70 is--interactive">
             Режим редактирования
           </div>
@@ -48,7 +49,7 @@
           </ng-container>
         </div>
 
-        <div *ngIf="editModeControl.value"
+        <div *ngIf="isEditMode()"
               class="layout-inline__item">
           <button mat-icon-button
                   [matMenuTriggerFor]="statesMenu"
@@ -103,7 +104,7 @@
           </ng-container>
         </div>
 
-        <div *ngIf="editModeControl.value"
+        <div *ngIf="isEditMode()"
               class="layout-inline__item">
           <button mat-icon-button
                  [matMenuTriggerFor]="statesMenu"
@@ -161,7 +162,7 @@
           <div *ngIf="!row.conditionalSignalsIds.size && !row.unconditionalTransition">-</div>
         </div>
 
-        <div *ngIf="editModeControl.value"
+        <div *ngIf="isEditMode()"
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="conditionalSignalsMenu"
@@ -237,7 +238,7 @@
           </div>
         </div>
 
-        <div *ngIf="editModeControl.value"
+        <div *ngIf="isEditMode()"
              class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="outputSignalsMenu"

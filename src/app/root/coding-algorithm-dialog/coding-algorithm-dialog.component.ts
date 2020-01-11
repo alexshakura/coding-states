@@ -20,7 +20,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[CodingA
 
   public errorMap: { [propName: string]: string } = {
     [this.codingAlgorithmsService.INVALID_INPUT_ERROR]: 'Проверьте веденные данные',
-    [this.codingAlgorithmsService.INVALID_GRAPH_ERROR]: 'Указанный граф не корректен',
+    [this.codingAlgorithmsService.INVALID_USED_STATES_COUNT]: 'Количество состояний в параметрах СТП не совпадает с количеством используемых',
     [this.codingAlgorithmsService.INVALID_ROWS_ERROR]: 'Заполните следующие строки: ',
     [this.codingAlgorithmsService.INVALID_ROW_ERROR]: 'Заполните следующую строку: ',
   };

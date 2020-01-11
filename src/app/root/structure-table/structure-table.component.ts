@@ -144,4 +144,8 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   public emitTableUpdate(): void {
     this.onUpdate.emit(this.dataSource.data);
   }
+
+  public isEditMode(): boolean {
+    return this.editModeControl.enabled && this.editModeControl.value;
+  }
 }

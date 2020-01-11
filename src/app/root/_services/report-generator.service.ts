@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { CodingAlgorithmsService } from './coding-algorithms.service';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { TableDataService } from './table-data.service';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 import { IFormattedTableRow, IGeneratedFileInputData, ITableConfig, ITableRow } from '@app/types';
-import { ConditionSignalOperand, LogicalOperand, OutputSignalOperand, StateOperand } from '@app/models';
+import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '@app/models';
 import { HttpClient } from '@angular/common/http';
 import { ElectronService } from './electron.service';
 import { environment } from '@app/env';
 import * as PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
-import { compile } from 'angular-expressions';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
+import { reportParser } from '@app/shared/_helpers/report-parser';
 
 @Injectable()
-export class DocxGeneratorService {
+export class ReportGeneratorService {
 
-  private readonly MIME_TYPE: string = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+  private readonly GENERATE_DOC_ERROR: string = 'Что-то пошло не так, перепроверьте Ваши данные';
 
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
@@ -27,7 +27,7 @@ export class DocxGeneratorService {
     private readonly electronService: ElectronService
   ) { }
 
-  public get$(tableConfig: ITableConfig, chosenCodingAlgorithm: CodingAlgorithmType): Observable<any> {
+  public get$(tableConfig: ITableConfig, chosenCodingAlgorithm: CodingAlgorithmType): Observable<Blob | Buffer> {
     return combineLatest([
       this.getData$(tableConfig, chosenCodingAlgorithm),
       this.getTemplateBinary$(),
@@ -38,48 +38,18 @@ export class DocxGeneratorService {
           const doc = new Docxtemplater();
 
           doc.loadZip(zip);
-          doc.setOptions({ paragraphLoop: true, parser: this.getParser() });
+          doc.setOptions({ paragraphLoop: true, parser: reportParser });
           doc.setData(data);
 
           try {
             doc.render();
 
             const generatedZipFile = doc.getZip();
-            let generatedFile;
 
-            // if (this._electronService.isElectron()) {
-            //   generatedFile = generatedZipFile.generate({ type: 'nodebuffer' });
-
-            //   const savePath: string = this._electronService.dialog.showSaveDialog({
-            //     defaultPath: 'coding_results',
-            //     filters: [{ name: 'Microsoft office document', extensions: ['docx'] }],
-            //   });
-
-            //   if (savePath) {
-            //     if (this._electronService.fs.existsSync(savePath)) {
-            //       this._electronService.fs.unlinkSync(savePath);
-            //     }
-
-            //     this._electronService.fs.writeFileSync(savePath, generatedFile);
-            //     this._snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
-            //   }
-            // }else {
-            generatedFile = generatedZipFile.generate({
-                type: 'blob',
-                mimeType: this.MIME_TYPE,
-              });
-
-            const url = window.URL.createObjectURL(generatedFile);
-            window.location.href = url;
-            setTimeout(() => window.URL.revokeObjectURL(url), 40);
-
-              // this.snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
-            // }
+            return generatedZipFile.generate({ type: 'nodebuffer' });
           } catch (e) {
-            console.log(e);
-
+            throw new Error(this.GENERATE_DOC_ERROR);
           }
-
         })
       );
   }
@@ -105,7 +75,8 @@ export class DocxGeneratorService {
           outputFunctions,
           excitationFunctions,
         };
-      })
+      }),
+      take(1)
     );
   }
 
@@ -143,9 +114,9 @@ export class DocxGeneratorService {
   }
 
   private getTemplateBinary$(): Observable<ArrayBuffer> {
-    let pathToTemplate: string = '/assets/doc-templates/table_min.docx';
+    let pathToTemplate: string = '/assets/report-template.docx';
 
-    if (this.electronService.isElectron() && environment.production) {
+    if (environment.production) {
       const resourcesPath = window.process.resourcesPath;
 
       pathToTemplate = this.electronService.path.join(resourcesPath, pathToTemplate);
@@ -154,40 +125,4 @@ export class DocxGeneratorService {
     return this.httpClient.get(pathToTemplate, { responseType: 'arraybuffer' });
   }
 
-  public getParser() {
-   return (tag: string) => {
-      return {
-          get: (scope: any, context: any) => {
-            if (tag === 'isLastItem') {
-              return this.isLastItem(context);
-            }
-
-            if (tag === 'isLogicalOperand') {
-              return scope instanceof LogicalOperand;
-            }
-
-            if (tag === '.') {
-              return scope;
-            }
-
-            const parsedExpressionFn = compile(tag.replace(/(’|“|”)/g, '\''));
-
-            return parsedExpressionFn(scope);
-          },
-      };
-    };
-  }
-
-  private isLastItem(context: any): boolean {
-    const index = context.scopePathItem[context.scopePathItem.length - 1];
-
-    const parent = context.scopeList[context.scopeList.length - 2];
-    const iterablePath: string[] = context.scopePath[context.scopePath.length - 1].split('.');
-
-    let iterable = parent;
-
-    iterablePath.forEach((prop) => iterable = iterable[prop]);
-
-    return index === iterable.length - 1;
-  }
 }
