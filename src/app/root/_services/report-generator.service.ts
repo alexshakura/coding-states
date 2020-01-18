@@ -1,30 +1,27 @@
 import { Injectable } from '@angular/core';
 import { CodingAlgorithmsService } from './coding-algorithms.service';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { TableDataService } from './table-data.service';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 import { IFormattedTableRow, IGeneratedFileInputData, ITableConfig, ITableRow } from '@app/types';
 import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '@app/models';
-import { HttpClient } from '@angular/common/http';
-import { ElectronService } from './electron.service';
-import { environment } from '@app/env';
 import * as PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { reportParser } from '@app/shared/_helpers/report-parser';
+import { getAssetsPath } from '@app/shared/_helpers/get-assets-path';
+import * as path from 'path';
+import * as fs from 'fs';
+import { ValidationError } from '@app/shared/_helpers/validation-error';
 
 @Injectable()
 export class ReportGeneratorService {
 
-  private readonly GENERATE_DOC_ERROR: string = 'Что-то пошло не так, перепроверьте Ваши данные';
-
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
-    private readonly tableDataService: TableDataService,
-    private readonly httpClient: HttpClient,
-    private readonly electronService: ElectronService
+    private readonly tableDataService: TableDataService
   ) { }
 
   public get$(tableConfig: ITableConfig, chosenCodingAlgorithm: CodingAlgorithmType): Observable<Blob | Buffer> {
@@ -48,7 +45,7 @@ export class ReportGeneratorService {
 
             return generatedZipFile.generate({ type: 'nodebuffer' });
           } catch (e) {
-            throw new Error(this.GENERATE_DOC_ERROR);
+            throw new ValidationError('ROOT.ROOT.ERROR_REPORT_GENERATION');
           }
         })
       );
@@ -113,16 +110,11 @@ export class ReportGeneratorService {
     });
   }
 
-  private getTemplateBinary$(): Observable<ArrayBuffer> {
-    let pathToTemplate: string = '/assets/report-template.docx';
+  private getTemplateBinary$(): Observable<any> {
+    const pathToTemplate = path.join(getAssetsPath(), 'report-template.docx');
+    const templateBinary = fs.readFileSync(pathToTemplate, { encoding: 'binary' });
 
-    if (environment.production) {
-      const resourcesPath = window.process.resourcesPath;
-
-      pathToTemplate = this.electronService.path.join(resourcesPath, pathToTemplate);
-    }
-
-    return this.httpClient.get(pathToTemplate, { responseType: 'arraybuffer' });
+    return of(templateBinary);
   }
 
 }

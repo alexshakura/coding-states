@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-
 import { Observable, of, ReplaySubject, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
-
 import {
   FrequencyDAlgorithm,
   Fsm,
@@ -21,11 +19,6 @@ import { SignalOperandGeneratorService } from './signal-operand-generator.servic
 export class CodingAlgorithmsService {
 
   private static readonly DEFAULT_TIMEOUT: number = 1000;
-
-  public readonly INVALID_ROWS_ERROR: string = 'INVALID_ROWS';
-  public readonly INVALID_ROW_ERROR: string = 'INVALID_ROW';
-  public readonly INVALID_INPUT_ERROR: string = 'INVALID_INPUT';
-  public readonly INVALID_USED_STATES_COUNT: string = 'INVALID_USED_STATES_COUNT';
 
   public get vertexCodes$(): Observable<TVertexData> {
     return this._vertexCodes$$.asObservable();
@@ -94,7 +87,7 @@ export class CodingAlgorithmsService {
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
         );
     } catch (error) {
-      return throwError({ key: error.key, params: error.params })
+      return throwError(error)
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
         );
@@ -102,18 +95,26 @@ export class CodingAlgorithmsService {
   }
 
   private checkData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
-    const invalidRows: number[] = this.getInvalidTableRows(tableData);
+    const invalidRowsIds = this.getInvalidTableRowsIds(tableData);
 
-    if (invalidRows.length) {
-      const errorKey = invalidRows.length > 1
-        ? this.INVALID_ROWS_ERROR
-        : this.INVALID_ROW_ERROR;
+    if (invalidRowsIds.length > 1) {
+      const NUM_INVALID_ROWS_TO_SHOW = 3;
 
-      throw new ValidationError(errorKey, { invalidRows });
+      throw new ValidationError(
+        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_ROWS',
+        { ids: invalidRowsIds.slice(0, NUM_INVALID_ROWS_TO_SHOW).join(', ') }
+      );
+    }
+
+    if (invalidRowsIds.length === 1) {
+      throw new ValidationError(
+        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_ROW',
+        { id: invalidRowsIds[0].toString() }
+      );
     }
 
     if (!this.isAllStatesUsed(tableData, tableConfig.numberOfStates)) {
-      throw new ValidationError(this.INVALID_USED_STATES_COUNT);
+      throw new ValidationError('ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_USED_STATES_COUNT');
     }
   }
 
@@ -127,7 +128,7 @@ export class CodingAlgorithmsService {
     return uniqueSelectedSrcStateIds.size === numberOfStates && uniqueSelectedDistStateIds.size === numberOfStates;
   }
 
-  private getInvalidTableRows(tableData: ITableRow[]): number[] {
+  private getInvalidTableRowsIds(tableData: ITableRow[]): number[] {
     return tableData
       .filter((tableRow: ITableRow) => {
         return !tableRow.distStateId
@@ -184,6 +185,7 @@ export class CodingAlgorithmsService {
 
   private getCapacity(vertexCodeMap: TVertexData): number {
     const maxValue: number = Math.max(...Array.from(vertexCodeMap.values()));
+
     return maxValue.toString(2).length;
   }
 

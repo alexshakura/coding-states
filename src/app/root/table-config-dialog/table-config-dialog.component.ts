@@ -18,11 +18,7 @@ import { SignalOperandGeneratorService } from '../_services/signal-operand-gener
   templateUrl: './table-config-dialog.component.html',
   host: { class: 'component-wrapper' },
 })
-export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfig, string], void> {
-
-  public readonly ERROR_MESSAGE: string = 'В форме присутствуют ошибки';
-  public readonly CREATE_SUCCESS_MESSAGE: string = 'Параметры СТП были успешно заданы';
-  public readonly EDIT_SUCCESS_MESSAGE: string = 'Параметры СТП были успешно отредактированы';
+export class TableConfigDialogComponent extends BaseDialogComponent<ITableConfig, void> {
 
   public readonly fsmTypes: typeof FsmType = FsmType;
 
@@ -64,7 +60,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
 
   public save(): void {
     if (this.form.invalid) {
-      this.snackBarService.showError(this.ERROR_MESSAGE);
+      this.snackBarService.showError('ROOT.TABLE_CONFIG_DIALOG.NOTIFICATION_FORM_ERRORS');
       return;
     }
 
@@ -84,11 +80,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<[ITableConfi
         takeUntil(this.destroy$$)
       )
       .subscribe((updatedConfig: ITableConfig) => {
-        const successMessage: string = this.isEditMode
-          ? this.EDIT_SUCCESS_MESSAGE
-          : this.CREATE_SUCCESS_MESSAGE;
-
-        this._success$$.next([updatedConfig, successMessage]);
+        this._success$$.next(updatedConfig);
       });
   }
 

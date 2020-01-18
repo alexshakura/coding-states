@@ -12,7 +12,8 @@ export class SnackBarContentComponent {
   public constructor(
     private readonly snackBar: MatSnackBar,
     @Inject(MAT_SNACK_BAR_DATA) public readonly data: {
-      text: string,
+      textKey: string,
+      textParams: Record<string, string>,
       isError: boolean,
     }
   ) { }

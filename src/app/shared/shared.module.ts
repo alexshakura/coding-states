@@ -31,6 +31,7 @@ import { PaginatorComponent } from './_components/paginator/paginator.component'
 import { SnackBarContentComponent } from './_components/snack-bar-content/snack-bar-content.component';
 import { DnfEquationComponent } from './_components/dnf-equation/dnf-equation.component';
 import { ShefferEquationComponent } from './_components/sheffer-equation/sheffer-equation.component';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -54,6 +55,7 @@ import { ShefferEquationComponent } from './_components/sheffer-equation/sheffer
     MatToolbarModule,
     MatTooltipModule,
     PortalModule,
+    TranslateModule,
   ],
   declarations: [
     DynamicContentTooltipComponent,
@@ -90,7 +92,11 @@ import { ShefferEquationComponent } from './_components/sheffer-equation/sheffer
     ShefferEquationComponent,
   ],
   providers: [
-    { provide: MatPaginatorIntl, useClass: CustomMatPaginatorIntlRu },
+    {
+      provide: MatPaginatorIntl,
+      useClass: CustomMatPaginatorIntlRu,
+      deps: [TranslateService],
+    },
   ],
   entryComponents: [
     DynamicContentTooltipComponent,

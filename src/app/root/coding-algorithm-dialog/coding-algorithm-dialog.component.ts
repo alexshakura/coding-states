@@ -1,6 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-
 import { BaseDialogComponent } from '@app/shared/_helpers/base-dialog-component';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { SnackBarService } from '../_services/snack-bar.service';
@@ -8,25 +7,16 @@ import { ITableConfig, ITableRow } from '@app/types';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { CodingAlgorithmType } from '@app/enums';
 import { of } from 'rxjs';
+import { ValidationError } from '@app/shared/_helpers/validation-error';
 
 @Component({
   selector: 'app-coding-algorithm-dialog',
   templateUrl: './coding-algorithm-dialog.component.html',
   host: { class: 'component-wrapper' },
 })
-export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[CodingAlgorithmType, string], string> {
+export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAlgorithmType, string> {
 
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
-
-  public errorMap: { [propName: string]: string } = {
-    [this.codingAlgorithmsService.INVALID_INPUT_ERROR]: 'Проверьте веденные данные',
-    [this.codingAlgorithmsService.INVALID_USED_STATES_COUNT]: 'Количество состояний в параметрах СТП не совпадает с количеством используемых',
-    [this.codingAlgorithmsService.INVALID_ROWS_ERROR]: 'Заполните следующие строки: ',
-    [this.codingAlgorithmsService.INVALID_ROW_ERROR]: 'Заполните следующую строку: ',
-  };
-
-  public readonly UNSELECTED_ALGORITHM_ERROR: string = 'Выберите алгоритм или способ кодирования';
-  public readonly SUCCESS_MESSAGE: string = 'Таблица была успешно закодирована';
 
   public codingAlgorithm: CodingAlgorithmType = CodingAlgorithmType.UNITARY_D_TRIGGER;
 
@@ -45,7 +35,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[CodingA
 
   public performCoding(): void {
     if (!this.codingAlgorithm) {
-      this.snackBarService.showError(this.UNSELECTED_ALGORITHM_ERROR);
+      this.snackBarService.showError('ROOT.CODING_ALGORITHM_DIALOG.FORM_ERRORS_NOTIFICATION');
       return;
     }
 
@@ -61,22 +51,11 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<[CodingA
       )
       .subscribe(
         () => {
-          this._success$$.next([this.codingAlgorithm, this.SUCCESS_MESSAGE]);
+          this._success$$.next(this.codingAlgorithm);
         },
-        (errorMap: {[propName: string]: any}) => {
+        (validationError: ValidationError) => {
+          this.snackBarService.showError(validationError.key, validationError.params);
           this.isProcessing = false;
-
-          const errorMessage: string = Object.keys(errorMap)[0];
-          let message: string = this.errorMap[errorMessage];
-
-          if (errorMessage === this.codingAlgorithmsService.INVALID_ROWS_ERROR
-                || errorMessage === this.codingAlgorithmsService.INVALID_ROW_ERROR) {
-            const invalidRows: number[] = errorMap[errorMessage].slice(0, 3);
-
-            message += invalidRows.join(', ');
-          }
-
-          this._error$$.next(message);
         });
   }
 

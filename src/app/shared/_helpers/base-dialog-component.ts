@@ -2,7 +2,6 @@ import { BaseComponent } from './base-component';
 import { Observable, Subject } from 'rxjs';
 import { OnDestroy } from '@angular/core';
 
-
 export class BaseDialogComponent<S, E> extends BaseComponent implements OnDestroy {
 
   public get success$(): Observable<S> {

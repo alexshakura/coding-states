@@ -4,10 +4,11 @@
       <div class="layout-list__item">
         <div class="dialog-header">
           <div class="dialog-header__title">
-            Кодирование состояний автомата
+            {{ 'ROOT.TABLE_CONFIG_DIALOG.TITLE' | translate }}
           </div>
+
           <div class="dialog-header__text">
-            Введите основные параметры СТП
+            {{ 'ROOT.TABLE_CONFIG_DIALOG.DESCRIPTION' | translate }}
           </div>
         </div>
       </div>
@@ -19,19 +20,21 @@
         <div class="layout-list__item">
           <div class="layout-list layout-list--10px">
             <div class="layout-list__item">
-              Тип автомата
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.STATE_MACHINE_TYPE_LABEL' | translate }}
             </div>
+
             <div class="layout-list__item">
               <mat-radio-group formControlName="fsmType">
                 <div class="layout-list layout-list--12px">
                   <div class="layout-list__item">
                     <label class="layout-inline-checkbox">
                       <div class="layout-inline__item">
-                        <mat-radio-button [value]="fsmTypes.MILI"></mat-radio-button>
+                        <mat-radio-button [value]="fsmTypes.MILI">
+                        </mat-radio-button>
                       </div>
 
                       <div class="layout-inline__item layout-inline__item--expand">
-                        Автомат Мили
+                        {{ 'ROOT.TABLE_CONFIG_DIALOG.MILI_STATE_MACHINE' | translate }}
                       </div>
                     </label>
                   </div>
@@ -39,11 +42,12 @@
                   <div class="layout-list__item">
                     <label class="layout-inline-checkbox">
                       <div class="layout-inline__item">
-                        <mat-radio-button [value]="fsmTypes.MURA"></mat-radio-button>
+                        <mat-radio-button [value]="fsmTypes.MURA">
+                        </mat-radio-button>
                       </div>
 
                       <div class="layout-inline__item layout-inline__item--expand">
-                        Автомат Мура
+                        {{ 'ROOT.TABLE_CONFIG_DIALOG.MURA_STATE_MACHINE' | translate }}
                       </div>
                     </label>
                   </div>
@@ -56,26 +60,28 @@
         <div class="layout-list__item">
           <mat-form-field app-theme="dark"
                           appearance="standard">
-            <mat-label>Длина СТП</mat-label>
+            <mat-label>
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.TABLE_LENGTH_LABEL' | translate }}
+            </mat-label>
 
             <input type="number"
                     matInput
                     formControlName="length">
 
             <mat-error *ngIf="form.hasError('required', ['length'])">
-              Поле не может быть пустым
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_REQUIRED_FIELD' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('min', ['length'])">
-              Длина должна быть больше нуля
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MIN_TABLE_LENGTH' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('max', ['length'])">
-              Длина слишком большая
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MAX_TABLE_LENGTH' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('pattern', ['length'])">
-              Длина должна быть числом
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_PATTERN_TABLE_LENGTH' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -83,7 +89,9 @@
         <div class="layout-list__item">
           <mat-form-field app-theme="dark"
                           appearance="standard">
-            <mat-label>Число состояний</mat-label>
+            <mat-label>
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.NUMBER_STATES_LABEL' | translate }}
+            </mat-label>
 
             <input type="number"
                     matInput
@@ -91,23 +99,23 @@
 
             <mat-hint *ngIf="isDataLossNoticeShown('numberOfStates')"
                       class="is--primary">
-              Данное значение приведет к сбросу всех данных таблицы
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.DATA_LOSS_NOTICE' | translate }}
             </mat-hint>
 
             <mat-error *ngIf="form.hasError('required', ['numberOfStates'])">
-              Поле не может быть пустым
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_REQUIRED_FIELD' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('min', ['numberOfStates'])">
-              Число состояний должно быть больше нуля
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MIN_NUMBER_STATES' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('max', ['numberOfStates'])">
-              Число состояний слишком большое
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MAX_NUMBER_STATES' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('pattern', ['numberOfStates'])">
-              Число состояний должно быть числом
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_PATTERN_NUMBER_STATES' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -115,7 +123,9 @@
         <div class="layout-list__item">
           <mat-form-field app-theme="dark"
                           appearance="standard">
-            <mat-label>Число X</mat-label>
+            <mat-label>
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.NUMBER_X_LABEL' | translate }}
+            </mat-label>
 
             <input type="number"
                     matInput
@@ -123,23 +133,23 @@
 
             <mat-hint *ngIf="isDataLossNoticeShown('numberOfX')"
                       class="is--primary">
-              Данное значение приведет к сбросу всех данных таблицы
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.DATA_LOSS_NOTICE' | translate }}
             </mat-hint>
 
             <mat-error *ngIf="form.hasError('required', ['numberOfX'])">
-              Поле не может быть пустым
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_REQUIRED_FIELD' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('min', ['numberOfX'])">
-              Число X должно быть больше нуля
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MIN_NUMBER_X' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('max', ['numberOfX'])">
-              Число X слишком большое
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MAX_NUMBER_X' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('pattern', ['numberOfX'])">
-              Число X должно быть числом
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_PATTERN_NUMBER_X' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -147,7 +157,9 @@
         <div class="layout-list__item">
           <mat-form-field app-theme="dark"
                           appearance="standard">
-            <mat-label>Число У</mat-label>
+            <mat-label>
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.NUMBER_Y_LABEL' | translate }}
+            </mat-label>
 
             <input type="number"
                     matInput
@@ -155,23 +167,23 @@
 
             <mat-hint *ngIf="isDataLossNoticeShown('numberOfY')"
                       class="is--primary">
-              Данное значение приведет к сбросу всех данных таблицы
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.DATA_LOSS_NOTICE' | translate }}
             </mat-hint>
 
             <mat-error *ngIf="form.hasError('required', ['numberOfY'])">
-              Поле не может быть пустым
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_REQUIRED_FIELD' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('min', ['numberOfY'])">
-              Число Y должнo быть больше нуля
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MIN_NUMBER_Y' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('max', ['numberOfY'])">
-              Число Y слишком большое
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_MAX_NUMBER_Y' | translate }}
             </mat-error>
 
             <mat-error *ngIf="form.hasError('pattern', ['numberOfY'])">
-              Число Y должно быть числом
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.ERROR_PATTERN_NUMBER_Y' | translate }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -187,7 +199,7 @@
                 app-theme="primary"
                 tabindex="3"
                 [disabled]="!isEditMode">
-          Выйти
+          {{ 'ROOT.TABLE_CONFIG_DIALOG.EXIT_BUTTON_LABEL' | translate }}
         </button>
       </div>
 
@@ -197,7 +209,13 @@
                 form="tableParamsForm"
                 [disabled]="isProcessing">
           <ng-container *ngIf="!isProcessing">
-            {{ isEditMode ? 'Изменить' : 'Создать' }}
+            {{
+                (
+                  isEditMode
+                    ? 'ROOT.TABLE_CONFIG_DIALOG.EDIT_BUTTON_LABEL'
+                    : 'ROOT.TABLE_CONFIG_DIALOG.CREATE_BUTTON_LABEL'
+                ) | translate
+            }}
           </ng-container>
 
           <mat-spinner *ngIf="isProcessing"

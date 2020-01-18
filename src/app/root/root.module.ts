@@ -20,7 +20,9 @@ import { TransitionFunctionsTableComponent } from './transition-functions-table/
 import { VertexCodesTableComponent } from './vertex-codes-table/vertex-codes-table.component';
 import { SignalOperandGeneratorService } from './_services/signal-operand-generator.service';
 import { TableMockDataService } from './_services/table-mock-data.service';
-import { HttpClientModule } from '@angular/common/http';
+import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
+import { CustomTranslateLoader } from './_helpers';
+import { DEFAULT_LANGUAGE } from './root.constants';
 
 @NgModule({
   declarations: [
@@ -35,10 +37,15 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserAnimationsModule,
     BrowserModule,
-    HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
     SharedModule,
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useClass: CustomTranslateLoader,
+      },
+    }),
  ],
   entryComponents: [
     CodingAlgorithmDialogComponent,
@@ -55,4 +62,13 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   bootstrap: [RootComponent],
 })
-export class RootModule { }
+export class RootModule {
+
+  public constructor(
+    readonly translateService: TranslateService
+  ) {
+    translateService.setDefaultLang(DEFAULT_LANGUAGE);
+    translateService.use(DEFAULT_LANGUAGE);
+  }
+
+}

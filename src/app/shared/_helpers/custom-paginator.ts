@@ -1,13 +1,21 @@
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { TranslateService } from '@ngx-translate/core';
 
 export class CustomMatPaginatorIntlRu extends MatPaginatorIntl {
-  public nextPageLabel: string = 'Следующая страница';
-  public previousPageLabel: string = 'Предыдущая страница';
 
-  public firstPageLabel: string = 'Первая страница';
-  public lastPageLabel: string = 'Последняя страница';
+  public nextPageLabel: string = this.translateService.instant('SHARED.CUSTOM_PAGINATOR.NEXT_PAGE_LABEL');
+  public previousPageLabel: string = this.translateService.instant('SHARED.CUSTOM_PAGINATOR.PREVIOUS_PAGE_LABEL');
 
-  public itemsPerPageLabel: string = 'Число строк на странице';
+  public firstPageLabel: string = this.translateService.instant('SHARED.CUSTOM_PAGINATOR.FIRST_PAGE_LABEL');
+  public lastPageLabel: string = this.translateService.instant('SHARED.CUSTOM_PAGINATOR.LAST_PAGE_LABEL');
+
+  public itemsPerPageLabel: string = this.translateService.instant('SHARED.CUSTOM_PAGINATOR.ITEMS_PER_PAGE_LABEL');
+
+  public constructor(
+    private readonly translateService: TranslateService
+  ) {
+    super();
+  }
 
   public getRangeLabel = (page: number, pageSize: number, length: number) => {
     if (length === 0 || pageSize === 0) {

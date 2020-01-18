@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TableDataService } from '../_services/table-data.service';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { map, takeUntil } from 'rxjs/operators';
 import { DISPLAYED_COLUMNS } from './vertex-codes-table.constants';

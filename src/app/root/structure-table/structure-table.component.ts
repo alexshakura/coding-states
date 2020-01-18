@@ -1,6 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { TableDataService } from '../_services/table-data.service';

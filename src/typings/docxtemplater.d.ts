@@ -20,12 +20,3 @@ declare module 'docxtemplater' {
 
   type TParser = (tag: string) => { get: (scope: any, context: any) => any; };
 }
-
-// export as namespace Docxtemplater;
-
-// export = Docxtemplater;
-
-
-
-// declare namespace Docxtemplater {
-// }

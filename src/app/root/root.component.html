@@ -1,7 +1,7 @@
 <mat-card>
   <mat-toolbar class="layout-split" color="primary">
     <div class="layout-split__item">
-      Кодирование состояний автомата
+      {{ 'ROOT.ROOT.TITLE' | translate }}
     </div>
 
     <div class="layout-split__item">
@@ -9,10 +9,10 @@
         <div class="layout-inline__item">
           <button mat-raised-button
                   app-theme="warning"
-                  (click)="generateReport()"
+                  (click)="saveReport()"
                   [disabled]="isGeneratingReport">
             <ng-container *ngIf="!isGeneratingReport">
-              Сохранить
+              {{ 'ROOT.ROOT.SAVE_BUTTON_LABEL' | translate }}
             </ng-container>
 
             <mat-spinner *ngIf="isGeneratingReport"
@@ -28,7 +28,7 @@
                   app-theme="warning"
                   (click)="openCodingAlgorithmDialog()"
                   [disabled]="isGeneratingReport">
-            Закодировать
+            {{ 'ROOT.ROOT.CODE_BUTTON_LABEL' | translate }}
           </button>
         </div>
 
@@ -37,7 +37,7 @@
                   app-theme="warning"
                   (click)="openTableConfigDialog()"
                   [disabled]="isGeneratingReport">
-            Изменить параметры СТП
+            {{ 'ROOT.ROOT.CHANGE_TABLE_PARAMETERS_BUTTON_LABEL' | translate }}
           </button>
         </div>
       </div>
@@ -47,29 +47,29 @@
   <mat-card-content>
     <mat-tab-group [selectedIndex]="selectedTabIndex"
                    (selectedTabChange)="selectedTabIndex = $event.index">
-      <mat-tab label="Структурная таблица переходов">
+      <mat-tab [label]="'ROOT.ROOT.TST_TAB_TITLE' | translate">
         <app-structure-table *ngIf="!isLoading"
                              [config]="tableConfig"
                              [data]="tableData"
                              [isCoded]="isTableCoded"
                              [editModeControl]="tableEditModeControl"
-                             (onUpdate)="tableData = $event">
+                             (onUpdate)="onTableDataUpdate($event)">
         </app-structure-table>
       </mat-tab>
 
-      <mat-tab label="Коды вершин"
+      <mat-tab [label]="'ROOT.ROOT.VERTEX_CODES_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
         <app-vertex-codes-table>
         </app-vertex-codes-table>
       </mat-tab>
 
-      <mat-tab label="Функции выходов"
+      <mat-tab [label]="'ROOT.ROOT.OUTPUT_FUNCTIONS_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
         <app-output-functions-table *ngIf="isTableCoded">
         </app-output-functions-table>
       </mat-tab>
 
-      <mat-tab label="Функции переходов"
+      <mat-tab [label]="'ROOT.ROOT.TRANSITIONS_FUNCTIONS_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
         <app-transition-functions-table>
         </app-transition-functions-table>

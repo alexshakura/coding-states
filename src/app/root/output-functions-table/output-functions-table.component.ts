@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { IOutputFunctionsDataCell } from '@app/types';

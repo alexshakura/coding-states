@@ -4,10 +4,11 @@
       <div class="layout-list__item">
         <div class="dialog-header">
           <div class="dialog-header__title">
-            Кодирование
+            {{ 'ROOT.CODING_ALGORITHM_DIALOG.TITLE' | translate }}
           </div>
+
           <div class="dialog-header__text">
-            Выберите алгоритм или способ кодирования
+            {{ 'ROOT.CODING_ALGORITHM_DIALOG.DESCRIPTION' | translate }}
           </div>
         </div>
       </div>
@@ -25,7 +26,7 @@
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  Унитарный
+                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.UNITARY_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -39,7 +40,7 @@
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  Частотный
+                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.FREQUENCY_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -53,7 +54,7 @@
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  по N состояния
+                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.BY_NUM_OF_STATE_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -70,7 +71,7 @@
                 mat-dialog-close
                 app-theme="primary"
                 tabindex="3">
-          Выйти
+          {{ 'ROOT.CODING_ALGORITHM_DIALOG.EXIT_BUTTON_LABEL' | translate }}
         </button>
       </div>
 
@@ -80,7 +81,7 @@
                 [disabled]="isProcessing"
                 (click)="performCoding()">
           <ng-container *ngIf="!isProcessing">
-            Закодировать
+            {{ 'ROOT.CODING_ALGORITHM_DIALOG.CODE_BUTTON_LABEL' | translate }}
           </ng-container>
 
           <mat-spinner *ngIf="isProcessing"

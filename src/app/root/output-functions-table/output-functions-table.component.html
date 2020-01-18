@@ -1,11 +1,11 @@
 <div class="card-header-wrapper">
   <div class="layout-split card-header">
     <div class="layout-split__item card-header__title">
-      Функции выходов
+      {{ 'ROOT.OUTPUT_FUNCTIONS_TABLE.TITLE' | translate }}
     </div>
 
     <div class="layout-split__item"
-         matTooltip="Выбрать представление"
+         [matTooltip]="'ROOT.OUTPUT_FUNCTIONS_TABLE.BASIS_MENU_TOOLTIP' | translate"
          matTooltipPosition="above">
       <button mat-icon-button
               [matMenuTriggerFor]="basisModeMenu"
@@ -20,12 +20,12 @@
           [overlapTrigger]="false">
   <button class="mat-menu-item"
           (click)="isBooleanBasisShown = true">
-    Базис Буля
+    {{ 'ROOT.OUTPUT_FUNCTIONS_TABLE.BOOLEAN_BASIS_OPTION' | translate }}
   </button>
 
   <button class="mat-menu-item"
           (click)="isBooleanBasisShown = false">
-    Базис Шеффера
+    {{ 'ROOT.OUTPUT_FUNCTIONS_TABLE.SHEFFER_BASIS_OPTION' | translate }}
   </button>
 </mat-menu>
 

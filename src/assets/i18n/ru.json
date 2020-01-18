@@ -1,0 +1,96 @@
+{
+  "ROOT": {
+    "ROOT": {
+      "TITLE": "Кодирование состояний автомата",
+      "SAVE_BUTTON_LABEL": "Сохранить",
+      "CODE_BUTTON_LABEL": "Закодировать",
+      "CHANGE_TABLE_PARAMETERS_BUTTON_LABEL": "Изменить параметры СТП",
+      "TST_TAB_TITLE": "Структурная таблица переходов",
+      "VERTEX_CODES_TAB_TITLE": "Коды вершин",
+      "OUTPUT_FUNCTIONS_TAB_TITLE": "Функции выходов",
+      "TRANSITIONS_FUNCTIONS_TAB_TITLE": "Функции переходов",
+      "ERROR_TABLE_NOT_ENCODED": "Таблица не закодирована",
+      "SAVE_REPORT_SUCCESS": "Файл с кодировками был успешно сгенерирован",
+      "TABLE_CONFIG_CREATED_SUCCESSFULLY": "Параметры СТП были успешно заданы",
+      "TABLE_CONFIG_EDITED_SUCCESSFULLY": "Параметры СТП были успешно отредактированы",
+      "TABLE_CODED_SUCCESSFULLY": "Таблица была успешно закодирована",
+      "ERROR_REPORT_GENERATION": "Что-то пошло не так, перепроверьте Ваши данные"
+    },
+    "VERTEX_CODES_TABLE": {
+      "TITLE": "Коды вершин"
+    },
+    "TRANSITIONS_FUNCTIONS_TABLE": {
+      "TITLE": "Функции переходов",
+      "BASIS_MENU_TOOLTIP": "Выбрать представление",
+      "BOOLEAN_BASIS_OPTION": "Базис Буля",
+      "SHEFFER_BASIS_OPTION": "Базис Шеффера"
+    },
+    "TABLE_CONFIG_DIALOG": {
+      "TITLE": "Кодирование состояний автомата",
+      "DESCRIPTION": "Введите основные параметры СТП",
+      "STATE_MACHINE_TYPE_LABEL": "Тип автомата",
+      "MILI_STATE_MACHINE": "Автомат Мили",
+      "MURA_STATE_MACHINE": "Автомат Мура",
+      "TABLE_LENGTH_LABEL": "Длина СТП",
+      "ERROR_REQUIRED_FIELD": "Поле не может быть пустым",
+      "ERROR_MIN_TABLE_LENGTH": "Длина должна быть больше нуля",
+      "ERROR_MAX_TABLE_LENGTH": "Длина слишком большая",
+      "ERROR_PATTERN_TABLE_LENGTH": "Длина слишком большая",
+      "NUMBER_STATES_LABEL": "Число состояний",
+      "ERROR_MIN_NUMBER_STATES": "Число состояний должно быть больше нуля",
+      "ERROR_MAX_NUMBER_STATES": "Число состояний слишком большое",
+      "ERROR_PATTERN_NUMBER_STATES": "Число состояний должно быть числом",
+      "NUMBER_X_LABEL": "Число X",
+      "ERROR_MIN_NUMBER_X": "Число X должно быть больше нуля",
+      "ERROR_MAX_NUMBER_X": "Число X слишком большое",
+      "ERROR_PATTERN_NUMBER_X": "Число X должно быть числом",
+      "NUMBER_Y_LABEL": "Число У",
+      "ERROR_MIN_NUMBER_Y": "Число Y должнo быть больше нуля",
+      "ERROR_MAX_NUMBER_Y": "Число Y слишком большое",
+      "ERROR_PATTERN_NUMBER_Y": "Число Y слишком большое",
+      "DATA_LOSS_NOTICE": "Данное значение приведет к сбросу всех данных таблицы",
+      "EXIT_BUTTON_LABEL": "Выйти",
+      "EDIT_BUTTON_LABEL": "Изменить",
+      "CREATE_BUTTON_LABEL": "Создать",
+      "NOTIFICATION_FORM_ERRORS": "В форме присутствуют ошибки"
+    },
+    "STRUCTURE_TABLE": {
+      "TITLE": "Структурная таблица переходов",
+      "EDIT_MODE_LABEL": "Режим редактирования",
+      "ADD_TOOLTIP_LABEL": "Добавить",
+      "UNCONDITIONAL_TRANSITION_LABEL": "Безусловный",
+      "MURA_HINT": "Столбец заполняется по a<sub>s</sub>"
+    },
+    "OUTPUT_FUNCTIONS_TABLE": {
+      "TITLE": "Функции выходов",
+      "BASIS_MENU_TOOLTIP": "Выбрать представление",
+      "BOOLEAN_BASIS_OPTION": "Базис Буля",
+      "SHEFFER_BASIS_OPTION": "Базис Шеффера"
+    },
+    "CODING_ALGORITHM_DIALOG": {
+      "TITLE": "Кодирование",
+      "DESCRIPTION": "Выберите алгоритм или способ кодирования",
+      "UNITARY_OPTION": "Унитарный",
+      "FREQUENCY_OPTION": "Частотный",
+      "BY_NUM_OF_STATE_OPTION": "по N состояния",
+      "EXIT_BUTTON_LABEL": "Выйти",
+      "CODE_BUTTON_LABEL": "Закодировать",
+      "ERROR_INVALID_USED_STATES_COUNT": "Количество состояний в параметрах СТП не совпадает с количеством используемых",
+      "ERROR_INVALID_ROW": "Проверьте {{ id }} строку",
+      "ERROR_INVALID_ROWS": "Заполните следующие строки: {{ ids }}",
+      "FORM_ERRORS_NOTIFICATION": "Выберите алгоритм или способ кодирования"
+    }
+  },
+  "SHARED": {
+    "CUSTOM_PAGINATOR": {
+      "NEXT_PAGE_LABEL": "Следующая страница",
+      "PREVIOUS_PAGE_LABEL": "Предыдущая страница",
+      "FIRST_PAGE_LABEL": "Первая страница",
+      "LAST_PAGE_LABEL": "Последняя страница",
+      "ITEMS_PER_PAGE_LABEL": "Число строк на странице"
+    },
+    "SNACK_BAR_CONTENT": {
+      "DEFAULT_ERROR_MESSAGE": "Что-то пошло не так. Пожалуйста, попробуйте еще раз"
+    }
+  }
+}

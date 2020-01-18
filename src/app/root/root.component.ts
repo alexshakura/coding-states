@@ -8,7 +8,6 @@ import { switchMap, takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
-import { TableMockDataService } from './_services/table-mock-data.service';
 import { ReportGeneratorService } from './_services/report-generator.service';
 import { CodingAlgorithmType } from '@app/enums';
 import { combineLatest, from, of } from 'rxjs';
@@ -20,19 +19,14 @@ import { combineLatest, from, of } from 'rxjs';
 })
 export class RootComponent implements OnInit {
 
-  public readonly GENERATE_DOC_TABLE_ERROR: string = 'Таблица не закодирована';
-  public readonly GENERATE_DOC_SUCCESS: string = 'Файл с кодировками был успешно сгенерирован';
-  public readonly GENERATE_DOC_ERROR: string = 'Что-то пошло не так, перепроверьте Ваши данные';
-
   public isLoading: boolean = true;
   public isTableCoded: boolean = false;
-  public isInitialized: boolean = false;
 
   public isGeneratingReport: boolean = false;
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForFrequencyD();
+  public tableConfig: ITableConfig | null;
 
   public tableData: ITableRow[] = [];
 
@@ -45,7 +39,6 @@ export class RootComponent implements OnInit {
     private readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
     private readonly tableDataService: TableDataService,
-    private readonly tableMockDataService: TableMockDataService,
     private readonly reportGeneratorService: ReportGeneratorService
   ) { }
 
@@ -56,26 +49,27 @@ export class RootComponent implements OnInit {
   public openTableConfigDialog(): void {
     const dialogRef: MatDialogRef<TableConfigDialogComponent> = this.dialog.open(TableConfigDialogComponent , {
       data: { tableConfig: this.tableConfig },
-      disableClose: !this.isInitialized,
+      disableClose: !this.tableConfig,
     });
-
-    this.isInitialized = true;
 
     dialogRef.componentInstance.success$
       .pipe(
         takeUntil(dialogRef.afterClosed())
       )
-      .subscribe(([tableConfig, successMessage]) => {
+      .subscribe((tableConfig) => {
         if (!this.tableConfig || this.tableDataService.shouldDeleteCurrentData(tableConfig, this.tableConfig)) {
           this.tableData = this.tableDataService.generateEmptyRows(tableConfig.length);
         } else if (this.tableConfig.length !== tableConfig.length) {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
 
-        this.tableData = this.tableMockDataService.getDataForFrequencyD();
+        const notificationMessageKey = !this.tableConfig
+          ? 'ROOT.ROOT.TABLE_CONFIG_CREATED_SUCCESSFULLY'
+          : 'ROOT.ROOT.TABLE_CONFIG_EDITED_SUCCESSFULLY';
+
+        this.snackBarService.showMessage(notificationMessageKey);
 
         this.tableConfig = tableConfig;
-        this.snackBarService.showMessage(successMessage);
 
         this.isLoading = false;
         this.isTableCoded = false;
@@ -97,31 +91,24 @@ export class RootComponent implements OnInit {
       .pipe(
         takeUntil(dialogRef.afterClosed())
       )
-      .subscribe(([codingAlgorithm, successMessage]) => {
-        this.snackBarService.showMessage(successMessage);
+      .subscribe((codingAlgorithm) => {
+        this.snackBarService.showMessage('ROOT.ROOT.TABLE_CODED_SUCCESSFULLY');
 
         this.chosenCodingAlgorithm = codingAlgorithm;
         this.isTableCoded = true;
 
         dialogRef.close();
       });
-
-    dialogRef.componentInstance.error$
-      .pipe(
-        takeUntil(dialogRef.afterClosed())
-      )
-      .subscribe((errorMessage: string) => {
-        this.snackBarService.showError(errorMessage);
-      });
   }
 
-  public generateReport(): void {
+  public saveReport(): void {
     if (!this.isTableCoded) {
-      this.snackBarService.showError(this.GENERATE_DOC_TABLE_ERROR);
+      this.snackBarService.showError('ROOT.ROOT.ERROR_TABLE_NOT_ENCODED');
       return;
     }
 
     this.isGeneratingReport = true;
+    this.tableEditModeControl.setValue(false);
     this.tableEditModeControl.disable();
 
     this.reportGeneratorService.get$(this.tableConfig as ITableConfig, this.chosenCodingAlgorithm)
@@ -144,24 +131,30 @@ export class RootComponent implements OnInit {
             return;
           }
 
-          this.saveReport(file, saveDialogResult.filePath as string);
-          this.snackBarService.showMessage(this.GENERATE_DOC_SUCCESS);
+          const filePath = saveDialogResult.filePath as string;
+
+          if (this.electronService.fs.existsSync(filePath)) {
+            this.electronService.fs.unlinkSync(filePath);
+          }
+
+          this.electronService.fs.writeFileSync(filePath, file);
+
+          this.snackBarService.showMessage('ROOT.ROOT.SAVE_REPORT_SUCCESS');
         },
         (message?: string) => {
           this.snackBarService.showError(message);
         },
         () => {
           this.isGeneratingReport = false;
+
+          this.tableEditModeControl.setValue(true);
           this.tableEditModeControl.enable();
         }
       );
   }
 
-  private saveReport(file: Blob | Buffer, filePath: string): void {
-    if (this.electronService.fs.existsSync(filePath)) {
-      this.electronService.fs.unlinkSync(filePath);
-    }
-
-    this.electronService.fs.writeFileSync(filePath, file);
+  public onTableDataUpdate(value: ITableRow[]): void {
+    this.tableData = value;
+    this.isTableCoded = false;
   }
 }

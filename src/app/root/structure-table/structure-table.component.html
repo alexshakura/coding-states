@@ -1,23 +1,16 @@
 <div class="card-header-wrapper">
   <div class="layout-split card-header">
     <div class="layout-split__item card-header__title">
-      Структурная таблица переходов
+      {{ 'ROOT.STRUCTURE_TABLE.TITLE' | translate }}
     </div>
 
     <div class="layout-split__item">
-      <label>
-        <div class="layout-inline">
-          <div class="layout-inline__item">
-            <mat-slide-toggle color="accent"
-                              [formControl]="editModeControl">
-            </mat-slide-toggle>
-          </div>
-
-          <div class="layout-inline__item is--muted-70 is--interactive">
-            Режим редактирования
-          </div>
+      <mat-slide-toggle color="accent"
+                        [formControl]="editModeControl">
+        <div class="is--muted-70">
+          {{ 'ROOT.STRUCTURE_TABLE.EDIT_MODE_LABEL' | translate }}
         </div>
-      </label>
+      </mat-slide-toggle>
     </div>
   </div>
 </div>
@@ -53,7 +46,7 @@
               class="layout-inline__item">
           <button mat-icon-button
                   [matMenuTriggerFor]="statesMenu"
-                  matTooltip="Добавить"
+                  [matTooltip]="'ROOT.STRUCTURE_TABLE.ADD_TOOLTIP_LABEL' | translate"
                   matTooltipPosition="above"
                   app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
@@ -108,7 +101,7 @@
               class="layout-inline__item">
           <button mat-icon-button
                  [matMenuTriggerFor]="statesMenu"
-                 matTooltip="Добавить"
+                 [matTooltip]="'ROOT.STRUCTURE_TABLE.ADD_TOOLTIP_LABEL' | translate"
                  matTooltipPosition="above"
                  app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
@@ -166,7 +159,7 @@
               class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="conditionalSignalsMenu"
-                  matTooltip="Добавить"
+                  [matTooltip]="'ROOT.STRUCTURE_TABLE.ADD_TOOLTIP_LABEL' | translate"
                   matTooltipPosition="above"
                   app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>
@@ -179,7 +172,7 @@
               <mat-checkbox [ngModel]="row.unconditionalTransition"
                             (ngModelChange)="onUnconditionalTransitionChange(row)"
                             (click)="$event.stopPropagation()">
-                Безусловный
+                {{ 'ROOT.STRUCTURE_TABLE.UNCONDITIONAL_TRANSITION_LABEL' | translate }}
               </mat-checkbox>
             </div>
 
@@ -220,8 +213,8 @@
       </div>
 
       <ng-template #muraHintPopover>
-        <div class="tooltip">
-          Столбец заполняется по a<sub>s</sub>
+        <div class="tooltip"
+             [innerHTML]="'ROOT.STRUCTURE_TABLE.MURA_HINT' | translate">
         </div>
       </ng-template>
     </mat-header-cell>
@@ -242,7 +235,7 @@
              class="layout-inline__item layout-inline__item--40per">
           <button mat-icon-button
                   [matMenuTriggerFor]="outputSignalsMenu"
-                  matTooltip="Добавить"
+                  [matTooltip]="'ROOT.STRUCTURE_TABLE.ADD_TOOLTIP_LABEL' | translate"
                   matTooltipPosition="above"
                   app-theme="primary">
             <div class="icon icon--plus-circle icon--20px"></div>

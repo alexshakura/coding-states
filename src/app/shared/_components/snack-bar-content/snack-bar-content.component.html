@@ -5,12 +5,12 @@
   </div>
 
   <div class="layout-inline__item layout-inline__item--expand">
-    <ng-container *ngIf="data.text">
-      {{ data.text }}
+    <ng-container *ngIf="data.textKey">
+      {{ data.textKey | translate: data.textParams }}
     </ng-container>
 
-    <ng-container *ngIf="!data.text && data.isError">
-      {{ 'Что-то пошло не так. Пожалуйста, попробуйте еще раз' }}
+    <ng-container *ngIf="!data.textKey && data.isError">
+      {{ 'SHARED.SNACK_BAR_CONTENT.DEFAULT_ERROR_MESSAGE' | translate }}
     </ng-container>
   </div>
 
