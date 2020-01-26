@@ -23,6 +23,7 @@ import { TableMockDataService } from './_services/table-mock-data.service';
 import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CustomTranslateLoader } from './_helpers';
 import { DEFAULT_LANGUAGE } from './root.constants';
+import { MenuService } from './_services/menu.service';
 
 @NgModule({
   declarations: [
@@ -59,6 +60,7 @@ import { DEFAULT_LANGUAGE } from './root.constants';
     TableDataService,
     TableMockDataService,
     SignalOperandGeneratorService,
+    MenuService,
   ],
   bootstrap: [RootComponent],
 })

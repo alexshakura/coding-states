@@ -11,6 +11,7 @@ import { TableDataService } from './_services/table-data.service';
 import { ReportGeneratorService } from './_services/report-generator.service';
 import { CodingAlgorithmType } from '@app/enums';
 import { combineLatest, from, of } from 'rxjs';
+import { MenuService } from './_services/menu.service';
 
 @Component({
   selector: 'app-root',
@@ -35,19 +36,22 @@ export class RootComponent implements OnInit {
   public chosenCodingAlgorithm: CodingAlgorithmType;
 
   public constructor(
-    private readonly dialog: MatDialog,
+    private readonly dialogService: MatDialog,
     private readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
     private readonly tableDataService: TableDataService,
+    private readonly menuService: MenuService,
     private readonly reportGeneratorService: ReportGeneratorService
   ) { }
 
   public ngOnInit(): void {
     setTimeout(() => this.openTableConfigDialog());
+
+    this.electronService.menu.setApplicationMenu(this.menuService.getMenuItems());
   }
 
   public openTableConfigDialog(): void {
-    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this.dialog.open(TableConfigDialogComponent , {
+    const dialogRef: MatDialogRef<TableConfigDialogComponent> = this.dialogService.open(TableConfigDialogComponent , {
       data: { tableConfig: this.tableConfig },
       disableClose: !this.tableConfig,
     });
@@ -80,7 +84,7 @@ export class RootComponent implements OnInit {
   }
 
   public openCodingAlgorithmDialog(): void {
-    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this.dialog.open(CodingAlgorithmDialogComponent, {
+    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this.dialogService.open(CodingAlgorithmDialogComponent, {
       data: {
         tableConfig: this.tableConfig,
         tableData: this.tableData,
