@@ -9,13 +9,15 @@ import { ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
 import { ReportGeneratorService } from './_services/report-generator.service';
-import { CodingAlgorithmType } from '@app/enums';
+import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { combineLatest, from, of } from 'rxjs';
 import { MenuService } from './_services/menu.service';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './root.component.html',
+  styleUrls: ['./root.component.scss'],
   host: { class: 'component-wrapper' },
 })
 export class RootComponent implements OnInit {
@@ -32,6 +34,9 @@ export class RootComponent implements OnInit {
   public tableData: ITableRow[] = [];
 
   public readonly tableEditModeControl: FormControl = new FormControl(true);
+
+  public readonly fsmTypes: typeof FsmType = FsmType;
+  public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
 
   public chosenCodingAlgorithm: CodingAlgorithmType;
 

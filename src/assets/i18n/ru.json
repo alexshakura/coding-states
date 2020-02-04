@@ -14,7 +14,12 @@
       "TABLE_CONFIG_CREATED_SUCCESSFULLY": "Параметры СТП были успешно заданы",
       "TABLE_CONFIG_EDITED_SUCCESSFULLY": "Параметры СТП были успешно отредактированы",
       "TABLE_CODED_SUCCESSFULLY": "Таблица была успешно закодирована",
-      "ERROR_REPORT_GENERATION": "Что-то пошло не так, перепроверьте Ваши данные"
+      "ERROR_REPORT_GENERATION": "Что-то пошло не так, перепроверьте Ваши данные",
+      "MILI_STATE_MACHINE": "Автомат Мили",
+      "MURA_STATE_MACHINE": "Автомат Мура",
+      "FREQUENCY_CODING_ALGORITHM": "Частотный алгоритм кодирования",
+      "UNITARY_CODING_ALGORITHM": "Унитарный алгоритм кодирования",
+      "STATE_N_CODING_ALGORITHM": "Кодирование по N состояния"
     },
     "VERTEX_CODES_TABLE": {
       "TITLE": "Коды вершин"

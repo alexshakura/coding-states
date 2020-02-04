@@ -1,7 +1,38 @@
 <mat-card>
-  <mat-toolbar class="layout-split" color="primary">
+  <mat-toolbar class="layout-split root-header" color="primary">
     <div class="layout-split__item">
-      {{ 'ROOT.ROOT.TITLE' | translate }}
+      <div class="layout-list layout-list--6px">
+        <div class="layout-list__item">
+          {{ 'ROOT.ROOT.TITLE' | translate }}
+        </div>
+
+        <div *ngIf="tableConfig"
+             class="layout-list__item root-header__subtitle">
+          <ng-container *ngIf="tableConfig.fsmType === fsmTypes.MILI">
+            {{ 'ROOT.ROOT.MILI_STATE_MACHINE' | translate }}
+          </ng-container>
+
+          <ng-container *ngIf="tableConfig.fsmType === fsmTypes.MURA">
+            {{ 'ROOT.ROOT.MURA_STATE_MACHINE' | translate }}
+          </ng-container>
+
+          <ng-container *ngIf="isTableCoded"
+                        [ngSwitch]="chosenCodingAlgorithm">
+            /
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.FREQUENCY_D_TRIGGER">
+              {{ 'ROOT.ROOT.FREQUENCY_CODING_ALGORITHM' | translate }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.STATE_N_D_TRIGGER">
+              {{ 'ROOT.ROOT.STATE_N_CODING_ALGORITHM' | translate }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.UNITARY_D_TRIGGER">
+              {{ 'ROOT.ROOT.UNITARY_CODING_ALGORITHM' | translate }}
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
     </div>
 
     <div class="layout-split__item">
