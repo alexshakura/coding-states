@@ -24,6 +24,7 @@ import { TranslateLoader, TranslateModule, TranslateService } from '@ngx-transla
 import { CustomTranslateLoader } from './_helpers';
 import { DEFAULT_LANGUAGE } from './root.constants';
 import { MenuService } from './_services/menu.service';
+import { ConditionalsFlowValidatorService } from './_services/conditionals-flow-validator.service';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { MenuService } from './_services/menu.service';
  ],
   providers: [
     CodingAlgorithmsService,
+    ConditionalsFlowValidatorService,
     ReportGeneratorService,
     ElectronService,
     SnackBarService,

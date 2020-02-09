@@ -14,6 +14,7 @@ import { IExcitationFunctionsDataCell, IOutputFunctionsDataCell, ITableConfig, I
 import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
+import { ConditionalsFlowValidatorService } from './conditionals-flow-validator.service';
 
 @Injectable()
 export class CodingAlgorithmsService {
@@ -51,7 +52,8 @@ export class CodingAlgorithmsService {
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
   public constructor(
-    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
+    private readonly conditionalsFlowValidatorService: ConditionalsFlowValidatorService
   ) { }
 
   public code(
@@ -96,13 +98,12 @@ export class CodingAlgorithmsService {
 
   private checkData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
     const invalidRowsIds = this.getInvalidTableRowsIds(tableData);
+    const NUM_INVALID_ENTITIES_TO_SHOW = 3;
 
     if (invalidRowsIds.length > 1) {
-      const NUM_INVALID_ROWS_TO_SHOW = 3;
-
       throw new ValidationError(
         'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_ROWS',
-        { ids: invalidRowsIds.slice(0, NUM_INVALID_ROWS_TO_SHOW).join(', ') }
+        { ids: invalidRowsIds.slice(0, NUM_INVALID_ENTITIES_TO_SHOW).join(', ') }
       );
     }
 
@@ -115,6 +116,22 @@ export class CodingAlgorithmsService {
 
     if (!this.isAllStatesUsed(tableData, tableConfig.numberOfStates)) {
       throw new ValidationError('ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_USED_STATES_COUNT');
+    }
+
+    const invalidSrcStates = this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
+
+    if (invalidSrcStates.length === 1) {
+      throw new ValidationError(
+        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_CONDITIONALS_FOR_STATE',
+        { index: `${invalidSrcStates[0].index}` }
+      );
+    }
+
+    if (invalidSrcStates.length > 1) {
+      throw new ValidationError(
+        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_CONDITIONALS_FOR_STATES',
+        { indexes: invalidSrcStates.slice(0, NUM_INVALID_ENTITIES_TO_SHOW).join(', ') }
+      );
     }
   }
 

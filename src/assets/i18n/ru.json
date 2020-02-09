@@ -83,6 +83,8 @@
       "ERROR_INVALID_USED_STATES_COUNT": "Количество состояний в параметрах СТП не совпадает с количеством используемых",
       "ERROR_INVALID_ROW": "Проверьте {{ id }} строку",
       "ERROR_INVALID_ROWS": "Заполните следующие строки: {{ ids }}",
+      "ERROR_INVALID_CONDITIONALS_FOR_STATE": "Проверьте строки с исходным состоянием {{ index }}",
+      "ERROR_INVALID_CONDITIONALS_FOR_STATES": "Проверьте строки со следующими исходными состояниями {{ indexes }}",
       "FORM_ERRORS_NOTIFICATION": "Выберите алгоритм или способ кодирования"
     },
     "MENU": {

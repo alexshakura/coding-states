@@ -367,4 +367,66 @@ export class TableMockDataService {
     ];
   }
 
+  public getConfigForWrongConditionals(): ITableConfig {
+    return {
+      length: 4,
+      numberOfStates: 5,
+      numberOfX: 3,
+      numberOfY: 1,
+      fsmType: FsmType.MURA,
+    };
+  }
+
+  public getDataForWrongConditionals(): ITableRow[] {
+    const states = Array.from(this.signalOperandGeneratorService.getStates().values());
+    const conditionalSignals = Array.from(this.signalOperandGeneratorService.getConditionalSignals().values());
+
+    return [
+      {
+        id: 1,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[1].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[1].id, conditionalSignals[3].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 2,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[2].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[1].id, conditionalSignals[2].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 3,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[3].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[0].id, conditionalSignals[5].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 3,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[4].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[1].id, conditionalSignals[5].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+    ];
+  }
+
 }
