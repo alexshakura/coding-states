@@ -18,7 +18,17 @@ export class SnackBarService {
       data: {
         textKey: key,
         textParams,
-        isError: false,
+      },
+    });
+  }
+
+  public showWarning(key: string, textParams?: Record<string, string>): void {
+    this.snackBar.openFromComponent(SnackBarContentComponent, {
+      panelClass: 'mat-snack-bar-container--warning',
+      data: {
+        textKey: key,
+        textParams,
+        isWarning: true,
       },
     });
   }
@@ -30,7 +40,6 @@ export class SnackBarService {
       data: {
         textKey: key,
         textParams,
-        isError: true,
       },
     });
   }

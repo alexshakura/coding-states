@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, ReplaySubject, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { delay, switchMap, tap } from 'rxjs/operators';
 import {
   FrequencyDAlgorithm,
   Fsm,
@@ -15,6 +15,7 @@ import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 import { ConditionalsFlowValidatorService } from './conditionals-flow-validator.service';
+import { SnackBarService } from './snack-bar.service';
 
 @Injectable()
 export class CodingAlgorithmsService {
@@ -52,8 +53,9 @@ export class CodingAlgorithmsService {
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
   public constructor(
+    private readonly conditionalsFlowValidatorService: ConditionalsFlowValidatorService,
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
-    private readonly conditionalsFlowValidatorService: ConditionalsFlowValidatorService
+    private readonly snackBarService: SnackBarService
   ) { }
 
   public code(
@@ -62,41 +64,46 @@ export class CodingAlgorithmsService {
     tableConfig: Readonly<ITableConfig>
   ): Observable<void> {
     try {
-      this.checkData(tableData, tableConfig);
-
-      const stateCodingAlgorithm = this.getVertexCodingAlgorithm(selectedAlgorithm, tableData);
-      const vertexCodeMap = stateCodingAlgorithm.getCodesMap();
-
-      const codedTableData = this.getCodedTableData(tableData, vertexCodeMap);
-
-      const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
-
-      const capacity = this.getCapacity(vertexCodeMap);
-
-      const outputFunction = fsm.getOutputFunctions();
-      const excitationFunctions = fsm.getExcitationFunctions(capacity);
-
-      this._capacity$$.next(capacity);
-      this._vertexCodes$$.next(vertexCodeMap);
-
-      this._outputFunctions$$.next(outputFunction);
-      this._transitionFunctions$$.next(excitationFunctions);
-
-      this._codedTableData$$.next(codedTableData);
-
-      return of(void 0)
-        .pipe(
-          delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
-        );
+      this.validateData(tableData, tableConfig);
     } catch (error) {
       return throwError(error)
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
         );
     }
+
+    return this.checkConditionalsFlow$(tableConfig, tableData)
+      .pipe(
+        switchMap(() => {
+          const stateCodingAlgorithm = this.getVertexCodingAlgorithm(selectedAlgorithm, tableData);
+          const vertexCodeMap = stateCodingAlgorithm.getCodesMap();
+
+          const codedTableData = this.getCodedTableData(tableData, vertexCodeMap);
+
+          const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
+
+          const capacity = this.getCapacity(vertexCodeMap);
+
+          const outputFunction = fsm.getOutputFunctions();
+          const excitationFunctions = fsm.getExcitationFunctions(capacity);
+
+          this._capacity$$.next(capacity);
+          this._vertexCodes$$.next(vertexCodeMap);
+
+          this._outputFunctions$$.next(outputFunction);
+          this._transitionFunctions$$.next(excitationFunctions);
+
+          this._codedTableData$$.next(codedTableData);
+
+          return of(void 0)
+            .pipe(
+              delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
+            );
+        })
+    );
   }
 
-  private checkData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
+  private validateData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
     const invalidRowsIds = this.getInvalidTableRowsIds(tableData);
     const NUM_INVALID_ENTITIES_TO_SHOW = 3;
 
@@ -117,22 +124,23 @@ export class CodingAlgorithmsService {
     if (!this.isAllStatesUsed(tableData, tableConfig.numberOfStates)) {
       throw new ValidationError('ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_USED_STATES_COUNT');
     }
+  }
 
-    const invalidSrcStates = this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
+  private checkConditionalsFlow$(tableConfig: Readonly<ITableConfig>, tableData: ITableRow[]): Observable<void> {
+    const value$ = of(void 0);
+    const WARNING_SNACKBAR_TIMEOUT = 3500;
 
-    if (invalidSrcStates.length === 1) {
-      throw new ValidationError(
-        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_CONDITIONALS_FOR_STATE',
-        { index: `${invalidSrcStates[0].index}` }
-      );
+    try {
+      this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
+    } catch (warning) {
+      return value$
+        .pipe(
+          tap(() => this.snackBarService.showWarning(warning.key, warning.params)),
+          delay(WARNING_SNACKBAR_TIMEOUT)
+        );
     }
 
-    if (invalidSrcStates.length > 1) {
-      throw new ValidationError(
-        'ROOT.CODING_ALGORITHM_DIALOG.ERROR_INVALID_CONDITIONALS_FOR_STATES',
-        { indexes: invalidSrcStates.slice(0, NUM_INVALID_ENTITIES_TO_SHOW).join(', ') }
-      );
-    }
+    return value$;
   }
 
   private isAllStatesUsed(tableData: ITableRow[], numberOfStates: number): boolean {

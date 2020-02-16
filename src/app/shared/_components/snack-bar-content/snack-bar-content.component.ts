@@ -15,6 +15,7 @@ export class SnackBarContentComponent {
       textKey: string,
       textParams: Record<string, string>,
       isError: boolean,
+      isWarning: boolean
     }
   ) { }
 

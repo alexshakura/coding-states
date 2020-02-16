@@ -4,22 +4,21 @@
     <div class="icon icon--alert-circle-outline icon--18px"></div>
   </div>
 
-  <div class="layout-inline__item layout-inline__item--expand">
-    <ng-container *ngIf="data.textKey">
-      {{ data.textKey | translate: data.textParams }}
-    </ng-container>
+  <div *ngIf="data.textKey"
+       class="layout-inline__item layout-inline__item--expand"
+       [innerHTML]="data.textKey | translate: data.textParams">
+  </div>
 
-    <ng-container *ngIf="!data.textKey && data.isError">
-      {{ 'SHARED.SNACK_BAR_CONTENT.DEFAULT_ERROR_MESSAGE' | translate }}
-    </ng-container>
+  <div *ngIf="!data.textKey && data.isError"
+       class="layout-inline__item layout-inline__item--expand">
+    {{ 'SHARED.SNACK_BAR_CONTENT.DEFAULT_ERROR_MESSAGE' | translate }}
   </div>
 
   <div class="layout-inline__item">
     <button mat-icon-button
-            app-theme="light"
+            [attr.app-theme]="data.isWarning ? 'dark' : 'light'"
             (click)="close()">
       <div class="icon icon--close"></div>
     </button>
   </div>
 </div>
-

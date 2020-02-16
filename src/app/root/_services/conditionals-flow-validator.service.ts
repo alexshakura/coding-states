@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ITableConfig, ITableRow } from '@app/types';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
-import { ConditionSignalOperand, StateOperand } from '@app/models';
+import { ConditionSignalOperand } from '@app/models';
 import { FsmType } from '@app/enums';
+import { ValidationError } from '@app/shared/_helpers/validation-error';
 
 @Injectable()
 export class ConditionalsFlowValidatorService {
@@ -11,32 +12,16 @@ export class ConditionalsFlowValidatorService {
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) { }
 
-  public validate(tableConfig: ITableConfig, tableData: ITableRow[]): StateOperand[] {
+  public validate(tableConfig: ITableConfig, tableData: ITableRow[]): void {
     const mapBySrcStateId = this.getMapBySrcStateId(tableData);
-    const states = this.signalOperandGeneratorService.getStates();
-    const invalidSrcStateIds = [];
 
     for (const [srcStateId, srcStateTableRows] of mapBySrcStateId.entries()) {
-      try {
-        this.verifySingleTransition(srcStateTableRows);
+      this.verifySingleTransition(srcStateTableRows);
 
-        const uniqueConditionalIndexes = this.getUniqueConditionalIndexes(srcStateTableRows);
+      this.verifyRedundancy(tableConfig, srcStateTableRows, srcStateId);
 
-        this.verifyUniqueSignalsCount(srcStateTableRows.length, uniqueConditionalIndexes.size);
-
-        this.verifyOrder(srcStateTableRows);
-
-        this.verifyRedundancy(tableConfig, srcStateTableRows);
-
-        this.verifyOrthogonality(Array.from(uniqueConditionalIndexes), srcStateTableRows);
-      } catch (error) {
-        invalidSrcStateIds.push(srcStateId);
-      }
+      this.verifyOrthogonality(srcStateTableRows, srcStateId);
     }
-
-    return invalidSrcStateIds.map((stateId) => {
-      return states.get(stateId) as StateOperand;
-    });
   }
 
   private getMapBySrcStateId(tableData: ITableRow[]): Map<number, ITableRow[]> {
@@ -63,90 +48,94 @@ export class ConditionalsFlowValidatorService {
     }
   }
 
-  private getUniqueConditionalIndexes(srcStateTableRows: ITableRow[]): Set<number> {
-    const conditionalSignals = this.signalOperandGeneratorService.getConditionalSignals();
-    const usedSignals: ConditionSignalOperand[] = [];
-
-    srcStateTableRows.forEach((tableRow) => {
-      tableRow.conditionalSignalsIds.forEach((conditionalSignalId) => {
-        const signal = conditionalSignals.get(conditionalSignalId) as ConditionSignalOperand;
-
-        usedSignals.push(signal);
-      });
-    });
-
-    return new Set(usedSignals.map((signal) => signal.index));
-  }
-
-  private verifyUniqueSignalsCount(transitionCount: number, uniqueSignalsCount: number): void {
-    if (transitionCount !== (uniqueSignalsCount + 1)) {
-      throw new Error();
-    }
-  }
-
-  private verifyOrder(srcStateTableRows: ITableRow[]): void {
-    const conditionalSignals = this.signalOperandGeneratorService.getConditionalSignals();
-
-    srcStateTableRows.forEach((tableRow) => {
-      const isSorted = Array.from(tableRow.conditionalSignalsIds)
-        .every((signalId, index, array) => {
-          if (!index) {
-            return true;
-          }
-
-          const currentSignal = conditionalSignals.get(signalId) as ConditionSignalOperand;
-          const previousSignal = conditionalSignals.get(array[index - 1]) as ConditionSignalOperand;
-
-          return previousSignal.index <= currentSignal.index;
-        });
-
-      if (!isSorted) {
-        throw new Error();
-      }
-    });
-  }
-
-  private verifyRedundancy(tableConfig: ITableConfig, srcStateTableRows: ITableRow[]): void {
+  private verifyRedundancy(
+    tableConfig: ITableConfig,
+    srcStateTableRows: ITableRow[],
+    srcStateId: number
+  ): void {
     if (tableConfig.fsmType === FsmType.MILI) {
       return;
     }
 
-    if (srcStateTableRows.length === 2) {
-      const states = this.signalOperandGeneratorService.getStates();
-      const firstDistState = states.get(srcStateTableRows[0].distStateId as number) as StateOperand;
-      const secondDistState = states.get(srcStateTableRows[1].distStateId as number) as StateOperand;
+    if (srcStateTableRows.length > 1) {
+      const distStateFrequencyMap = new Map<number, number>();
 
-      if (firstDistState.equalTo(secondDistState)) {
-        throw new Error();
-      }
+      srcStateTableRows.forEach((tableRow) => {
+        const distStateId = tableRow.distStateId as number;
+
+        if (!distStateFrequencyMap.has(distStateId)) {
+          distStateFrequencyMap.set(distStateId, 0);
+        }
+
+        const frequency = distStateFrequencyMap.get(distStateId) as number;
+
+        if (frequency === 1) {
+          throw new ValidationError(
+            'ROOT.CODING_ALGORITHM_DIALOG.WARNING_REDUNDANT_TRANSITIONS_FOR_MURA',
+            { index: `${srcStateId}` }
+          );
+        }
+
+        distStateFrequencyMap.set(distStateId, frequency + 1);
+      });
     }
   }
 
-  private verifyOrthogonality(uniqueConditionalIndexes: number[], tableRows: ITableRow[]): void {
-    const minIndex = Math.min(...uniqueConditionalIndexes);
-    const maxIndex = Math.max(...uniqueConditionalIndexes);
-    const rowCount = 2 ** uniqueConditionalIndexes.length;
+  private verifyOrthogonality(srcStateTableRows: ITableRow[], srcStateId: number): void {
+    const uniqueIndexes = this.getUniqueConditionalIndexes(srcStateTableRows);
+    const indexCodeValueMap = this.getIndexCodeValueMap(uniqueIndexes);
+    const rowCount = 2 ** uniqueIndexes.length;
 
-    const checkMatrix = tableRows.map((tableRow) => {
-      const map = this.getIndexConditionalSignalsMap(tableRow);
-      const pairCodes = this.getPairCodes(map, minIndex, maxIndex, uniqueConditionalIndexes.length);
+    const checkMatrix = srcStateTableRows.map((tableRow) => {
+      const indexConditionalSignalsMap = this.getIndexConditionalSignalsMap(tableRow);
+      const termCodes = this.getTermCodes(uniqueIndexes, indexCodeValueMap, indexConditionalSignalsMap);
 
       return new Array(rowCount)
         .fill(false)
-        .map((_, code) => pairCodes.includes(code));
+        .map((_, code) => termCodes.includes(code));
     });
 
     for (let rowIndex = 0; rowIndex < rowCount; rowIndex++) {
       let onesCount = 0;
 
-      for (let colIndex = 0; colIndex < tableRows.length; colIndex++) {
+      for (let colIndex = 0; colIndex < srcStateTableRows.length; colIndex++) {
         onesCount += Number(checkMatrix[colIndex][rowIndex]);
       }
 
       if (onesCount !== 1) {
-        throw new Error();
+        throw new ValidationError(
+          'ROOT.CODING_ALGORITHM_DIALOG.WARNING_INVALID_CONDITIONALS_FOR_STATE',
+          { index: `${srcStateId}` }
+        );
       }
     }
+  }
+
+  private getUniqueConditionalIndexes(srcStateTableRows: ITableRow[]): number[] {
+    const conditionalSignals = this.signalOperandGeneratorService.getConditionalSignals();
+
+    const usedSignals = srcStateTableRows
+      .map((tableRow) => {
+        return Array.from(tableRow.conditionalSignalsIds)
+          .map((signalId) => {
+            const signal = conditionalSignals.get(signalId) as ConditionSignalOperand;
+
+            return signal.index;
+          });
+      })
+      .flat();
+
+    return Array.from(new Set(usedSignals));
+  }
+
+  private getIndexCodeValueMap(uniqueIndexes: number[]): Map<number, number> {
+    const map = new Map();
+
+    uniqueIndexes.forEach((signalIndex, position) => {
+      map.set(signalIndex, 2 ** (uniqueIndexes.length - 1 - position));
+    });
+
+    return map;
   }
 
   private getIndexConditionalSignalsMap(tableRow: ITableRow): Map<number, ConditionSignalOperand> {
@@ -162,39 +151,36 @@ export class ConditionalsFlowValidatorService {
     return map;
   }
 
-  private getPairCodes(
-    indexConditionalSignalsMap: Map<number, ConditionSignalOperand>,
-    minIndex: number,
-    maxIndex: number,
-    totalCount: number
+  private getTermCodes(
+    uniqueIndexes: number[],
+    indexCodeValueMap: Map<number, number>,
+    indexConditionalSignalsMap: Map<number, ConditionSignalOperand>
   ): number[] {
     let codes: number[] = [0];
 
-    for (let index = minIndex, iteration = 0; index <= maxIndex; index++, iteration++) {
+    uniqueIndexes.forEach((index) => {
       const conditionalSignal = indexConditionalSignalsMap.get(index);
 
-      if (conditionalSignal) {
-        if (conditionalSignal.inverted) {
-          continue;
-        }
-
-        codes = codes.map((code) => code + this.getEnabledSignalCode(totalCount, iteration));
-      } else {
-        codes = [].concat.apply([], codes.map((code) => {
-          return [
-            code,
-            code + this.getEnabledSignalCode(totalCount, iteration),
-          ];
-        })
-        );
+      if (conditionalSignal && conditionalSignal.inverted) {
+        return;
       }
-    }
+
+      const signalIndex = conditionalSignal
+        ? conditionalSignal.index
+        : index;
+
+      const enabledSignalCode = indexCodeValueMap.get(signalIndex) as number;
+
+      if (conditionalSignal) {
+        codes = codes.map((code) => code + enabledSignalCode);
+      } else {
+        codes = codes
+          .map((code) => [code, code + enabledSignalCode])
+          .flat();
+      }
+    });
 
     return codes;
-  }
-
-  private getEnabledSignalCode(totalCount: number, position: number): number {
-    return 2 ** (totalCount - 1 - position);
   }
 
 }

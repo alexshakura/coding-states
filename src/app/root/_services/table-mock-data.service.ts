@@ -429,4 +429,77 @@ export class TableMockDataService {
     ];
   }
 
+  public getConfigForMuraRedundancy(): ITableConfig {
+    return {
+      length: 5,
+      numberOfStates: 3,
+      numberOfX: 2,
+      numberOfY: 3,
+      fsmType: FsmType.MURA,
+    };
+  }
+
+  public getDataForMuraRedundancy(): ITableRow[] {
+    const states = Array.from(this.signalOperandGeneratorService.getStates().values());
+    const conditionalSignals = Array.from(this.signalOperandGeneratorService.getConditionalSignals().values());
+
+    return [
+      {
+        id: 1,
+        srcStateId: states[0].id,
+        srcStateCode: null,
+        distStateId: states[1].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set(),
+        unconditionalTransition: true,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 2,
+        srcStateId: states[1].id,
+        srcStateCode: null,
+        distStateId: states[0].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[0].id, conditionalSignals[2].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 3,
+        srcStateId: states[1].id,
+        srcStateCode: null,
+        distStateId: states[2].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[1].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 4,
+        srcStateId: states[1].id,
+        srcStateCode: null,
+        distStateId: states[2].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set([conditionalSignals[0].id, conditionalSignals[3].id]),
+        unconditionalTransition: false,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+      {
+        id: 5,
+        srcStateId: states[2].id,
+        srcStateCode: null,
+        distStateId: states[0].id,
+        distStateCode: null,
+        conditionalSignalsIds: new Set(),
+        unconditionalTransition: true,
+        outputSignalsIds: new Set(),
+        triggerExcitationSignals: null,
+      },
+    ];
+  }
+
 }
