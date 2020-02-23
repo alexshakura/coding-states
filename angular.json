@@ -25,6 +25,11 @@
               "src/styles/styles.scss",
               "src/fonts/roboto/roboto.css"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "src/styles"
+              ]
+            },
             "scripts": []
           },
           "configurations": {

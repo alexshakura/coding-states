@@ -14,8 +14,7 @@ export class SnackBarContentComponent {
     @Inject(MAT_SNACK_BAR_DATA) public readonly data: {
       textKey: string,
       textParams: Record<string, string>,
-      isError: boolean,
-      isWarning: boolean
+      isError: boolean
     }
   ) { }
 

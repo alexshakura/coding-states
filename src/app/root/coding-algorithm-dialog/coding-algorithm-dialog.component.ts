@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BaseDialogComponent } from '@app/shared/_helpers/base-dialog-component';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
@@ -15,6 +15,8 @@ import { ValidationError } from '@app/shared/_helpers/validation-error';
   host: { class: 'component-wrapper' },
 })
 export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAlgorithmType, string> {
+
+  @Output() public readonly onSubmit: EventEmitter<void> = new EventEmitter<void>();
 
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
 
@@ -34,6 +36,8 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAl
   }
 
   public performCoding(): void {
+    this.onSubmit.next();
+
     if (!this.codingAlgorithm) {
       this.snackBarService.showError('ROOT.CODING_ALGORITHM_DIALOG.FORM_ERRORS_NOTIFICATION');
       return;

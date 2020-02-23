@@ -108,3 +108,18 @@
     </mat-tab-group>
   </mat-card-content>
 </mat-card>
+
+<mat-card *ngIf="!isLoading && !selectedTabIndex && isTableWarningShown"
+          class="root-table-warning">
+  <mat-card-content>
+    <div class="layout-list layout-list--0px layout-list--align-center">
+      <div class="layout-list__item">
+        <div class="icon icon--alert"></div>
+      </div>
+
+      <div class="layout-list__item"
+           [innerHTML]="tableWarning.key | translate: tableWarning.params">
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

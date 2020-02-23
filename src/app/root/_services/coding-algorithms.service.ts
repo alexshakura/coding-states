@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, ReplaySubject, throwError } from 'rxjs';
-import { delay, switchMap, tap } from 'rxjs/operators';
+import { Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import {
   FrequencyDAlgorithm,
   Fsm,
@@ -15,7 +15,6 @@ import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 import { ConditionalsFlowValidatorService } from './conditionals-flow-validator.service';
-import { SnackBarService } from './snack-bar.service';
 
 @Injectable()
 export class CodingAlgorithmsService {
@@ -52,10 +51,15 @@ export class CodingAlgorithmsService {
 
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
+  public get warning$(): Observable<ValidationError> {
+    return this._warning$$.asObservable();
+  }
+
+  private _warning$$: Subject<ValidationError> = new Subject<ValidationError>();
+
   public constructor(
     private readonly conditionalsFlowValidatorService: ConditionalsFlowValidatorService,
-    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
-    private readonly snackBarService: SnackBarService
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) { }
 
   public code(
@@ -65,42 +69,39 @@ export class CodingAlgorithmsService {
   ): Observable<void> {
     try {
       this.validateData(tableData, tableConfig);
+
+      this.checkConditionalsFlow(tableConfig, tableData);
+
+      const stateCodingAlgorithm = this.getVertexCodingAlgorithm(selectedAlgorithm, tableData);
+      const vertexCodeMap = stateCodingAlgorithm.getCodesMap();
+
+      const codedTableData = this.getCodedTableData(tableData, vertexCodeMap);
+
+      const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
+
+      const capacity = this.getCapacity(vertexCodeMap);
+
+      const outputFunction = fsm.getOutputFunctions();
+      const excitationFunctions = fsm.getExcitationFunctions(capacity);
+
+      this._capacity$$.next(capacity);
+      this._vertexCodes$$.next(vertexCodeMap);
+
+      this._outputFunctions$$.next(outputFunction);
+      this._transitionFunctions$$.next(excitationFunctions);
+
+      this._codedTableData$$.next(codedTableData);
+
+      return of(void 0)
+        .pipe(
+          delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
+        );
     } catch (error) {
       return throwError(error)
         .pipe(
           delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
         );
     }
-
-    return this.checkConditionalsFlow$(tableConfig, tableData)
-      .pipe(
-        switchMap(() => {
-          const stateCodingAlgorithm = this.getVertexCodingAlgorithm(selectedAlgorithm, tableData);
-          const vertexCodeMap = stateCodingAlgorithm.getCodesMap();
-
-          const codedTableData = this.getCodedTableData(tableData, vertexCodeMap);
-
-          const fsm = this.getFsm(tableConfig.fsmType, codedTableData);
-
-          const capacity = this.getCapacity(vertexCodeMap);
-
-          const outputFunction = fsm.getOutputFunctions();
-          const excitationFunctions = fsm.getExcitationFunctions(capacity);
-
-          this._capacity$$.next(capacity);
-          this._vertexCodes$$.next(vertexCodeMap);
-
-          this._outputFunctions$$.next(outputFunction);
-          this._transitionFunctions$$.next(excitationFunctions);
-
-          this._codedTableData$$.next(codedTableData);
-
-          return of(void 0)
-            .pipe(
-              delay(CodingAlgorithmsService.DEFAULT_TIMEOUT)
-            );
-        })
-    );
   }
 
   private validateData(tableData: ITableRow[], tableConfig: Readonly<ITableConfig>): void {
@@ -126,21 +127,12 @@ export class CodingAlgorithmsService {
     }
   }
 
-  private checkConditionalsFlow$(tableConfig: Readonly<ITableConfig>, tableData: ITableRow[]): Observable<void> {
-    const value$ = of(void 0);
-    const WARNING_SNACKBAR_TIMEOUT = 3500;
-
+  private checkConditionalsFlow(tableConfig: Readonly<ITableConfig>, tableData: ITableRow[]): void {
     try {
       this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
     } catch (warning) {
-      return value$
-        .pipe(
-          tap(() => this.snackBarService.showWarning(warning.key, warning.params)),
-          delay(WARNING_SNACKBAR_TIMEOUT)
-        );
+      this._warning$$.next(warning);
     }
-
-    return value$;
   }
 
   private isAllStatesUsed(tableData: ITableRow[], numberOfStates: number): boolean {

@@ -4,7 +4,7 @@ import { SnackBarService } from './_services/snack-bar.service';
 import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { ElectronService } from './_services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
@@ -12,7 +12,8 @@ import { ReportGeneratorService } from './_services/report-generator.service';
 import { CodingAlgorithmType, FsmType } from '@app/enums';
 import { combineLatest, from, of } from 'rxjs';
 import { MenuService } from './_services/menu.service';
-
+import { CodingAlgorithmsService } from './_services/coding-algorithms.service';
+import { ValidationError } from '@app/shared/_helpers/validation-error';
 
 @Component({
   selector: 'app-root',
@@ -33,6 +34,9 @@ export class RootComponent implements OnInit {
 
   public tableData: ITableRow[] = [];
 
+  public tableWarning: ValidationError;
+  public isTableWarningShown: boolean = false;
+
   public readonly tableEditModeControl: FormControl = new FormControl(true);
 
   public readonly fsmTypes: typeof FsmType = FsmType;
@@ -44,6 +48,7 @@ export class RootComponent implements OnInit {
     private readonly dialogService: MatDialog,
     private readonly electronService: ElectronService,
     private readonly snackBarService: SnackBarService,
+    private readonly codingAlgorithmsService: CodingAlgorithmsService,
     private readonly tableDataService: TableDataService,
     private readonly menuService: MenuService,
     private readonly reportGeneratorService: ReportGeneratorService
@@ -95,6 +100,25 @@ export class RootComponent implements OnInit {
         tableData: this.tableData,
       },
     });
+
+    this.codingAlgorithmsService.warning$
+      .pipe(
+        take(1),
+        takeUntil(dialogRef.afterClosed())
+      )
+      .subscribe((warning) => {
+        this.tableWarning = warning;
+        this.isTableWarningShown = true;
+      });
+
+    dialogRef.componentInstance.onSubmit
+      .pipe(
+        take(1),
+        takeUntil(dialogRef.afterClosed())
+      )
+      .subscribe(() => {
+        this.isTableWarningShown = false;
+      });
 
     dialogRef.componentInstance.success$
       .pipe(
@@ -165,5 +189,6 @@ export class RootComponent implements OnInit {
   public onTableDataUpdate(value: ITableRow[]): void {
     this.tableData = value;
     this.isTableCoded = false;
+    this.isTableWarningShown = false;
   }
 }

@@ -1,7 +1,19 @@
+@import 'variables';
+
 .root-header {
   line-height: 20px;
 
   &__subtitle {
     font-size: 13px;
   }
+}
+
+.root-table-warning {
+  padding: 16px !important;
+  color: rgba($app-color-dark, 0.87) !important;
+  background-color: $app-color-warning !important;
+  text-align: center;
+  font-weight: 500;
+  width: 400px;
+  margin: 16px auto 0;
 }

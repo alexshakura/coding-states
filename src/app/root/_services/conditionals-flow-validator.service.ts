@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ITableConfig, ITableRow } from '@app/types';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
-import { ConditionSignalOperand } from '@app/models';
+import { ConditionSignalOperand, StateOperand } from '@app/models';
 import { FsmType } from '@app/enums';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 
@@ -14,13 +14,16 @@ export class ConditionalsFlowValidatorService {
 
   public validate(tableConfig: ITableConfig, tableData: ITableRow[]): void {
     const mapBySrcStateId = this.getMapBySrcStateId(tableData);
+    const states = this.signalOperandGeneratorService.getStates();
 
     for (const [srcStateId, srcStateTableRows] of mapBySrcStateId.entries()) {
+      const srcState = states.get(srcStateId) as StateOperand;
+
       this.verifySingleTransition(srcStateTableRows);
 
-      this.verifyRedundancy(tableConfig, srcStateTableRows, srcStateId);
+      this.verifyRedundancy(tableConfig, srcStateTableRows, srcState);
 
-      this.verifyOrthogonality(srcStateTableRows, srcStateId);
+      this.verifyOrthogonality(srcStateTableRows, srcState);
     }
   }
 
@@ -51,7 +54,7 @@ export class ConditionalsFlowValidatorService {
   private verifyRedundancy(
     tableConfig: ITableConfig,
     srcStateTableRows: ITableRow[],
-    srcStateId: number
+    srcState: StateOperand
   ): void {
     if (tableConfig.fsmType === FsmType.MILI) {
       return;
@@ -72,7 +75,7 @@ export class ConditionalsFlowValidatorService {
         if (frequency === 1) {
           throw new ValidationError(
             'ROOT.CODING_ALGORITHM_DIALOG.WARNING_REDUNDANT_TRANSITIONS_FOR_MURA',
-            { index: `${srcStateId}` }
+            { index: `${srcState.index}` }
           );
         }
 
@@ -81,7 +84,7 @@ export class ConditionalsFlowValidatorService {
     }
   }
 
-  private verifyOrthogonality(srcStateTableRows: ITableRow[], srcStateId: number): void {
+  private verifyOrthogonality(srcStateTableRows: ITableRow[], srcState: StateOperand): void {
     const uniqueIndexes = this.getUniqueConditionalIndexes(srcStateTableRows);
     const indexCodeValueMap = this.getIndexCodeValueMap(uniqueIndexes);
     const rowCount = 2 ** uniqueIndexes.length;
@@ -105,7 +108,7 @@ export class ConditionalsFlowValidatorService {
       if (onesCount !== 1) {
         throw new ValidationError(
           'ROOT.CODING_ALGORITHM_DIALOG.WARNING_INVALID_CONDITIONALS_FOR_STATE',
-          { index: `${srcStateId}` }
+          { index: `${srcState.index}` }
         );
       }
     }

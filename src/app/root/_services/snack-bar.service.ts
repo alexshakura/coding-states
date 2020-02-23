@@ -22,17 +22,6 @@ export class SnackBarService {
     });
   }
 
-  public showWarning(key: string, textParams?: Record<string, string>): void {
-    this.snackBar.openFromComponent(SnackBarContentComponent, {
-      panelClass: 'mat-snack-bar-container--warning',
-      data: {
-        textKey: key,
-        textParams,
-        isWarning: true,
-      },
-    });
-  }
-
   public showError(key?: string, textParams?: Record<string, string>): void {
     this.snackBar.openFromComponent(SnackBarContentComponent, {
       panelClass: 'mat-snack-bar-container--error',
