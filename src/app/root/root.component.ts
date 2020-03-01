@@ -34,8 +34,8 @@ export class RootComponent implements OnInit {
 
   public tableData: ITableRow[] = [];
 
-  public tableWarning: ValidationError;
-  public isTableWarningShown: boolean = false;
+  public tableWarnings: ValidationError[];
+  public isTableWarningsShown: boolean = false;
 
   public readonly tableEditModeControl: FormControl = new FormControl(true);
 
@@ -87,6 +87,7 @@ export class RootComponent implements OnInit {
 
         this.isLoading = false;
         this.isTableCoded = false;
+        this.isTableWarningsShown = false;
         this.selectedTabIndex = 0;
 
         dialogRef.close();
@@ -101,14 +102,14 @@ export class RootComponent implements OnInit {
       },
     });
 
-    this.codingAlgorithmsService.warning$
+    this.codingAlgorithmsService.warnings$
       .pipe(
         take(1),
         takeUntil(dialogRef.afterClosed())
       )
-      .subscribe((warning) => {
-        this.tableWarning = warning;
-        this.isTableWarningShown = true;
+      .subscribe((warnings) => {
+        this.tableWarnings = warnings;
+        this.isTableWarningsShown = warnings.length > 0;
       });
 
     dialogRef.componentInstance.onSubmit
@@ -117,7 +118,7 @@ export class RootComponent implements OnInit {
         takeUntil(dialogRef.afterClosed())
       )
       .subscribe(() => {
-        this.isTableWarningShown = false;
+        this.isTableWarningsShown = false;
       });
 
     dialogRef.componentInstance.success$
@@ -189,6 +190,5 @@ export class RootComponent implements OnInit {
   public onTableDataUpdate(value: ITableRow[]): void {
     this.tableData = value;
     this.isTableCoded = false;
-    this.isTableWarningShown = false;
   }
 }

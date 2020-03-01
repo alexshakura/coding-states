@@ -12,19 +12,27 @@ export class ConditionalsFlowValidatorService {
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) { }
 
-  public validate(tableConfig: ITableConfig, tableData: ITableRow[]): void {
+  public validate(tableConfig: ITableConfig, tableData: ITableRow[]): ValidationError[] {
     const mapBySrcStateId = this.getMapBySrcStateId(tableData);
     const states = this.signalOperandGeneratorService.getStates();
 
+    const errors: ValidationError[] = [];
+
     for (const [srcStateId, srcStateTableRows] of mapBySrcStateId.entries()) {
-      const srcState = states.get(srcStateId) as StateOperand;
+      try {
+        const srcState = states.get(srcStateId) as StateOperand;
 
-      this.verifySingleTransition(srcStateTableRows);
+        this.verifySingleTransition(srcState, srcStateTableRows);
 
-      this.verifyRedundancy(tableConfig, srcStateTableRows, srcState);
+        this.verifyRedundancy(tableConfig, srcStateTableRows, srcState);
 
-      this.verifyOrthogonality(srcStateTableRows, srcState);
+        this.verifyOrthogonality(srcStateTableRows, srcState);
+      } catch (error) {
+        errors.push(error);
+      }
     }
+
+    return errors;
   }
 
   private getMapBySrcStateId(tableData: ITableRow[]): Map<number, ITableRow[]> {
@@ -45,9 +53,12 @@ export class ConditionalsFlowValidatorService {
     return map;
   }
 
-  private verifySingleTransition(srcStateTableRows: ITableRow[]): void {
+  private verifySingleTransition(srcState: StateOperand, srcStateTableRows: ITableRow[]): void {
     if (srcStateTableRows.length === 1 && !srcStateTableRows[0].unconditionalTransition) {
-      throw new Error();
+      throw new ValidationError(
+        'ROOT.CODING_ALGORITHM_DIALOG.WARNING_INVALID_CONDITIONALS_FOR_STATE',
+        { index: `${srcState.index}` }
+      );
     }
   }
 

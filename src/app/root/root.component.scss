@@ -16,4 +16,18 @@
   font-weight: 500;
   width: 400px;
   margin: 16px auto 0;
+
+  mat-card-content {
+    position: relative;
+  }
+
+  &__close-btn {
+    position: absolute !important;
+    right: -12px;
+    top: -12px;
+  }
+
+  &__items {
+    padding-top: 20px;
+  }
 }

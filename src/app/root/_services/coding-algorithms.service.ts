@@ -51,11 +51,11 @@ export class CodingAlgorithmsService {
 
   private _codedTableData$$: ReplaySubject<ITableRow[]> = new ReplaySubject<ITableRow[]>(1);
 
-  public get warning$(): Observable<ValidationError> {
-    return this._warning$$.asObservable();
+  public get warnings$(): Observable<ValidationError[]> {
+    return this._warnings$$.asObservable();
   }
 
-  private _warning$$: Subject<ValidationError> = new Subject<ValidationError>();
+  private _warnings$$: Subject<ValidationError[]> = new Subject<ValidationError[]>();
 
   public constructor(
     private readonly conditionalsFlowValidatorService: ConditionalsFlowValidatorService,
@@ -128,11 +128,8 @@ export class CodingAlgorithmsService {
   }
 
   private checkConditionalsFlow(tableConfig: Readonly<ITableConfig>, tableData: ITableRow[]): void {
-    try {
-      this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
-    } catch (warning) {
-      this._warning$$.next(warning);
-    }
+    const warnings = this.conditionalsFlowValidatorService.validate(tableConfig, tableData);
+    this._warnings$$.next(warnings);
   }
 
   private isAllStatesUsed(tableData: ITableRow[], numberOfStates: number): boolean {

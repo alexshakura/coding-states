@@ -109,16 +109,23 @@
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="!isLoading && !selectedTabIndex && isTableWarningShown"
+<mat-card *ngIf="!isLoading && !selectedTabIndex && isTableWarningsShown"
           class="root-table-warning">
   <mat-card-content>
-    <div class="layout-list layout-list--0px layout-list--align-center">
+    <button mat-icon-button
+            class="root-table-warning__close-btn"
+            (click)="isTableWarningsShown = false">
+      <div class="icon icon--close icon--20px"></div>
+    </button>
+
+    <div class="layout-list layout-list--0px layout-list--align-center root-table-warning__items">
       <div class="layout-list__item">
         <div class="icon icon--alert"></div>
       </div>
 
-      <div class="layout-list__item"
-           [innerHTML]="tableWarning.key | translate: tableWarning.params">
+      <div *ngFor="let warning of tableWarnings"
+           class="layout-list__item"
+           [innerHTML]="warning.key | translate: warning.params">
       </div>
     </div>
   </mat-card-content>
