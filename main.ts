@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app, BrowserWindow, dialog, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
@@ -49,6 +49,18 @@ function createWindow(): void {
     win = null;
   });
 
+  win.on('close', (event) => {
+    const result = dialog.showMessageBoxSync(win as BrowserWindow, {
+      type: 'warning',
+      buttons: ['Да', 'Нет'],
+      defaultId: 0,
+      message: 'Вы уверены, что хотите закрыть приложение?',
+    });
+
+    if (result) {
+      event.preventDefault();
+    }
+  });
 }
 
 try {
