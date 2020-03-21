@@ -8,19 +8,21 @@ import { switchMap, take, takeUntil } from 'rxjs/operators';
 import { CodingAlgorithmType } from '@app/enums';
 import { of } from 'rxjs';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
+import { VertexCodingAlgorithmsFactory } from '@app/models';
+import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
 
 @Component({
-  selector: 'app-coding-algorithm-dialog',
-  templateUrl: './coding-algorithm-dialog.component.html',
+  selector: 'app-d-trigger-coding-dialog',
+  templateUrl: './d-trigger-coding-dialog.component.html',
   host: { class: 'component-wrapper' },
 })
-export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAlgorithmType, string> {
+export class DTriggerCodingDialogComponent extends BaseDialogComponent<CodingAlgorithmType, string> {
 
   @Output() public readonly onSubmit: EventEmitter<void> = new EventEmitter<void>();
 
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
 
-  public codingAlgorithm: CodingAlgorithmType = CodingAlgorithmType.UNITARY_D_TRIGGER;
+  public codingAlgorithm: CodingAlgorithmType = CodingAlgorithmType.UNITARY;
 
   public isProcessing: boolean = false;
 
@@ -30,6 +32,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAl
       tableData: ITableRow[]
     },
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
     private readonly snackBarService: SnackBarService
   ) {
     super();
@@ -39,7 +42,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAl
     this.onSubmit.next();
 
     if (!this.codingAlgorithm) {
-      this.snackBarService.showError('ROOT.CODING_ALGORITHM_DIALOG.FORM_ERRORS_NOTIFICATION');
+      this.snackBarService.showError('ROOT.D_TRIGGER_CODING_DIALOG.FORM_ERRORS_NOTIFICATION');
       return;
     }
 
@@ -48,7 +51,17 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAl
     of(this.data.tableData)
       .pipe(
         switchMap((tableData: ITableRow[]) => {
-          return this.codingAlgorithmsService.code(this.codingAlgorithm, tableData, this.data.tableConfig);
+          const vertexCodingAlgorithm = VertexCodingAlgorithmsFactory.getDTriggerAlgorithm(
+            this.codingAlgorithm,
+            tableData,
+            this.signalOperandGeneratorService.getStates()
+          );
+
+          return this.codingAlgorithmsService.code(
+            vertexCodingAlgorithm,
+            tableData,
+            this.data.tableConfig
+          );
         }),
         take(1),
         takeUntil(this.destroy$$)
@@ -58,7 +71,7 @@ export class CodingAlgorithmDialogComponent extends BaseDialogComponent<CodingAl
           this._success$$.next(this.codingAlgorithm);
         },
         (validationError: ValidationError) => {
-          this.snackBarService.showError(validationError.key, validationError.params);
+          this.snackBarService.showError(`ROOT.D_TRIGGER_CODING_DIALOG.${validationError.key}`, validationError.params);
           this.isProcessing = false;
         });
   }

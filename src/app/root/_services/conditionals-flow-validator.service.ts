@@ -56,7 +56,7 @@ export class ConditionalsFlowValidatorService {
   private verifySingleTransition(srcState: StateOperand, srcStateTableRows: ITableRow[]): void {
     if (srcStateTableRows.length === 1 && !srcStateTableRows[0].unconditionalTransition) {
       throw new ValidationError(
-        'ROOT.CODING_ALGORITHM_DIALOG.WARNING_INVALID_CONDITIONALS_FOR_STATE',
+        'WARNING_INVALID_CONDITIONALS_FOR_STATE',
         { index: `${srcState.index}` }
       );
     }
@@ -85,7 +85,7 @@ export class ConditionalsFlowValidatorService {
 
         if (frequency === 1) {
           throw new ValidationError(
-            'ROOT.CODING_ALGORITHM_DIALOG.WARNING_REDUNDANT_TRANSITIONS_FOR_MURA',
+            'WARNING_REDUNDANT_TRANSITIONS_FOR_MURA',
             { index: `${srcState.index}` }
           );
         }
@@ -118,7 +118,7 @@ export class ConditionalsFlowValidatorService {
 
       if (onesCount !== 1) {
         throw new ValidationError(
-          'ROOT.CODING_ALGORITHM_DIALOG.WARNING_INVALID_CONDITIONALS_FOR_STATE',
+          'WARNING_INVALID_CONDITIONALS_FOR_STATE',
           { index: `${srcState.index}` }
         );
       }

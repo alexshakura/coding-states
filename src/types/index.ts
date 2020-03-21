@@ -6,3 +6,6 @@ export { TVertexData } from './vertex-data';
 export { IExcitationFunctionsDataCell } from './excitation-functions-data-cell';
 export { IFormattedTableRow } from './formatted-table-row';
 export { IGeneratedFileInputData } from './generated-file-input-data';
+export { IVertexCodingAlgorithm } from './vertex-coding-algorithm';
+export { ITableCoder } from './table-coder';
+export { ICodingDialog } from './coding-dialog';

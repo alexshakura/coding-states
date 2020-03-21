@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { BaseDialogComponent } from '@app/shared/_helpers/base-dialog-component';
 import { SnackBarService } from '@app/root/_services/snack-bar.service';
 import { delay, takeUntil, tap } from 'rxjs/operators';
-import { FsmType } from '@app/enums';
+import { FsmType, TriggerType } from '@app/enums';
 import { ITableConfig, TSensitiveTableConfigFields } from '@app/types';
 import { NUMBER_FORM_FIELD_VALIDATORS, SUBMISSION_DELAY } from './table-config-dialog.constants';
 import { TableDataService } from '../_services/table-data.service';
@@ -22,6 +22,8 @@ export class TableConfigDialogComponent extends BaseDialogComponent<ITableConfig
 
   public readonly fsmTypes: typeof FsmType = FsmType;
 
+  public readonly triggerTypes: typeof TriggerType = TriggerType;
+
   public isProcessing: boolean = false;
 
   public form: FormGroup = this.formBuilder.group({
@@ -30,6 +32,7 @@ export class TableConfigDialogComponent extends BaseDialogComponent<ITableConfig
     numberOfX: [this.tableConfig.numberOfX, NUMBER_FORM_FIELD_VALIDATORS],
     numberOfY: [this.tableConfig.numberOfY, NUMBER_FORM_FIELD_VALIDATORS],
     fsmType: this.tableConfig.fsmType || this.fsmTypes.MILI,
+    triggerType: this.tableConfig.triggerType || this.triggerTypes.D,
   });
 
   public isEditMode: boolean = !!this.data.tableConfig;

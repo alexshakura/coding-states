@@ -2,9 +2,8 @@ import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChil
 import { MatTableDataSource } from '@angular/material/table';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-import { TableDataService } from '../_services/table-data.service';
 import { ITableConfig, ITableRow } from '@app/types';
-import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '@app/models';
+import { ConditionSignalOperand, getFormattedCode, OutputSignalOperand, StateOperand } from '@app/models';
 import { MatSort } from '@angular/material/sort';
 import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -61,8 +60,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
 
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
-    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
-    private readonly tableDataService: TableDataService
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) {
     super();
   }
@@ -133,7 +131,7 @@ export class StructureTableComponent extends BaseComponent implements OnInit, Af
   }
 
   public formatStateCode(value: number): string {
-    return this.tableDataService.formatStateCode(value, this.capacity);
+    return getFormattedCode(value, this.capacity);
   }
 
   public getConditionalSignal(id: number): ConditionSignalOperand {

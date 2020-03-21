@@ -1,0 +1,9 @@
+.canonical-coding-dialog {
+  &__controls {
+    flex-wrap: wrap;
+  }
+
+  &__control:nth-child(odd) {
+    padding-right: 16px;
+  }
+}

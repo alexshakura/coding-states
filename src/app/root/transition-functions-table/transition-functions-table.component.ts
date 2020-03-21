@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
-import { IExcitationFunctionsDataCell } from '@app/types';
+import { IExcitationFunctionsDataCell, ITableConfig } from '@app/types';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { DISPLAYED_COLUMNS } from './transition-functions-table.constants';
+import { TriggerType } from '@app/enums';
 
 @Component({
   selector: 'app-transition-functions-table',
@@ -12,7 +13,11 @@ import { DISPLAYED_COLUMNS } from './transition-functions-table.constants';
 })
 export class TransitionFunctionsTableComponent extends BaseComponent implements OnDestroy, OnInit {
 
+  @Input() public readonly tableConfig: ITableConfig;
+
   public readonly displayedColumns: string[] = DISPLAYED_COLUMNS;
+
+  public readonly triggerTypes: typeof TriggerType = TriggerType;
 
   public dataSource: IExcitationFunctionsDataCell[];
 

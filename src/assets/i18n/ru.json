@@ -19,7 +19,10 @@
       "MURA_STATE_MACHINE": "Автомат Мура",
       "FREQUENCY_CODING_ALGORITHM": "Частотный алгоритм кодирования",
       "UNITARY_CODING_ALGORITHM": "Унитарный алгоритм кодирования",
-      "STATE_N_CODING_ALGORITHM": "Кодирование по N состояния"
+      "STATE_N_CODING_ALGORITHM": "Кодирование по N состояния",
+      "CANONICAL_CODING_ALGORITHM": "Канонический алгоритм кодирования",
+      "WARNING_REDUNDANT_TRANSITIONS_FOR_MURA": "В графе автомата Мура не должно быть кратных дуг, т.е. должен быть единственный переход а<sub>i</sub> -> а<sub>j</sub>. Проверьте переходы из состояния а<sub>{{ index }}</sub>",
+      "WARNING_INVALID_CONDITIONALS_FOR_STATE": "Проверьте условия переходов из состояния a<sub>{{ index }}</sub>"
     },
     "VERTEX_CODES_TABLE": {
       "TITLE": "Коды вершин"
@@ -34,6 +37,10 @@
       "TITLE": "Кодирование состояний автомата",
       "DESCRIPTION": "Введите основные параметры СТП",
       "STATE_MACHINE_TYPE_LABEL": "Тип автомата",
+      "TRIGGER_TYPE_LABEL": "Тип триггера",
+      "D_TRIGGER": "D",
+      "T_TRIGGER": "T",
+      "NOT_T_TRIGGER": "T*",
       "MILI_STATE_MACHINE": "Автомат Мили",
       "MURA_STATE_MACHINE": "Автомат Мура",
       "TABLE_LENGTH_LABEL": "Длина СТП",
@@ -72,7 +79,7 @@
       "BOOLEAN_BASIS_OPTION": "Базис Буля",
       "SHEFFER_BASIS_OPTION": "Базис Шеффера"
     },
-    "CODING_ALGORITHM_DIALOG": {
+    "D_TRIGGER_CODING_DIALOG": {
       "TITLE": "Кодирование",
       "DESCRIPTION": "Выберите алгоритм или способ кодирования",
       "UNITARY_OPTION": "Унитарный",
@@ -83,9 +90,22 @@
       "ERROR_INVALID_USED_STATES_COUNT": "Количество состояний в параметрах СТП не совпадает с количеством используемых",
       "ERROR_INVALID_ROW": "Проверьте {{ id }} строку",
       "ERROR_INVALID_ROWS": "Заполните следующие строки: {{ ids }}",
-      "WARNING_REDUNDANT_TRANSITIONS_FOR_MURA": "В графе автомата Мура не должно быть кратных дуг, т.е. должен быть единственный переход а<sub>i</sub> -> а<sub>j</sub>. Проверьте переходы из состояния а<sub>{{ index }}</sub>",
-      "WARNING_INVALID_CONDITIONALS_FOR_STATE": "Проверьте условия переходов из состояния a<sub>{{ index }}</sub>",
       "FORM_ERRORS_NOTIFICATION": "Выберите алгоритм или способ кодирования"
+    },
+    "CANONICAL_CODING_DIALOG": {
+      "TITLE": "Кодирование",
+      "DESCRIPTION": "Укажите коды для состояний",
+      "CODE_CONTROL_LABEL": "Код для состояния # {{ index }}",
+      "ERROR_CODE_MAX_VALUE": "Значение кода слишком большое",
+      "ERROR_CODE_PATTERN": "Код должен быть бинарным числом",
+      "ERROR_INVALID_USED_STATES_COUNT": "Количество состояний в параметрах СТП не совпадает с количеством используемых",
+      "ERROR_INVALID_ROW": "Проверьте {{ id }} строку",
+      "ERROR_INVALID_ROWS": "Заполните следующие строки: {{ ids }}",
+      "ERROR_INVALID_FORM": "Проверьте корректность введённых данных",
+      "ERROR_UNIQUE_VALUES": "Все коды должны быть уникальны",
+      "ERROR_MIN_FILLED_COUNT": "Необходимо указать как минимум {{ count }} кода",
+      "EXIT_BUTTON_LABEL": "Выйти",
+      "CODE_BUTTON_LABEL": "Закодировать"
     },
     "MENU": {
       "EDIT": "Редактировать",

@@ -1,0 +1,75 @@
+<div class="dialog">
+  <div class="dialog__body">
+    <div class="layout-list">
+      <div class="layout-list__item">
+        <div class="dialog-header">
+          <div class="dialog-header__title">
+            {{ 'ROOT.CANONICAL_CODING_DIALOG.TITLE' | translate }}
+          </div>
+
+          <div class="dialog-header__text">
+            {{ 'ROOT.CANONICAL_CODING_DIALOG.DESCRIPTION' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <form [formGroup]="form"
+            (ngSubmit)="performCoding()"
+            id="statesCodesForm"
+            class="layout-inline layout-inline--0px canonical-coding-dialog__controls">
+        <div *ngFor="let item of form.controls | keyvalue"
+             class="layout-inline__item canonical-coding-dialog__control">
+          <mat-form-field app-theme="dark"
+                          appearance="standard">
+            <mat-label>
+              {{ 'ROOT.CANONICAL_CODING_DIALOG.CODE_CONTROL_LABEL' | translate: { index: getStateOperand(item.key).index } }}
+            </mat-label>
+
+            <input type="string"
+                   matInput
+                   [formControlName]="item.key">
+
+            <mat-error *ngIf="item.value.hasError('maxValue')">
+              {{ 'ROOT.CANONICAL_CODING_DIALOG.ERROR_CODE_MAX_VALUE' | translate }}
+            </mat-error>
+
+            <mat-error *ngIf="item.value.hasError('pattern')">
+              {{ 'ROOT.CANONICAL_CODING_DIALOG.ERROR_CODE_PATTERN' | translate }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="dialog__actions">
+    <div class="layout-inline layout-inline--align-right">
+      <div class="layout-inline__item">
+        <button mat-button
+                mat-dialog-close
+                app-theme="primary"
+                tabindex="3">
+          {{ 'ROOT.CANONICAL_CODING_DIALOG.EXIT_BUTTON_LABEL' | translate }}
+        </button>
+      </div>
+
+      <div class="layout-inline__item">
+        <button mat-raised-button
+                app-theme="primary"
+                type="submit"
+                form="statesCodesForm"
+                [disabled]="isProcessing">
+          <ng-container *ngIf="!isProcessing">
+            {{ 'ROOT.CANONICAL_CODING_DIALOG.CODE_BUTTON_LABEL' | translate }}
+          </ng-container>
+
+          <mat-spinner *ngIf="isProcessing"
+                        [diameter]="20"
+                        strokeWidth="2"
+                        app-theme="light">
+          </mat-spinner>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

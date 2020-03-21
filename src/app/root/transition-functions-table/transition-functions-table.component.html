@@ -32,15 +32,34 @@
 <mat-table [dataSource]="dataSource">
   <ng-container matColumnDef="function">
     <mat-header-cell *matHeaderCellDef>
-      <div>
+      <div *ngIf="tableConfig.triggerType === triggerTypes.D">
         D<sub>i</sub>
+      </div>
+
+      <div *ngIf="tableConfig.triggerType === triggerTypes.T">
+        T<sub>i</sub>
+      </div>
+
+      <div *ngIf="tableConfig.triggerType === triggerTypes.NOT_T">
+        T*<sub>i</sub>
       </div>
     </mat-header-cell>
 
     <mat-cell *matCellDef="let row">
       <div class="layout-inline layout-inline--2px">
-        <div class="layout-inline__item">
+        <div *ngIf="tableConfig.triggerType === triggerTypes.D"
+             class="layout-inline__item">
           D<sub>{{ row.index }}</sub>
+        </div>
+
+        <div *ngIf="tableConfig.triggerType === triggerTypes.T"
+             class="layout-inline__item">
+          T<sub>{{ row.index }}</sub>
+        </div>
+
+        <div *ngIf="tableConfig.triggerType === triggerTypes.NOT_T"
+             class="layout-inline__item">
+          T*<sub>{{ row.index }}</sub>
         </div>
 
         <div class="layout-inline__item">

@@ -19,16 +19,20 @@
           <ng-container *ngIf="isTableCoded"
                         [ngSwitch]="chosenCodingAlgorithm">
             /
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.FREQUENCY_D_TRIGGER">
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.FREQUENCY">
               {{ 'ROOT.ROOT.FREQUENCY_CODING_ALGORITHM' | translate }}
             </ng-container>
 
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.STATE_N_D_TRIGGER">
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.STATE_N">
               {{ 'ROOT.ROOT.STATE_N_CODING_ALGORITHM' | translate }}
             </ng-container>
 
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.UNITARY_D_TRIGGER">
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.UNITARY">
               {{ 'ROOT.ROOT.UNITARY_CODING_ALGORITHM' | translate }}
+            </ng-container>
+
+            <ng-container *ngSwitchCase="codingAlgorithmTypes.CANONICAL">
+              {{ 'ROOT.ROOT.CANONICAL_CODING_ALGORITHM' | translate }}
             </ng-container>
           </ng-container>
         </div>
@@ -55,9 +59,18 @@
         </div>
 
         <div class="layout-inline__item">
-          <button mat-raised-button
+          <button *ngIf="tableConfig?.triggerType === triggerTypes.D"
+                  mat-raised-button
                   app-theme="warning"
-                  (click)="openCodingAlgorithmDialog()"
+                  (click)="openDTriggerCodingDialog()"
+                  [disabled]="isGeneratingReport">
+            {{ 'ROOT.ROOT.CODE_BUTTON_LABEL' | translate }}
+          </button>
+
+          <button *ngIf="tableConfig?.triggerType !== triggerTypes.D"
+                  mat-raised-button
+                  app-theme="warning"
+                  (click)="openCanonicalCodingDialog()"
                   [disabled]="isGeneratingReport">
             {{ 'ROOT.ROOT.CODE_BUTTON_LABEL' | translate }}
           </button>
@@ -102,7 +115,7 @@
 
       <mat-tab [label]="'ROOT.ROOT.TRANSITIONS_FUNCTIONS_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
-        <app-transition-functions-table>
+        <app-transition-functions-table [tableConfig]="tableConfig">
         </app-transition-functions-table>
       </mat-tab>
     </mat-tab-group>
@@ -125,7 +138,7 @@
 
       <div *ngFor="let warning of tableWarnings"
            class="layout-list__item"
-           [innerHTML]="warning.key | translate: warning.params">
+           [innerHTML]="('ROOT.ROOT.' + warning.key) | translate: warning.params">
       </div>
     </div>
   </mat-card-content>

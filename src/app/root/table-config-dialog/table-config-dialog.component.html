@@ -58,6 +58,59 @@
         </div>
 
         <div class="layout-list__item">
+          <div class="layout-list layout-list--10px">
+            <div class="layout-list__item">
+              {{ 'ROOT.TABLE_CONFIG_DIALOG.TRIGGER_TYPE_LABEL' | translate }}
+            </div>
+
+            <div class="layout-list__item">
+              <mat-radio-group formControlName="triggerType">
+                <div class="layout-list layout-list--12px">
+                  <div class="layout-list__item">
+                    <label class="layout-inline-checkbox">
+                      <div class="layout-inline__item">
+                        <mat-radio-button [value]="triggerTypes.D">
+                        </mat-radio-button>
+                      </div>
+
+                      <div class="layout-inline__item layout-inline__item--expand">
+                        {{ 'ROOT.TABLE_CONFIG_DIALOG.D_TRIGGER' | translate }}
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="layout-list__item">
+                    <label class="layout-inline-checkbox">
+                      <div class="layout-inline__item">
+                        <mat-radio-button [value]="triggerTypes.T">
+                        </mat-radio-button>
+                      </div>
+
+                      <div class="layout-inline__item layout-inline__item--expand">
+                        {{ 'ROOT.TABLE_CONFIG_DIALOG.T_TRIGGER' | translate }}
+                      </div>
+                    </label>
+                  </div>
+
+                  <div class="layout-list__item">
+                    <label class="layout-inline-checkbox">
+                      <div class="layout-inline__item">
+                        <mat-radio-button [value]="triggerTypes.NOT_T">
+                        </mat-radio-button>
+                      </div>
+
+                      <div class="layout-inline__item layout-inline__item--expand"
+                           [innerHTML]="'ROOT.TABLE_CONFIG_DIALOG.NOT_T_TRIGGER' | translate">
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </mat-radio-group>
+            </div>
+          </div>
+        </div>
+
+        <div class="layout-list__item">
           <mat-form-field app-theme="dark"
                           appearance="standard">
             <mat-label>

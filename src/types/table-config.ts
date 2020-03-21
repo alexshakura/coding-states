@@ -1,4 +1,4 @@
-import { FsmType } from '@app/enums';
+import { FsmType, TriggerType } from '@app/enums';
 
 export interface ITableConfig {
   length: number;
@@ -6,4 +6,5 @@ export interface ITableConfig {
   numberOfX: number;
   numberOfY: number;
   fsmType: FsmType;
+  triggerType: TriggerType;
 }

@@ -1,7 +1,7 @@
-import { ITableRow, TVertexData } from '@app/types';
-import { StateOperand } from '../operands';
+import { ITableRow } from '@app/types';
+import { StateOperand } from '../../operands';
 
-export abstract class VertexCodingAlgorithm {
+export abstract class BaseDAlgorithm {
 
   protected orderedStates: StateOperand[];
 
@@ -26,7 +26,5 @@ export abstract class VertexCodingAlgorithm {
         return 0;
       });
   }
-
-  public abstract getCodesMap(): TVertexData;
 
 }

@@ -4,11 +4,11 @@
       <div class="layout-list__item">
         <div class="dialog-header">
           <div class="dialog-header__title">
-            {{ 'ROOT.CODING_ALGORITHM_DIALOG.TITLE' | translate }}
+            {{ 'ROOT.D_TRIGGER_CODING_DIALOG.TITLE' | translate }}
           </div>
 
           <div class="dialog-header__text">
-            {{ 'ROOT.CODING_ALGORITHM_DIALOG.DESCRIPTION' | translate }}
+            {{ 'ROOT.D_TRIGGER_CODING_DIALOG.DESCRIPTION' | translate }}
           </div>
         </div>
       </div>
@@ -20,13 +20,13 @@
               <label class="layout-inline-checkbox">
                 <div class="layout-inline__item">
                   <mat-radio-button class="coding-algorithm-option"
-                                    [value]="codingAlgorithmTypes.UNITARY_D_TRIGGER"
+                                    [value]="codingAlgorithmTypes.UNITARY"
                                     [disabled]="isProcessing">
                   </mat-radio-button>
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.UNITARY_OPTION' | translate }}
+                  {{ 'ROOT.D_TRIGGER_CODING_DIALOG.UNITARY_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -34,13 +34,13 @@
               <label class="layout-inline-checkbox">
                 <div class="layout-inline__item">
                   <mat-radio-button class="coding-algorithm-option"
-                                    [value]="codingAlgorithmTypes.FREQUENCY_D_TRIGGER"
+                                    [value]="codingAlgorithmTypes.FREQUENCY"
                                     [disabled]="isProcessing">
                   </mat-radio-button>
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.FREQUENCY_OPTION' | translate }}
+                  {{ 'ROOT.D_TRIGGER_CODING_DIALOG.FREQUENCY_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -48,13 +48,13 @@
               <label class="layout-inline-checkbox">
                 <div class="layout-inline__item">
                   <mat-radio-button class="coding-algorithm-option"
-                                    [value]="codingAlgorithmTypes.STATE_N_D_TRIGGER"
+                                    [value]="codingAlgorithmTypes.STATE_N"
                                     [disabled]="isProcessing">
                   </mat-radio-button>
                 </div>
 
                 <div class="layout-inline__item layout-inline__item--expand">
-                  {{ 'ROOT.CODING_ALGORITHM_DIALOG.BY_NUM_OF_STATE_OPTION' | translate }}
+                  {{ 'ROOT.D_TRIGGER_CODING_DIALOG.BY_NUM_OF_STATE_OPTION' | translate }}
                 </div>
               </label>
             </div>
@@ -71,7 +71,7 @@
                 mat-dialog-close
                 app-theme="primary"
                 tabindex="3">
-          {{ 'ROOT.CODING_ALGORITHM_DIALOG.EXIT_BUTTON_LABEL' | translate }}
+          {{ 'ROOT.D_TRIGGER_CODING_DIALOG.EXIT_BUTTON_LABEL' | translate }}
         </button>
       </div>
 
@@ -81,7 +81,7 @@
                 [disabled]="isProcessing"
                 (click)="performCoding()">
           <ng-container *ngIf="!isProcessing">
-            {{ 'ROOT.CODING_ALGORITHM_DIALOG.CODE_BUTTON_LABEL' | translate }}
+            {{ 'ROOT.D_TRIGGER_CODING_DIALOG.CODE_BUTTON_LABEL' | translate }}
           </ng-container>
 
           <mat-spinner *ngIf="isProcessing"

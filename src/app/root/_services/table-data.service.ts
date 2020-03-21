@@ -45,12 +45,4 @@ export class TableDataService {
     return oldConfig[field] > newConfig[field];
   }
 
-  public formatStateCode(stateCode: number, capacity: number): string {
-    const formattedCodingState: string = stateCode.toString(2);
-
-    return capacity > 1
-      ? '0'.repeat(capacity - formattedCodingState.length) + formattedCodingState
-      : formattedCodingState;
-  }
-
 }

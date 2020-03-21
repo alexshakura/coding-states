@@ -7,7 +7,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { RootComponent } from './root.component';
-import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { CodingAlgorithmsService } from './_services/coding-algorithms.service';
 import { ReportGeneratorService } from './_services/report-generator.service';
 import { ElectronService } from './_services/electron.service';
@@ -25,16 +24,20 @@ import { CustomTranslateLoader } from './_helpers';
 import { DEFAULT_LANGUAGE } from './root.constants';
 import { MenuService } from './_services/menu.service';
 import { ConditionalsFlowValidatorService } from './_services/conditionals-flow-validator.service';
+import { CanonicalCodingDialogComponent } from './canonical-coding-dialog/canonical-coding-dialog.component';
+import { DTriggerCodingDialogComponent } from './d-trigger-coding-dialog/d-trigger-coding-dialog.component';
+import { TableDataValidatorService } from './_services/table-data-validator.service';
 
 @NgModule({
   declarations: [
     RootComponent,
-    CodingAlgorithmDialogComponent,
+    DTriggerCodingDialogComponent,
     OutputFunctionsTableComponent,
     StructureTableComponent,
     TableConfigDialogComponent,
     TransitionFunctionsTableComponent,
     VertexCodesTableComponent,
+    CanonicalCodingDialogComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -50,7 +53,8 @@ import { ConditionalsFlowValidatorService } from './_services/conditionals-flow-
     }),
  ],
   entryComponents: [
-    CodingAlgorithmDialogComponent,
+    DTriggerCodingDialogComponent,
+    CanonicalCodingDialogComponent,
     TableConfigDialogComponent,
  ],
   providers: [
@@ -63,6 +67,7 @@ import { ConditionalsFlowValidatorService } from './_services/conditionals-flow-
     TableMockDataService,
     SignalOperandGeneratorService,
     MenuService,
+    TableDataValidatorService,
   ],
   bootstrap: [RootComponent],
 })

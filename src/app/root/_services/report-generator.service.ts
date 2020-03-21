@@ -2,13 +2,12 @@ import { Injectable } from '@angular/core';
 import { CodingAlgorithmsService } from './coding-algorithms.service';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
-import { TableDataService } from './table-data.service';
 import { SignalOperandGeneratorService } from './signal-operand-generator.service';
 import { IFormattedTableRow, IGeneratedFileInputData, ITableConfig, ITableRow } from '@app/types';
-import { ConditionSignalOperand, OutputSignalOperand, StateOperand } from '@app/models';
+import { ConditionSignalOperand, getFormattedCode, OutputSignalOperand, StateOperand } from '@app/models';
 import * as PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
-import { CodingAlgorithmType, FsmType } from '@app/enums';
+import { CodingAlgorithmType, FsmType, TriggerType } from '@app/enums';
 import { reportParser } from '@app/shared/_helpers/report-parser';
 import { getAssetsPath } from '@app/shared/_helpers/get-assets-path';
 import * as path from 'path';
@@ -20,8 +19,7 @@ export class ReportGeneratorService {
 
   public constructor(
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
-    private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
-    private readonly tableDataService: TableDataService
+    private readonly signalOperandGeneratorService: SignalOperandGeneratorService
   ) { }
 
   public get$(tableConfig: ITableConfig, chosenCodingAlgorithm: CodingAlgorithmType): Observable<Blob | Buffer> {
@@ -65,9 +63,13 @@ export class ReportGeneratorService {
       map(([codedTableData, capacity, outputFunctions, excitationFunctions]) => {
         return {
           isMiliFsm: tableConfig.fsmType === FsmType.MILI,
-          isUnitaryAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.UNITARY_D_TRIGGER,
-          isFrequencyAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.FREQUENCY_D_TRIGGER,
-          isNStateAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.STATE_N_D_TRIGGER,
+          isUnitaryAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.UNITARY,
+          isFrequencyAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.FREQUENCY,
+          isNStateAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.STATE_N,
+          isCanonicalAlgorithm: chosenCodingAlgorithm === CodingAlgorithmType.CANONICAL,
+          isDTrigger: tableConfig.triggerType === TriggerType.D,
+          isTTrigger: tableConfig.triggerType === TriggerType.T,
+          isNotTTrigger: tableConfig.triggerType === TriggerType.NOT_T,
           tableData: this.getFormattedTableData(codedTableData, capacity),
           outputFunctions,
           excitationFunctions,
@@ -99,13 +101,13 @@ export class ReportGeneratorService {
       return {
         id: tableRow.id,
         srcStateIndex: srcState.index,
-        srcStateCode: this.tableDataService.formatStateCode(tableRow.srcStateCode as number, capacity),
+        srcStateCode: getFormattedCode(tableRow.srcStateCode as number, capacity),
         distStateIndex: distState.index,
-        distStateCode: this.tableDataService.formatStateCode(tableRow.distStateCode as number, capacity),
+        distStateCode: getFormattedCode(tableRow.distStateCode as number, capacity),
         conditionalSignals,
         unconditionalTransition: tableRow.unconditionalTransition,
         outputSignalsIndexes,
-        triggerExcitationSignals: this.tableDataService.formatStateCode(tableRow.triggerExcitationSignals as number, capacity),
+        triggerExcitationSignals: getFormattedCode(tableRow.triggerExcitationSignals as number, capacity),
       };
     });
   }

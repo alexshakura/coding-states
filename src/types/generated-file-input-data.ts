@@ -7,6 +7,10 @@ export interface IGeneratedFileInputData {
   isUnitaryAlgorithm: boolean;
   isFrequencyAlgorithm: boolean;
   isNStateAlgorithm: boolean;
+  isCanonicalAlgorithm: boolean;
+  isDTrigger: boolean;
+  isTTrigger: boolean;
+  isNotTTrigger: boolean;
   tableData: IFormattedTableRow[];
   outputFunctions: IOutputFunctionsDataCell[];
   excitationFunctions: IExcitationFunctionsDataCell[];

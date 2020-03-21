@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SnackBarService } from './_services/snack-bar.service';
-import { CodingAlgorithmDialogComponent } from './coding-algorithm-dialog/coding-algorithm-dialog.component';
 import { ElectronService } from './_services/electron.service';
 import { TableConfigDialogComponent } from './table-config-dialog/table-config-dialog.component';
 import { switchMap, take, takeUntil } from 'rxjs/operators';
-import { ITableConfig, ITableRow } from '@app/types';
+import { ICodingDialog, ITableConfig, ITableRow } from '@app/types';
 import { FormControl } from '@angular/forms';
 import { TableDataService } from './_services/table-data.service';
 import { ReportGeneratorService } from './_services/report-generator.service';
-import { CodingAlgorithmType, FsmType } from '@app/enums';
+import { CodingAlgorithmType, FsmType, TriggerType } from '@app/enums';
 import { combineLatest, from, of } from 'rxjs';
 import { MenuService } from './_services/menu.service';
 import { CodingAlgorithmsService } from './_services/coding-algorithms.service';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
+import { TableMockDataService } from './_services/table-mock-data.service';
+import { DTriggerCodingDialogComponent } from './d-trigger-coding-dialog/d-trigger-coding-dialog.component';
+import { CanonicalCodingDialogComponent } from './canonical-coding-dialog/canonical-coding-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +32,7 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig | null;
+  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForCanonical();
 
   public tableData: ITableRow[] = [];
 
@@ -41,6 +43,7 @@ export class RootComponent implements OnInit {
 
   public readonly fsmTypes: typeof FsmType = FsmType;
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
+  public readonly triggerTypes: typeof TriggerType = TriggerType;
 
   public chosenCodingAlgorithm: CodingAlgorithmType;
 
@@ -51,7 +54,8 @@ export class RootComponent implements OnInit {
     private readonly codingAlgorithmsService: CodingAlgorithmsService,
     private readonly tableDataService: TableDataService,
     private readonly menuService: MenuService,
-    private readonly reportGeneratorService: ReportGeneratorService
+    private readonly reportGeneratorService: ReportGeneratorService,
+    private readonly tableMockDataService: TableMockDataService
   ) { }
 
   public ngOnInit(): void {
@@ -77,6 +81,8 @@ export class RootComponent implements OnInit {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
 
+        this.tableData = this.tableMockDataService.getDataForCanonical();
+
         const notificationMessageKey = !this.tableConfig
           ? 'ROOT.ROOT.TABLE_CONFIG_CREATED_SUCCESSFULLY'
           : 'ROOT.ROOT.TABLE_CONFIG_EDITED_SUCCESSFULLY';
@@ -94,36 +100,51 @@ export class RootComponent implements OnInit {
       });
   }
 
-  public openCodingAlgorithmDialog(): void {
-    const dialogRef: MatDialogRef<CodingAlgorithmDialogComponent> = this.dialogService.open(CodingAlgorithmDialogComponent, {
+  public openDTriggerCodingDialog(): void {
+    const dialogRef = this.dialogService.open(DTriggerCodingDialogComponent, {
       data: {
         tableConfig: this.tableConfig,
         tableData: this.tableData,
       },
     });
 
+    this.listenCodingAlgorithmDialogEvents(dialogRef);
+  }
+
+  public openCanonicalCodingDialog(): void {
+    const dialogRef = this.dialogService.open(CanonicalCodingDialogComponent, {
+      data: {
+        tableConfig: this.tableConfig,
+        tableData: this.tableData,
+      },
+    });
+
+    this.listenCodingAlgorithmDialogEvents(dialogRef);
+  }
+
+  private listenCodingAlgorithmDialogEvents<T extends ICodingDialog>(dialogComponent: MatDialogRef<T>): void {
     this.codingAlgorithmsService.warnings$
       .pipe(
         take(1),
-        takeUntil(dialogRef.afterClosed())
+        takeUntil(dialogComponent.afterClosed())
       )
       .subscribe((warnings) => {
         this.tableWarnings = warnings;
         this.isTableWarningsShown = warnings.length > 0;
       });
 
-    dialogRef.componentInstance.onSubmit
+    dialogComponent.componentInstance.onSubmit
       .pipe(
         take(1),
-        takeUntil(dialogRef.afterClosed())
+        takeUntil(dialogComponent.afterClosed())
       )
       .subscribe(() => {
         this.isTableWarningsShown = false;
       });
 
-    dialogRef.componentInstance.success$
+    dialogComponent.componentInstance.success$
       .pipe(
-        takeUntil(dialogRef.afterClosed())
+        takeUntil(dialogComponent.afterClosed())
       )
       .subscribe((codingAlgorithm) => {
         this.snackBarService.showMessage('ROOT.ROOT.TABLE_CODED_SUCCESSFULLY');
@@ -131,7 +152,7 @@ export class RootComponent implements OnInit {
         this.chosenCodingAlgorithm = codingAlgorithm;
         this.isTableCoded = true;
 
-        dialogRef.close();
+        dialogComponent.close();
       });
   }
 

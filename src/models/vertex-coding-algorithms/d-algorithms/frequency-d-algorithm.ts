@@ -1,10 +1,11 @@
-import { ITableRow, TVertexData } from '@app/types';
-import { VertexCodingAlgorithm } from './vertex-coding-algorithm';
+import { ITableRow, IVertexCodingAlgorithm, TVertexData } from '@app/types';
+import { getNumberOfOnes, getTotalBitDepth } from '../../helpers';
+import { BaseDAlgorithm } from './base-d-algorithm';
 
-export class FrequencyDAlgorithm extends VertexCodingAlgorithm {
+export class FrequencyDAlgorithm extends BaseDAlgorithm implements IVertexCodingAlgorithm {
 
   public getCodesMap(): TVertexData {
-    const totalBitDepth = this.getTotalBitDepth();
+    const totalBitDepth = getTotalBitDepth(this.orderedStates.length);
 
     const codeCombinations = this.getCodeCombinations(totalBitDepth);
     const sortedVertexIds = this.getSortedVertexIds();
@@ -42,27 +43,18 @@ export class FrequencyDAlgorithm extends VertexCodingAlgorithm {
     const codeCombinationsMap: Map<number, number[]> = new Map();
 
     for (let i: number = 0; i <= maxValue; i++) {
-      const numOfUnits: number = this.getNumberOfUnits(i);
+      const numOfOnes: number = getNumberOfOnes(i);
 
-      if (!codeCombinationsMap.has(numOfUnits)) {
-        codeCombinationsMap.set(numOfUnits, []);
+      if (!codeCombinationsMap.has(numOfOnes)) {
+        codeCombinationsMap.set(numOfOnes, []);
       }
 
-      const value = codeCombinationsMap.get(numOfUnits) as number[];
+      const value = codeCombinationsMap.get(numOfOnes) as number[];
 
       value.push(i);
     }
 
     return codeCombinationsMap;
-  }
-
-  private getNumberOfUnits(value: number): number {
-    return value
-      .toString(2)
-      .split('')
-      .map(Number)
-      .filter(Boolean)
-      .length;
   }
 
   private getSortedVertexIds(): number[] {
@@ -103,7 +95,4 @@ export class FrequencyDAlgorithm extends VertexCodingAlgorithm {
     return map;
   }
 
-  private getTotalBitDepth(): number {
-    return Math.ceil(Math.log2(this.orderedStates.length));
-  }
 }

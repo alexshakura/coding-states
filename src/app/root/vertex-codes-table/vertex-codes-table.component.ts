@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { TableDataService } from '../_services/table-data.service';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { BaseComponent } from '@app/shared/_helpers/base-component';
 import { map, takeUntil } from 'rxjs/operators';
 import { DISPLAYED_COLUMNS } from './vertex-codes-table.constants';
 import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
-import { StateOperand } from '@app/models';
+import { getFormattedCode, StateOperand } from '@app/models';
 
 @Component({
   selector: 'app-vertex-codes-table',
@@ -21,7 +20,6 @@ export class VertexCodesTableComponent extends BaseComponent implements OnInit {
   public capacity: number;
 
   public constructor(
-    private readonly tableDataService: TableDataService,
     private readonly signalOperandGeneratorService: SignalOperandGeneratorService,
     private readonly codingAlgorithmsService: CodingAlgorithmsService
   ) {
@@ -68,7 +66,7 @@ export class VertexCodesTableComponent extends BaseComponent implements OnInit {
   }
 
   public formatStateCode(stateCode: number): string {
-    return this.tableDataService.formatStateCode(stateCode, this.capacity);
+    return getFormattedCode(stateCode, this.capacity);
   }
 
 }

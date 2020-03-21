@@ -1,7 +1,7 @@
-import { TVertexData } from '@app/types';
-import { VertexCodingAlgorithm } from './vertex-coding-algorithm';
+import { IVertexCodingAlgorithm, TVertexData } from '@app/types';
+import { BaseDAlgorithm } from './base-d-algorithm';
 
-export class NStateAlgorithm extends VertexCodingAlgorithm {
+export class NStateAlgorithm extends BaseDAlgorithm implements IVertexCodingAlgorithm {
 
   public getCodesMap(): TVertexData {
     const vertexCodesMap: TVertexData = new Map();
