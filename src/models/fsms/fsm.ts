@@ -28,7 +28,8 @@ export abstract class Fsm {
     const map: Map<number, DnfEquation> = new Map();
 
     this.tableData.forEach((tableRow) => {
-      const excitationSignalsCode = tableRow.distStateCode as number;
+      const excitationSignalsCode = tableRow.triggerExcitationSignals as number;
+
       const term = this.getTerm(tableRow);
 
       controlBitsList

@@ -103,7 +103,7 @@
 
       <mat-tab [label]="'ROOT.ROOT.VERTEX_CODES_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
-        <app-vertex-codes-table>
+        <app-vertex-codes-table *ngIf="isTableCoded">
         </app-vertex-codes-table>
       </mat-tab>
 
@@ -115,7 +115,8 @@
 
       <mat-tab [label]="'ROOT.ROOT.TRANSITIONS_FUNCTIONS_TAB_TITLE' | translate"
                [disabled]="!isTableCoded">
-        <app-transition-functions-table [tableConfig]="tableConfig">
+        <app-transition-functions-table *ngIf="isTableCoded"
+                                        [tableConfig]="tableConfig">
         </app-transition-functions-table>
       </mat-tab>
     </mat-tab-group>

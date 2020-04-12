@@ -22,7 +22,8 @@
           <mat-form-field app-theme="dark"
                           appearance="standard">
             <mat-label>
-              {{ 'ROOT.CANONICAL_CODING_DIALOG.CODE_CONTROL_LABEL' | translate: { index: getStateOperand(item.key).index } }}
+              <div [innerHTML]="'ROOT.CANONICAL_CODING_DIALOG.CODE_CONTROL_LABEL' | translate: { index: getStateOperand(item.key).index }">
+              </div>
             </mat-label>
 
             <input type="string"

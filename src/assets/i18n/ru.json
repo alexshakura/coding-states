@@ -1,7 +1,7 @@
 {
   "ROOT": {
     "ROOT": {
-      "TITLE": "Кодирование состояний автомата",
+      "TITLE": "Кодирование состояний автомата для РГЗ",
       "SAVE_BUTTON_LABEL": "Сохранить",
       "CODE_BUTTON_LABEL": "Закодировать",
       "CHANGE_TABLE_PARAMETERS_BUTTON_LABEL": "Изменить параметры СТП",
@@ -20,7 +20,7 @@
       "FREQUENCY_CODING_ALGORITHM": "Частотный алгоритм кодирования",
       "UNITARY_CODING_ALGORITHM": "Унитарный алгоритм кодирования",
       "STATE_N_CODING_ALGORITHM": "Кодирование по N состояния",
-      "CANONICAL_CODING_ALGORITHM": "Канонический алгоритм кодирования",
+      "CANONICAL_CODING_ALGORITHM": "Эвристический алгоритм кодирования",
       "WARNING_REDUNDANT_TRANSITIONS_FOR_MURA": "В графе автомата Мура не должно быть кратных дуг, т.е. должен быть единственный переход а<sub>i</sub> -> а<sub>j</sub>. Проверьте переходы из состояния а<sub>{{ index }}</sub>",
       "WARNING_INVALID_CONDITIONALS_FOR_STATE": "Проверьте условия переходов из состояния a<sub>{{ index }}</sub>"
     },
@@ -95,7 +95,7 @@
     "CANONICAL_CODING_DIALOG": {
       "TITLE": "Кодирование",
       "DESCRIPTION": "Укажите коды для состояний",
-      "CODE_CONTROL_LABEL": "Код для состояния # {{ index }}",
+      "CODE_CONTROL_LABEL": "Код для состояния a<sub>{{ index }}</sub>",
       "ERROR_CODE_MAX_VALUE": "Значение кода слишком большое",
       "ERROR_CODE_PATTERN": "Код должен быть бинарным числом",
       "ERROR_INVALID_USED_STATES_COUNT": "Количество состояний в параметрах СТП не совпадает с количеством используемых",

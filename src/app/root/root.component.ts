@@ -13,7 +13,6 @@ import { combineLatest, from, of } from 'rxjs';
 import { MenuService } from './_services/menu.service';
 import { CodingAlgorithmsService } from './_services/coding-algorithms.service';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
-import { TableMockDataService } from './_services/table-mock-data.service';
 import { DTriggerCodingDialogComponent } from './d-trigger-coding-dialog/d-trigger-coding-dialog.component';
 import { CanonicalCodingDialogComponent } from './canonical-coding-dialog/canonical-coding-dialog.component';
 
@@ -32,7 +31,7 @@ export class RootComponent implements OnInit {
 
   public selectedTabIndex: number = 0;
 
-  public tableConfig: ITableConfig | null = this.tableMockDataService.getConfigForCanonical();
+  public tableConfig: ITableConfig | null;
 
   public tableData: ITableRow[] = [];
 
@@ -55,7 +54,6 @@ export class RootComponent implements OnInit {
     private readonly tableDataService: TableDataService,
     private readonly menuService: MenuService,
     private readonly reportGeneratorService: ReportGeneratorService,
-    private readonly tableMockDataService: TableMockDataService
   ) { }
 
   public ngOnInit(): void {
@@ -80,8 +78,6 @@ export class RootComponent implements OnInit {
         } else if (this.tableConfig.length !== tableConfig.length) {
           this.tableData = this.tableDataService.rearrangeTableData(this.tableData, tableConfig.length);
         }
-
-        this.tableData = this.tableMockDataService.getDataForCanonical();
 
         const notificationMessageKey = !this.tableConfig
           ? 'ROOT.ROOT.TABLE_CONFIG_CREATED_SUCCESSFULLY'
