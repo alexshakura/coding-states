@@ -15,6 +15,7 @@ import { CodingAlgorithmsService } from './_services/coding-algorithms.service';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
 import { DTriggerCodingDialogComponent } from './d-trigger-coding-dialog/d-trigger-coding-dialog.component';
 import { CanonicalCodingDialogComponent } from './canonical-coding-dialog/canonical-coding-dialog.component';
+import { CODING_ALGORITHMS_TRANSLATIONS_MAP, TRIGGER_TYPES_TRANSLATIONS_MAP, FSM_TYPES_TRANSLATIONS_MAP } from './root.constants';
 
 @Component({
   selector: 'app-root',
@@ -41,8 +42,13 @@ export class RootComponent implements OnInit {
   public readonly tableEditModeControl: FormControl = new FormControl(true);
 
   public readonly fsmTypes: typeof FsmType = FsmType;
+  public readonly fsmTypesTranslationsMap: Record<FsmType, string> = FSM_TYPES_TRANSLATIONS_MAP;
+
   public readonly codingAlgorithmTypes: typeof CodingAlgorithmType = CodingAlgorithmType;
+  public readonly codingAlgorithmsTranslationsMap: Record<CodingAlgorithmType, string> = CODING_ALGORITHMS_TRANSLATIONS_MAP;
+
   public readonly triggerTypes: typeof TriggerType = TriggerType;
+  public readonly triggerTypesTranslationsMap: Record<TriggerType, string> = TRIGGER_TYPES_TRANSLATIONS_MAP;
 
   public chosenCodingAlgorithm: CodingAlgorithmType;
 

@@ -17,7 +17,7 @@
             (ngSubmit)="performCoding()"
             id="statesCodesForm"
             class="layout-inline layout-inline--0px canonical-coding-dialog__controls">
-        <div *ngFor="let item of form.controls | keyvalue"
+        <div *ngFor="let item of form.controls | keyvalue: formControlsCompareFn"
              class="layout-inline__item canonical-coding-dialog__control">
           <mat-form-field app-theme="dark"
                           appearance="standard">

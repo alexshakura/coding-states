@@ -6,11 +6,12 @@ import { ITableConfig, ITableRow } from '@app/types';
 import { CodingAlgorithmsService } from '../_services/coding-algorithms.service';
 import { SignalOperandGeneratorService } from '../_services/signal-operand-generator.service';
 import { SnackBarService } from '../_services/snack-bar.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAX_VALUE_VALIDATOR, MIN_FILLED_FIELDS_COUNT } from './canonical-coding-dialog.constants';
 import { getTotalBitDepth, StateOperand, VertexCodingAlgorithmsFactory } from '@app/models';
 import { take, takeUntil } from 'rxjs/operators';
 import { ValidationError } from '@app/shared/_helpers/validation-error';
+import { KeyValue } from '@angular/common';
 
 @Component({
   selector: 'app-canonical-coding-dialog',
@@ -48,12 +49,27 @@ export class CanonicalCodingDialogComponent extends BaseDialogComponent<CodingAl
 
     const controlValidators = [Validators.pattern('^[0|1]+$'), MAX_VALUE_VALIDATOR(this.getMaxControlValue())];
 
-    for (const stateId of statesMap.keys()) {
+    const sortedStateIds = Array.from(statesMap.keys())
+      .sort((a, b) => this.stateIdsCompareFn(a, b));
+
+    for (const stateId of sortedStateIds) {
       const control = this.formBuilder.control('', controlValidators);
       form.addControl(`${stateId}`, control);
     }
 
     return form;
+  }
+
+  private stateIdsCompareFn(a: number, b: number): number {
+    if (a > b) {
+      return 1;
+    }
+
+    if (a < b) {
+      return -1;
+    }
+
+    return 0;
   }
 
   private getMaxControlValue(): number {
@@ -136,4 +152,12 @@ export class CanonicalCodingDialogComponent extends BaseDialogComponent<CodingAl
   public getStateOperand(id: string): StateOperand {
     return this.statesMap.get(+id) as StateOperand;
   }
+
+  public formControlsCompareFn: (
+    a: KeyValue<string, FormControl>,
+    b: KeyValue<string, FormControl>
+  ) => number = (a, b) => {
+    return this.stateIdsCompareFn(+a.key, +b.key);
+  }
+
 }

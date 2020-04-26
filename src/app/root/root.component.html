@@ -8,32 +8,12 @@
 
         <div *ngIf="tableConfig"
              class="layout-list__item root-header__subtitle">
-          <ng-container *ngIf="tableConfig.fsmType === fsmTypes.MILI">
-            {{ 'ROOT.ROOT.MILI_STATE_MACHINE' | translate }}
-          </ng-container>
+          {{ fsmTypesTranslationsMap[tableConfig.fsmType] | translate }}
 
-          <ng-container *ngIf="tableConfig.fsmType === fsmTypes.MURA">
-            {{ 'ROOT.ROOT.MURA_STATE_MACHINE' | translate }}
-          </ng-container>
+          / {{ triggerTypesTranslationsMap[tableConfig.triggerType] | translate }}
 
-          <ng-container *ngIf="isTableCoded"
-                        [ngSwitch]="chosenCodingAlgorithm">
-            /
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.FREQUENCY">
-              {{ 'ROOT.ROOT.FREQUENCY_CODING_ALGORITHM' | translate }}
-            </ng-container>
-
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.STATE_N">
-              {{ 'ROOT.ROOT.STATE_N_CODING_ALGORITHM' | translate }}
-            </ng-container>
-
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.UNITARY">
-              {{ 'ROOT.ROOT.UNITARY_CODING_ALGORITHM' | translate }}
-            </ng-container>
-
-            <ng-container *ngSwitchCase="codingAlgorithmTypes.CANONICAL">
-              {{ 'ROOT.ROOT.CANONICAL_CODING_ALGORITHM' | translate }}
-            </ng-container>
+          <ng-container *ngIf="isTableCoded">
+            / {{ codingAlgorithmsTranslationsMap[chosenCodingAlgorithm] | translate }}
           </ng-container>
         </div>
       </div>
